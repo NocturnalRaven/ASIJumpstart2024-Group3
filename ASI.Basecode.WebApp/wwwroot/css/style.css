@@ -1,364 +1,843 @@
-﻿/* Main CSS Here */
-
-@import url( "https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+﻿@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap");
 
 * {
-    margin: 0;
-    padding: 0;
     box-sizing: border-box;
-    font-family: "Poppins", sans-serif;
-}
-
-:root {
-    --background-color1: #fafaff;
-    --background-color2: #ffffff;
-    --background-color3: #ededed;
-    --background-color4: #cad7fda4;
-    --primary-color: #4b49ac;
-    --secondary-color: #0c007d;
-    --Border-color: #3f0097;
-    --one-use-color: #3f0097;
-    --two-use-color: #5500cb;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-    background-color: var(--background-color4);
-    max-width: 100%;
-    overflow-x: hidden;
+    padding: 0;
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background-color: #E3E6EF;
 }
 
-header {
-    height: 70px;
-    width: 100vw;
-    padding: 0 30px;
-    background-color: var(--background-color1);
-    z-index: 100;
-    box-shadow: 1px 1px 15px rgba(161, 182, 253, 0.825);
+nav {
+    position: relative;
+    padding: 5px 5%;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.logo {
-    font-size: 27px;
-    font-weight: 600;
-    color: rgb(47, 141, 70);
-}
-
-.menuicn {
-    cursor: pointer;
-}
-
-.searchbar,
-.message,
-.logosec {
-    display: flex;
-    align-items: center;
     justify-content: center;
-}
-
-.searchbar2 {
-    display: none;
-}
-
-.logosec {
-    gap: 20px;
-}
-
-.hover-pointer {
-    cursor: pointer;
-}
-
-.searchbar input {
-    width: 250px;
-    height: 42px;
-    border-radius: 50px 0 0 50px;
-    background-color: var(--background-color3);
-    padding: 0 20px;
-    font-size: 15px;
-    outline: none;
-    border: none;
-}
-
-.searchbtn {
-    width: 50px;
-    height: 42px;
-    display: flex;
     align-items: center;
-    justify-content: center;
-    border-radius: 0px 50px 50px 0px;
-    background-color: var(--secondary-color);
-    cursor: pointer;
-}
-
-.message {
-    gap: 40px;
-    position: relative;
-    cursor: pointer;
-}
-
-.circle {
-    height: 7px;
-    width: 7px;
-    position: absolute;
-    background-color: #fa7bb4;
-    border-radius: 50%;
-    left: 19px;
-    top: 8px;
-}
-
-.dp {
-    height: 40px;
-    width: 40px;
-    background-color: #626262;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    cursor: pointer; 
-    position: relative;
-    overflow: hidden; 
-}
-
-.main-container {
-    display: flex;
-    width: 100vw;
-    position: relative;
-    top: 70px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    height: 7vh;
+    background-color: #ffffff;
     z-index: 1;
 }
 
-.dpicn {
-    height: 42px;
-}
-
-.main {
-    height: calc(100vh - 70px);
-    width: 100%;
-    overflow-y: scroll;
-    overflow-x: hidden;
-    padding: 40px 30px 30px 30px;
-}
-
-    .main::-webkit-scrollbar-thumb {
-        background-image: linear-gradient(to bottom, rgb(0, 0, 85), rgb(0, 0, 50));
+    nav .navList {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 6%;
+        position: relative;
     }
 
-    .main::-webkit-scrollbar {
-        width: 5px;
+    nav .navItem {
+        padding: 10px 10px;
+        font-size: 13px;
     }
 
-    .main::-webkit-scrollbar-track {
-        background-color: #9e9e9eb2;
-    }
-
-.box-container {
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 50px;
-}
-
-.nav {
-    min-height: 91vh;
-    width: 273px;
-    background-color: #1e272e;
-    position: absolute;
-    top: 0px;
-    left: 00;
-    box-shadow: 1px 1px 10px rgba(198, 189, 248, 0.825);
-    display: flex;
-    justify-content: space-between;
-    overflow: hidden;
-    padding: 30px 0 20px 10px;
-    color: whitesmoke !important;
-}
-
-.navcontainer {
-    height: calc(100vh - 70px);
-    width: 600px;
+.navList .navItem .navItemA {
+    text-decoration: none;
+    color: gray;
+    transition: 0.2s ease-in-out;
     position: relative;
-    overflow-y: scroll;
-    overflow-x: hidden;
-    transition: all 0.5s ease-in-out;
 }
 
-    .navcontainer::-webkit-scrollbar {
+    .navList .navItem .navItemA:hover {
+        font-weight: 500;
+        color: #6798F9;
+        transition: 0.2s ease-in-out;
+    }
+
+.navItemA {
+    color: gray;
+}
+
+.navIndicator {
+    position: absolute;
+    bottom: 0;
+    height: 3px;
+    width: 0;
+    background-color: #6798F9;
+    transition: all 0.3s ease;
+}
+
+.navList .navItem .navItemA.active {
+    font-weight: 600;
+    color: #6798F9;
+    transition: all 0.3s ease;
+}
+
+.hamburger {
+    display: none;
+    cursor: pointer;
+}
+
+    .hamburger .line {
+        width: 25px;
+        height: 1px;
+        background-color: #1f1f1f;
+        display: block;
+        margin: 7px auto;
+        transition: all 0.3s ease-in-out;
+    }
+
+.menubar {
+    position: absolute;
+    top: 0;
+    left: -60%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 60%;
+    height: 100vh;
+    padding: 20% 0;
+    background: rgba(255, 255, 255);
+    transition: all 0.5s ease-in;
+    z-index: 2;
+}
+
+.active {
+    left: 0;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.menubar ul {
+    padding: 0;
+    list-style: none;
+}
+
+    .menubar ul li {
+        margin-bottom: 32px;
+    }
+
+        .menubar ul li a {
+            text-decoration: none;
+            color: #000;
+            font-size: 95%;
+            font-weight: 400;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+            .menubar ul li a:hover {
+                background-color: #f5f5f5;
+            }
+
+@media screen and (max-width: 790px) {
+    .hamburger {
+        display: block;
+    }
+
+    nav ul {
         display: none;
     }
-
-.navclose {
-    width: 80px;
 }
 
-.nav-option {
-    width: 250px;
-    height: 60px;
+.mainBody {
+    /*    padding: 15px;*/
+    height: 90vh;
+}
+
+.mainBodyInner {
     display: flex;
-    align-items: center;
-    padding: 0 30px 0 20px;
-    gap: 20px;
-    transition: all 0.1s ease-in-out;
+    flex-direction: row;
+    gap: 15px;
+    height: 100%;
 }
 
-    .nav-option:hover {
-        border-left: 5px solid #a2a2a2;
-        background-color: #dadada;
-        cursor: pointer;
-    }
+.calendarSide {
 
-.nav-img {
-    height: 30px;
-}
-
-.nav-upper-options {
+    flex: 1;
+    background-color: #ffffff;
+    border-radius: 15px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 30px;
+    padding-top: 20px;
 }
 
-.option1 {
-    border-left: 5px solid #010058af;
-    background-color: var(--Border-color);
-    color: white;
-    cursor: pointer;
+#calendar {
+    margin: auto;
+    /*    max-width: 230px !important;
+    margin: 10px auto !important;
+    font-size: 0.7rem !important;*/
 }
 
-    .option1:hover {
-        border-left: 5px solid #010058af;
-        background-color: var(--Border-color);
-    }
-
-.box {
-    height: 130px;
-    width: 230px;
-    border-radius: 20px;
-    box-shadow: 3px 3px 10px rgba(0, 30, 87, 0.751);
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    cursor: pointer;
-    transition: transform 0.3s ease-in-out;
+.flatpickr-input {
+    display: none;
 }
 
-    .box:hover {
-        transform: scale(1.08);
-    }
-
-    .box:nth-child(1) {
-        background-color: var(--one-use-color);
-    }
-
-    .box:nth-child(2) {
-        background-color: var(--two-use-color);
-    }
-
-    .box:nth-child(3) {
-        background-color: var(--one-use-color);
-    }
-
-    .box:nth-child(4) {
-        background-color: var(--two-use-color);
-    }
-
-    .box img {
-        height: 50px;
-    }
-
-    .box .text {
-        color: white;
-    }
-
-.topic {
-    font-size: 13px;
-    font-weight: 400;
-    letter-spacing: 1px;
+/* Ensure calendar is smaller */
+.flatpickr-calendar {
+    width: 350px !important;
+    /*width: 85% !important;*/
+    /* max-width: 220px !important; Ensure it fits within the container */
+    background-color: none !important;
+    box-shadow: none !important;
 }
 
-.topic-heading {
-    font-size: 30px;
-    letter-spacing: 3px;
+/* Reduce the size of the individual day cells */
+.flatpickr-day {
+    width: 1.5em !important;
+    height: 2em !important;
+    line-height: 2em !important;
+    /*width: 1.2em !important;
+    height: 2.9em !important;
+    line-height: 4em !important;
+    padding: 0 !important;*/ /* Ensure no extra padding */
+    /*font-size: 0.9rem !important;*/
 }
 
-.report-container {
-    min-height: 300px;
-    max-width: 1200px;
-    margin: 70px auto 0px auto;
-    background-color: #ffffff;
-    border-radius: 30px;
-    box-shadow: 3px 3px 10px rgb(188, 188, 188);
-    padding: 0px 20px 20px 20px;
+/* Reduce the font size for the month title and weekdays */
+.flatpickr-month {
+    font-size: 0.8rem !important;
 }
 
-.report-header {
-    height: 80px;
+.flatpickr-weekday {
+    font-size: 0.7rem !important;
+}
+
+/* Reduce the size of the navigation arrows */
+.flatpickr-prev-month, .flatpickr-next-month {
+    width: 15px !important;
+    height: 15px !important;
+    padding: 0 !important;
+}
+
+/* Style for the month/year dropdown */
+.flatpickr-monthDropdown-months {
+    font-size: 0.9rem !important;
+}
+
+/* Reduce padding for month container to make it fit */
+.flatpickr-current-month {
+    padding: 5px !important;
+}
+
+.recentBookingsAside {
+    font-size: 0.8em;
+    color: gray;
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+.recentBookingsOverall {
     width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 20px 10px 20px;
-    border-bottom: 2px solid rgba(0, 20, 151, 0.59);
-}
-
-.recent-Articles {
-    font-size: 30px;
-    font-weight: 600;
-    color: #5500cb;
-}
-
-.view {
-    height: 35px;
-    width: 90px;
-    border-radius: 8px;
-    background-color: #5500cb;
-    color: white;
-    font-size: 15px;
-    border: none;
-    cursor: pointer;
-}
-
-.report-body {
-    max-width: 1160px;
-    overflow-x: auto;
     padding: 20px;
 }
 
-.report-topic-heading,
-.item1 {
-    width: 1120px;
+.recentBookings {
+    background-color: #6798F9;
+    padding: 10px 15px;
+    border-radius: 10px;
+    color: #ffffff;
+}
+
+.userRecentBookings {
+    margin: 0;
+    font-weight: 500;
+}
+
+.recentBookings hr {
+    margin: 0;
+}
+
+.recentBookingsDetails * {
+    margin: 0;
+    font-size: 12px;
+}
+
+.recentBookingsDetails {
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
+    gap: 5px;
     align-items: center;
 }
 
-.t-op {
-    font-size: 18px;
-    letter-spacing: 0px;
+.recentBookingsDetailsDiv {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 7px;
 }
 
-.items {
-    width: 1120px;
+.recentBookingsOverallInner {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.mainContent {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.bookingsDashboard {
+    flex: 1;
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 15px 25px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.bookingsDashboardLower {
+    flex: 1;
+    display: flex;
+    gap: 15px;
+    /* height: 100%; */
+    overflow-y: auto;
+}
+
+.dashboardPending {
+    flex: 2;
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 15px 25px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.dashboardAnalytics {
+    flex: 1;
+    background-color: #ffffff;
+    border-radius: 15px;
+}
+
+.bookingsDashboardHeader {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+}
+
+.bookingsDashboardTitle, .userBookingsDashboardTitle {
+    color: #6798F9;
+    font-size: 12px;
+}
+
+.bi-filter {
+    font-size: 20px;
+    color: gray;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table thead tr th,
+table tbody tr td {
+    font-size: 12px;
+    white-space: nowrap;
+    text-align: left;
+    padding: 8px;
+}
+
+.viewBtn, .editBtn, .deleteBtn {
+    font-size: 11px;
+    padding: 5px 10px;
+}
+
+.viewBtn {
+    background-color: #DBE5FF;
+}
+
+.editBtn {
+    background-color: #DBFFDE;
+}
+
+.deleteBtn {
+    background-color: #FFDBDB;
+}
+
+@media (max-width: 1024px) {
+    .calendarSide {
+        display: none; /* Hide sidebar on smaller screens */
+    }
+}
+
+.analytics-card {
+    flex: 1;
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    text-align: center;
+}
+
+    .analytics-card h4 {
+        color: #6798F9;
+        font-size: 18px;
+        margin: 0;
+    }
+
+.analytics-dropdown {
+    color: #6798F9;
+    font-size: 12px;
+}
+
+.legend-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
     margin-top: 15px;
 }
 
-.item1 {
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+}
+
+.legend-color {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.chart-container {
+    position: relative;
+    width: 300px; /* Adjust the width to make the chart smaller */
+    height: 300px; /* Adjust the height to make the chart smaller */
+    margin: 0 auto;
+}
+
+.meeting-room {
+    background-color: #6848FF;
+}
+
+.event-venue {
+    background-color: #AFAEFF;
+}
+
+.unit {
+    background-color: #E6DEFF;
+}
+
+.apartment {
+    background-color: #F3F0FF;
+}
+
+.ranges-display {
     margin-top: 20px;
 }
 
-.t-op-nextlvl {
-    font-size: 14px;
-    letter-spacing: 0px;
-    font-weight: 600;
+.analyticsDropdown {
+    background-color: #FFFFFF !important;
+    border: none;
+    color: #6848FF;
+    padding: 0;
+    font-size: 12px;
 }
 
-.label-tag {
-    width: 100px;
-    text-align: center;
-    background-color: rgb(0, 177, 0);
-    color: white;
-    border-radius: 4px;
+
+
+
+/* admin-bookings.html */
+.adminAddBookingBtn {
+    background-color: #55679C;
+    color: #ffff;
+}
+
+.adminAddRecurringBookingBtn {
+    border: 1px #55679C solid !important;
+    color: #55679C;
+}
+
+.timeDiv {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.buttonsOffCanvas {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    .btn
+
+{
+    width: 100%;
+}
+
+}
+
+.offcanvas-body-inner {
+}
+
+
+/* admin user management */
+.userDashboard {
+    width: 80%;
+}
+
+.users-inputGroup {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+}
+
+.adminAddUserBtn {
+    background-color: #55679C;
+    color: #ffff;
+    display: flex;
+    flex-direction: row;
+    height: fit-content;
+    align-items: center;
+    width: fit-content;
+}
+
+.addUserText {
+    margin: 0;
+    width: 75px;
+}
+
+.editIconBtn {
+    color: gray;
+}
+
+.deleteIconBtn {
+    color: #FF204E;
+}
+
+.offcanvas-body-innerMost {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+
+/* analytics */
+.chart-container2 {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+
+/* room  */
+.mainBodyInner2 {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+    /* align-items: center; */
+}
+
+.mainBodyRooms {
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.adminAddRoomBtn {
+    background-color: #55679C;
+    color: #ffff;
+    display: flex;
+    flex-direction: row;
+    height: fit-content;
+    align-items: center;
+    width: fit-content;
+}
+
+.addRoomText {
+    margin: 0;
+    width: 90px;
+}
+
+
+
+/* user dashboard */
+.mainBodyUser {
+    padding: 0px !important;
+    height: 88vh;
+}
+
+.usersRoomDashboard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    h4
+
+{
+    margin: 0;
+}
+
+}
+
+.userDashboardRoomsCard {
+    background-color: #ffff;
+    padding: 10px;
+    border-radius: 15px;
+    width: 250px;
+}
+
+.userDashboardRoomsCardDetails {
+    display: flex;
+    flex-direction: column;
+}
+
+.userDashboardRoomsCardImg {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 10px; /* Optional: add some rounded corners */
+}
+
+.userDashboardRoomsCardDetailsInner {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: 12px;
+    gap: 5px;
+    color: gray;
+    p
+
+{
+    margin: 0;
+}
+
+}
+
+.userDashboardRoomsCardDetailsName {
+    margin-bottom: 7px;
+    margin-top: 7px;
+}
+
+.userDashboardRoomsCardView {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+
+.userDashboardRoomsCardViewParent {
+    flex: 1; /* Give this section less space */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.userBookingsDashboard {
+    flex: 2; /* Give this section more space compared to userDashboardRoomsCardViewParent */
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 15px 25px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    min-height: 0; /* Allow the section to shrink when necessary */
+}
+
+.userDashboardRoomsCardView {
+    display: flex;
+    flex-wrap: nowrap; /* Prevent items from wrapping to a new line */
+    overflow-x: auto; /* Enable horizontal scrolling if needed */
+    gap: 10px; /* Add some spacing between cards */
+    padding: 10px;
+}
+
+.mainBodyUser {
+    padding: 0px !important;
+    height: 88vh; /* Ensure the content fills the viewport */
+    display: flex;
+    flex-direction: column;
+}
+
+.mainBodyInner {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    height: 100%; /* Ensure it takes the full height */
+    overflow: hidden; /* Prevent extra scrolling */
+}
+
+.userBookings {
+    flex: 1; /* Give this section more space compared to userDashboardRoomsCardViewParent */
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 15px 25px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    min-height: 0; /* Allow the section to shrink when necessary */
+}
+
+.userBookingsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    flex: 1; /* Let the container take up the remaining height */
+}
+
+.userBookingsDashboardHeader {
+    display: flex;
+    ;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.userBookingsPage {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+.userBookings {
+    flex: 1; /* Give this section more space compared to userDashboardRoomsCardViewParent */
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 15px 25px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    min-height: 0; /* Allow the section to shrink when necessary */
+}
+
+.userCancellations {
+    flex: 2; /* Give this section more space compared to userDashboardRoomsCardViewParent */
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 15px 25px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    min-height: 0; /* Allow the section to shrink when necessary */
+}
+
+
+.bi-filter {
+    cursor: pointer;
+    font-size: 20px;
+    color: gray;
+}
+
+    .bi-filter:hover {
+        color: #6798F9;
+    }
+
+
+/* Horizontal scroll for the room card container */
+.userDashboardRoomsCardView {
+    display: flex;
+    flex-wrap: nowrap; /* Prevent wrapping */
+    overflow-x: auto; /* Enable horizontal scroll */
+    gap: 10px; /* Space between the cards */
+    padding: 10px;
+    max-width: 100%; /* Ensure the container doesn't exceed the viewport width */
+}
+
+.userDashboardRoomsCard {
+    min-width: 250px; /* Set a fixed minimum width for the cards */
+    max-width: 250px; /* Ensure all cards have the same width */
+    background-color: #ffffff;
+    padding: 10px;
+    border-radius: 15px;
+}
+
+/* Style the images to ensure they fit well in the card */
+.userDashboardRoomsCardImg {
+    width: 100%;
+    height: 150px; /* Adjust height to fit your design */
+    object-fit: cover; /* Make sure images fit properly */
+    border-radius: 10px;
+}
+
+/* Hide the scrollbar for WebKit browsers */
+.userDashboardRoomsCardView::-webkit-scrollbar {
+    display: none;
+}
+
+.userDashboardRoomsCardView {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+/* Ensure the main content doesn't overflow */
+.mainContent {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow: hidden; /* Prevent overflow in the main content */
+}
+
+.userDashboardRoomsCardViewParent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    max-width: 100%; /* Prevent the container from exceeding the width */
+}
+
+
+/* Profile Section Styling */
+.profile-section {
+    position: relative;
+}
+
+.profile-icon {
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.profile-dropdown {
+    position: absolute;
+    top: 40px; /* Adjust this value based on how far you want the dropdown to appear below the icon */
+    /* left: 90%; Align it to the center of the parent container */
+    transform: translateX(-50%); /* Offset by 50% of the dropdown's width to center it */
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    display: none;
+    width: 150px; /* Set a fixed width for the dropdown */
+    z-index: 1000; /* Ensure it appears above other elements */
+}
+
+    .profile-dropdown.show {
+        display: block;
+    }
+
+
+
+    .profile-dropdown p {
+        margin: 0;
+        font-weight: 500;
+        font-size: 24px;
+        ;
+        text-align: center;
+    }
+
+    .profile-dropdown .btn {
+        /* display: block; */
+        margin-top: 10px;
+        text-align: center;
+        /* padding: 0; */
+        width: 100%;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        background-color: #D2E0FB;
+    }
+
+
+.logoutBtn {
+    background-color: #E5E4E2;
 }

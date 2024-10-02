@@ -59,5 +59,104 @@ namespace ASI.Basecode.Resources.Views {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Bookings.
+        /// </summary>
+        public static string AddBookings {
+            get {
+                return ResourceManager.GetString("AddBookings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Book.
+        /// </summary>
+        public static string Book {
+            get {
+                return ResourceManager.GetString("Book", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        public static string CancelBooking {
+            get {
+                return ResourceManager.GetString("CancelBooking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        public static string CancelBookingInput {
+            get {
+                return ResourceManager.GetString("CancelBookingInput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string CloseButtonModal {
+            get {
+                return ResourceManager.GetString("CloseButtonModal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string CloseFilterModal {
+            get {
+                return ResourceManager.GetString("CloseFilterModal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit.
+        /// </summary>
+        public static string EditBooking {
+            get {
+                return ResourceManager.GetString("EditBooking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Profile.
+        /// </summary>
+        public static string EditProfileModal {
+            get {
+                return ResourceManager.GetString("EditProfileModal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Book.
+        /// </summary>
+        public static string TriggerBook {
+            get {
+                return ResourceManager.GetString("TriggerBook", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recurring Book.
+        /// </summary>
+        public static string TriggerRecurringBook {
+            get {
+                return ResourceManager.GetString("TriggerRecurringBook", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View.
+        /// </summary>
+        public static string View {
+            get {
+                return ResourceManager.GetString("View", resourceCulture);
+            }
+        }
     }
 }
