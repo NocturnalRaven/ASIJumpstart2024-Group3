@@ -9,42 +9,42 @@ using System.Threading.Tasks;
 
 namespace ASI.Basecode.Data.Repositories
 {
-    public class UserRepository : BaseRepository, IUserRepository
+    public class BookingRepository : BaseRepository, IBookingRepository
     {
-        public UserRepository(IUnitOfWork unitOfWork) : base(unitOfWork) 
+        public BookingRepository(IUnitOfWork unitOfWork) : base(unitOfWork) 
         {
 
         }
 
-        public IQueryable<MUser> GetUsers()
+        public IQueryable<MBooking> GetBooking()
         {
-            return this.GetDbSet<MUser>();
+            return this.GetDbSet<MBooking>();
         }
 
-        public bool UserExists(int userId)
+        public bool BookingExists(int bookingId)
         {
-            return this.GetDbSet<MUser>().Any(x => x.UserId == userId);
+            return this.GetDbSet<MBooking>().Any(x => x.BookingId == bookingId);
         }
 
-        public void AddUser(MUser user)
+        public void AddUser(MBooking booking)
         {
-            var maxId = this.GetDbSet<MUser>().Max(x => x.UserId) + 1;
-            user.UserId = maxId;
-            user.UpdDt = DateTime.Now;
-            this.GetDbSet<MUser>().Add(user);
+            var maxId = this.GetDbSet<MBooking>().Max(x => x.BookingId) + 1;
+            booking.BookingId = maxId;
+            booking.UpdDt = DateTime.Now;
+            this.GetDbSet<MBooking>().Add(booking);
             UnitOfWork.SaveChanges();
         }
 
-        public void UpdateUser(MUser user)
+        public void UpdateUser(MBooking booking)
         {
-            this.GetDbSet<MUser>().Update(user);
-            user.UpdDt = DateTime.Now;
+            this.GetDbSet<MBooking>().Update(booking);
+            booking.UpdDt = DateTime.Now;
             UnitOfWork.SaveChanges();
         }
 
-        public void DeleteUser(int userId)
+        public void DeleteUser(int bookingId)
         {
-            var userToDelete = this.GetDbSet<MUser>().FirstOrDefault(x => x.Deleted != true && x.UserId == userId);
+            var userToDelete = this.GetDbSet<MBooking>().FirstOrDefault(x => x.Deleted != true && x.BookingId == bookingId);
             if (userToDelete != null)
             {
                 userToDelete.Deleted = true;

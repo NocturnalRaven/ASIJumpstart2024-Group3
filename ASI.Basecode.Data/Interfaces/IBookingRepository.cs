@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace ASI.Basecode.Data.Interfaces
 {
-    public interface IUserRepository
+    public interface IBookingRepository
     {
-        IQueryable<MUser> GetUsers();
-        bool UserExists(int userId);
-        void AddUser(MUser user);
-        void UpdateUser(MUser user);
-        void DeleteUser(int userId);
+        IQueryable<MBooking> GetBooking();
+        bool BookingExists(int bookingId);
+        void AddBooking(MBooking booking);
+        void UpdateBooking(MBooking booking);
+        void DeleteBooking(int bookingId);
     }
 }
