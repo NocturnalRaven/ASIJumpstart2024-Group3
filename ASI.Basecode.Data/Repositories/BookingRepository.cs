@@ -44,11 +44,11 @@ namespace ASI.Basecode.Data.Repositories
 
         public void DeleteBooking(int bookingId)
         {
-            var userToDelete = this.GetDbSet<MBooking>().FirstOrDefault(x => x.Deleted != true && x.BookingId == bookingId);
-            if (userToDelete != null)
+            var bookingToDelete = this.GetDbSet<MBooking>().FirstOrDefault(x => x.Deleted != true && x.BookingId == bookingId);
+            if (bookingToDelete != null)
             {
-                userToDelete.Deleted = true;
-                userToDelete.UpdDt = DateTime.Now;
+                bookingToDelete.Deleted = true;
+                bookingToDelete.UpdDt = DateTime.Now;
             }
             UnitOfWork.SaveChanges();
         }
