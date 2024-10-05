@@ -26,7 +26,7 @@ namespace ASI.Basecode.Data.Repositories
             return this.GetDbSet<MBooking>().Any(x => x.BookingId == bookingId);
         }
 
-        public void AddUser(MBooking booking)
+        public void AddBooking(MBooking booking)
         {
             var maxId = this.GetDbSet<MBooking>().Max(x => x.BookingId) + 1;
             booking.BookingId = maxId;
@@ -35,14 +35,14 @@ namespace ASI.Basecode.Data.Repositories
             UnitOfWork.SaveChanges();
         }
 
-        public void UpdateUser(MBooking booking)
+        public void UpdateBooking(MBooking booking)
         {
             this.GetDbSet<MBooking>().Update(booking);
             booking.UpdDt = DateTime.Now;
             UnitOfWork.SaveChanges();
         }
 
-        public void DeleteUser(int bookingId)
+        public void DeleteBooking(int bookingId)
         {
             var userToDelete = this.GetDbSet<MBooking>().FirstOrDefault(x => x.Deleted != true && x.BookingId == bookingId);
             if (userToDelete != null)
