@@ -16,8 +16,11 @@ namespace ASI.Basecode.Services.ServiceModels
         [Required(ErrorMessage = "This is required")]
         public int RoomId { get; set; }
         [Required(ErrorMessage = "This is required")]
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public int NoOfPeople { get; set; }
         public string Status { get; set; }
-
+        public bool IsRecurring { get; set; }
         public string Frequency { get; set; }
     }
 
@@ -26,9 +29,6 @@ namespace ASI.Basecode.Services.ServiceModels
         [DisplayName("ID")]
         public string IdFilter { get; set; }
 
-        [Display(Name = "FirstName", ResourceType = typeof(Resources.Views.Screen))]
-        public string FirstNameFilter { get; set; }
-
-        public IEnumerable<UserViewModel> dataList { get; set; }
+        public IEnumerable<BookingViewModel> dataList { get; set; }
     }
 }
