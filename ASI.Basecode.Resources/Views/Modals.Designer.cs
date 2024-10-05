@@ -22,14 +22,14 @@ namespace ASI.Basecode.Resources.Views {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Screen {
+    public class Modals {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Screen() {
+        internal Modals() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace ASI.Basecode.Resources.Views {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ASI.Basecode.Resources.Views.Screen", typeof(Screen).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ASI.Basecode.Resources.Views.Modals", typeof(Modals).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,83 +61,39 @@ namespace ASI.Basecode.Resources.Views {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Bookings.
+        ///   Looks up a localized string similar to Email.
         /// </summary>
-        public static string BookingsLabel {
+        public static string EmailModal {
             get {
-                return ResourceManager.GetString("BookingsLabel", resourceCulture);
+                return ResourceManager.GetString("EmailModal", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ©2023 Alliance Software Inc. All rights reserved..
+        ///   Looks up a localized string similar to Name.
         /// </summary>
-        public static string Copyright {
+        public static string NameModal {
             get {
-                return ResourceManager.GetString("Copyright", resourceCulture);
+                return ResourceManager.GetString("NameModal", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Create new.
+        ///   Looks up a localized string similar to Reset Password
+        ///.
         /// </summary>
-        public static string CreateNew {
+        public static string ResetPasswordModal {
             get {
-                return ResourceManager.GetString("CreateNew", resourceCulture);
+                return ResourceManager.GetString("ResetPasswordModal", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Don&apos;t have an account?.
+        ///   Looks up a localized string similar to Role.
         /// </summary>
-        public static string DontHaveAcc {
+        public static string RoleModal {
             get {
-                return ResourceManager.GetString("DontHaveAcc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to First Name.
-        /// </summary>
-        public static string FirstName {
-            get {
-                return ResourceManager.GetString("FirstName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Forgot password?.
-        /// </summary>
-        public static string ForgotPass {
-            get {
-                return ResourceManager.GetString("ForgotPass", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Login.
-        /// </summary>
-        public static string Login {
-            get {
-                return ResourceManager.GetString("Login", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Password.
-        /// </summary>
-        public static string Password {
-            get {
-                return ResourceManager.GetString("Password", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to UserId.
-        /// </summary>
-        public static string UserId {
-            get {
-                return ResourceManager.GetString("UserId", resourceCulture);
+                return ResourceManager.GetString("RoleModal", resourceCulture);
             }
         }
     }

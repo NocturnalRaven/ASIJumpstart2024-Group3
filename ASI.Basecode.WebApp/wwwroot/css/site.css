@@ -1,87 +1,198 @@
-﻿html {
-    font-size: 14px;
+﻿body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
 }
 
-@media (min-width: 768px) {
-    html {
-        font-size: 16px;
-    }
+/* Sign-up and Login Containers */
+.signup-container, .login-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #F0F4FA;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+.signup-container {
+    width: 50%;
+    margin: 150px auto 0 auto; /* Top margin, horizontal centering, no bottom margin */
 }
 
-html {
-    position: relative;
-    min-height: 100%;
+.login-container {
+    width: 30%;
+    margin: 200px auto 0 auto; /* Top margin, horizontal centering, no bottom margin */
 }
 
-body {
-    margin-bottom: 60px;
+.form-container {
+    width: 50%;
 }
 
-.footer {
-    position: absolute;
-    bottom: 0;
+.form-input {
     width: 100%;
-    white-space: nowrap;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-sizing: border-box;
 }
 
-#footer {
-    height: 160px;
-    margin-left: 0px;
-    transition: margin-left 0.2s;
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
 }
 
-.wrapper {
-    min-height: 100vh;
-    position: relative;
-    height: auto
+.form-checkbox {
+    margin-right: 10px;
 }
 
-.hide-navbar {
-    display: none;
+.submit-button {
+    width: 100%;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 15px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+    display: block; /* Ensure it spans the entire form width */
 }
 
-
-/* Initially hide the dropdown */
-.dropdown {
-    display: none;
-    position: absolute;
-    top: 100%;
-    right: 30px;
-    background-color: #fff;
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
-    z-index: 1;
+.illustration-container {
+    width: 50%;
+    text-align: right;
 }
 
-    /* Style the dropdown list */
-    .dropdown ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
+    .illustration-container img {
+        width: 100%;
+    }
+/* Navbar */
+.navbar {
+    background-color: #ffffff; /* White background */
+    border-bottom: 1px solid #e0e0e0; /* Light grey border for separation */
+    padding: 10px 20px; /* Appropriate padding */
+    display: flex; /* Flexbox to enable alignment features */
+    justify-content: center; /* Center horizontally */
+    width: 100%; /* Navbar takes full width of the viewport */
+}
+
+.navbar-nav {
+    display: flex; /* Flex container for nav items */
+    justify-content: center; /* Center nav items horizontally */
+    width: auto; /* Auto width based on content */
+    padding-left: 0; /* Remove padding if any */
+    margin: 0 auto; /* Centering margin if needed */
+    list-style: none; /* Removes list styling */
+}
+
+.nav-item {
+    margin-right: 40px; /* Space between nav items */
+    display: inline-block; /* Inline-block for horizontal layout */
+}
+
+    .nav-item:last-child {
+        margin-right: 0; /* Remove margin for the last item */
     }
 
-        .dropdown ul li {
-            padding: 10px;
-        }
-
-            /* Style the links in the dropdown */
-            .dropdown ul li a {
-                text-decoration: none;
-                color: #333;
-            }
-
-.dropdown-open {
-    display: block;
-    width: 140px
+.nav-link {
+    color: #333333; /* Dark grey for readability */
+    font-size: 16px; /* Slightly larger font size */
+    font-weight: 500; /* Medium font weight */
+    padding: 8px 12px; /* Padding for clickable area */
+    display: block; /* Block display to fill the nav-item area */
+    text-decoration: none; /* Remove underline from links */
 }
 
-.mr-20 {
-    margin-right: 20px;
+    .nav-link:hover, .nav-link:focus {
+        color: #0056b3; /* Color change on hover/focus */
+        background-color: #f8f9fa; /* Light background on hover/focus */
+    }
+
+
+/* Calendar Container */
+.calendar-container {
+    background-color: #f9f9f9; /* Slightly off-white background */
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 20px;
 }
 
-.w-1000px {
-    width: 1000px;
+
+    .calendar-container h2 {
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+/* Booking, Pending, and Analytics Containers */
+.booking-container, .pending-container, .analytics-container {
+    background-color: #FFFFFF;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.table {
+    margin-top: 10px;
+    width: 100%;
+}
+
+    .table th, .table td {
+        padding: 8px;
+        text-align: left;
+    }
+
+    .table th {
+        background-color: #e9ecef;
+    }
+
+/* Analytics */
+.analytics-container h2 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+/* Adjustments for mobile views */
+@media (max-width: 768px) {
+    .navbar-nav {
+        justify-content: space-around;
+    }
+
+    .calendar-container, .booking-container, .pending-container, .analytics-container {
+        margin-bottom: 15px;
+    }
+}
+
+/* Additional styling for the table buttons */
+.table .btn-sm {
+    padding: 5px 10px;
+}
+
+.table .btn-primary {
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+}
+
+.table .btn-info {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+}
+
+.table .btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+/* Additional responsive adjustments */
+@media (max-width: 992px) {
+    .calendar-container {
+        height: auto;
+    }
+}
+.render-container {
+    padding-inline: 40px;
 }

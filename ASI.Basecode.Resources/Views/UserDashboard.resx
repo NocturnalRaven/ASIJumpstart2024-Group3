@@ -117,31 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Copyright" xml:space="preserve">
-    <value>©2023 Alliance Software Inc. All rights reserved.</value>
-  </data>
-  <data name="CreateNew" xml:space="preserve">
-    <value>Create new</value>
-  </data>
-  <data name="DontHaveAcc" xml:space="preserve">
-    <value>Don't have an account?</value>
-  </data>
-  <data name="FirstName" xml:space="preserve">
-    <value>First Name</value>
-  </data>
-  <data name="ForgotPass" xml:space="preserve">
-    <value>Forgot password?</value>
-  </data>
-  <data name="Login" xml:space="preserve">
-    <value>Login</value>
-  </data>
-  <data name="Password" xml:space="preserve">
-    <value>Password</value>
-  </data>
-  <data name="UserId" xml:space="preserve">
-    <value>UserId</value>
-  </data>
-  <data name="BookingsLabel" xml:space="preserve">
-    <value>Bookings</value>
+  <data name="ModalTitle" xml:space="preserve">
+    <value>Edit Profile
+</value>
   </data>
 </root>

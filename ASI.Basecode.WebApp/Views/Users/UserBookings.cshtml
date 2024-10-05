@@ -1,0 +1,189 @@
+﻿@using static ASI.Basecode.Resources.Views.Screen;
+@using static ASI.Basecode.Resources.Views.Button;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <main class="mainBody">
+        <div class="mainBodyInner">
+            <aside class="calendarSide">
+                <div id="calendar"></div>
+                <div class="recentBookingsOverall">
+                    <p class="recentBookingsAside">Pending Cancellations</p>
+                    <div class="recentBookingsOverallInner" id="pendingCancellationsContainer">
+                        <!-- Pending Cancellations data will be rendered here -->
+                    </div>
+                </div>
+            </aside>
+            <div class="mainContent">
+                <div class="bookingsDashboard">
+                    <div class="bookingsDashboardHeader">
+                        <p class="bookingsDashboardTitle">Bookings</p>
+                        <div>
+                            <i class="bi bi-filter" data-bs-toggle="modal" data-bs-target="#filterModal"></i>
+                            <button class="btn adminAddBookingBtn btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
+                                <i class="bi bi-plus-square me-2"></i>New Booking
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="table table-striped align-middle" id="userBookingsTable">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Room Name</th>
+                                    <th scope="col">Style</th>
+                                    <th scope="col">Date Booked</th>
+                                    <th scope="col">Duration</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- User bookings data will be rendered here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="bookingsDashboardLower">
+                    <div class="dashboardPending">
+                        <div class="bookingsDashboardHeader">
+                            <p class="bookingsDashboardTitle">Recurring Bookings</p>
+                            <i class="bi bi-filter" data-bs-toggle="modal" data-bs-target="#filterModal"></i>
+                        </div>
+                        <div class="table-wrapper">
+                            <table class="table table-striped align-middle" id="recurringBookingsTable">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Room Name</th>
+                                        <th scope="col">Recurrence</th>
+                                        <th scope="col">Start Date</th>
+                                        <th scope="col">End Date</th>
+                                        <th scope="col">Time</th>
+                                        <th scope="col">Weekdays</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Recurring bookings data will be rendered here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Initialize Flatpickr on the calendar div
+        flatpickr("#calendar", {
+            inline: true,  // Displays the calendar inline, without an input field
+            mode: "range", // Enables date range selection
+            dateFormat: "Y-m-d", // Format for the dates
+            defaultDate: ["2024-09-10", "2024-09-15", "2024-10-01", "2024-10-15"], // Pre-selected range
+            onChange: function (selectedDates, dateStr, instance) {
+                console.log("Selected range:", dateStr); // Log the selected range
+            }
+        });
+
+        // Dummy Data for Pending Cancellations
+        const pendingCancellationsData = [
+            { room_name: "Meeting Room 3", style: "Classroom", date: "10 Sept 2:00 - 15 Sept 7:30", duration: "30 mins" },
+            { room_name: "Meeting Room 6", style: "Banquet", date: "10 Sept 2:00 - 15 Sept 7:30", duration: "1 hour 30 mins" },
+            { room_name: "Meeting Room 9", style: "Classroom", date: "10 Sept 2:00 - 15 Sept 7:30", duration: "3 hours" }
+        ];
+
+        // Dummy Data for User Bookings
+        const userBookingsData = [
+            { room_name: "Conference Room A", style: "Classroom", date: "2024-10-10", duration: "2 hours" },
+            { room_name: "Banquet Hall", style: "Banquet", date: "2024-11-12", duration: "3 hours" },
+            { room_name: "Meeting Room 5", style: "Boardroom", date: "2024-12-05", duration: "1 hour" }
+        ];
+
+        // Dummy Data for Recurring Bookings
+        const recurringBookingsData = [
+            { roomName: "Conference Room 1", recurrenceType: "weekly", startDate: "2024-09-10", endDate: "2024-12-10", startTime: "10:00", endTime: "12:00", weekdays: ["Monday", "Wednesday", "Friday"] },
+            { roomName: "Event Hall", recurrenceType: "daily", startDate: "2024-10-01", endDate: "2024-11-01", startTime: "09:00", endTime: "11:00", weekdays: [] }
+        ];
+
+        // Function to Render Pending Cancellations
+        function renderPendingCancellations(data) {
+            const container = document.getElementById('pendingCancellationsContainer');
+            container.innerHTML = '';
+            data.forEach(item => {
+                container.innerHTML += `
+                            <div class="recentBookings">
+                                <p class="userRecentBookings">${item.room_name}</p>
+                                <hr>
+                                <div class="recentBookingsDetailsDiv">
+                                    <div class="recentBookingsDetails">
+                                        <i class="bi bi-house-door-fill"></i>
+                                        <p>${item.style}</p>
+                                    </div>
+                                    <div class="recentBookingsDetails">
+                                        <i class="bi bi-calendar2-week"></i>
+                                        <p>${item.date}</p>
+                                    </div>
+                                </div>
+                            </div>`;
+            });
+        }
+
+        // Function to Render Bookings Table
+        function renderBookings(data) {
+            const tbody = document.querySelector('#userBookingsTable tbody');
+            tbody.innerHTML = '';
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                            <td>${item.room_name}</td>
+                            <td>${item.style}</td>
+                            <td>${item.date}</td>
+                            <td>${item.duration}</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm">View</button>
+                                <button class="btn btn-info btn-sm">Edit</button>
+                                <button class="btn btn-danger btn-sm">Cancel</button>
+                            </td>`;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Function to Render Recurring Bookings
+        function renderRecurringBookings(data) {
+            const tbody = document.querySelector("#recurringBookingsTable tbody");
+            tbody.innerHTML = '';
+            data.forEach(item => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                            <td>${item.roomName}</td>
+                            <td>${item.recurrenceType.charAt(0).toUpperCase() + item.recurrenceType.slice(1)}</td>
+                            <td>${item.startDate}</td>
+                            <td>${item.endDate}</td>
+                            <td>${item.startTime} - ${item.endTime}</td>
+                            <td>${item.recurrenceType === "weekly" ? item.weekdays.join(", ") : "--"}</td>`;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Render Dummy Data on Load
+        renderPendingCancellations(pendingCancellationsData);
+        renderBookings(userBookingsData);
+        renderRecurringBookings(recurringBookingsData);
+    </script>
+</body>
+</html>

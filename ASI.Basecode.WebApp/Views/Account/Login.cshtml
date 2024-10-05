@@ -1,16 +1,19 @@
 ﻿@model LoginViewModel
 @using static ASI.Basecode.Resources.Views.Screen
+
 @section styles {
     <link rel="stylesheet" href="~/css/login.css" />
 }
+
 @{
-    ViewBag.LoginView = true;
+    ViewBag.HideNav = true; // Set this flag to hide the navbar
     ViewData["Title"] = "Login Page";
 }
+
 <div>
     @Html.AntiForgeryToken()
 </div>
-<div class="container py-5" style="display:flex; align-content:center;height:calc(100vh - 64px)">
+<div class="container py-5 d-flex justify-content-center align-items-center" style="display:flex; align-content:center;height:calc(100vh - 64px)">
     <div class="row d-flex justify-content-center align-items-center h-100">
         <div class="col-xl-10">
             <div class="card rounded-3 text-black">
@@ -18,20 +21,17 @@
                     <div class="col-lg-6">
                         <div class="card-body p-md-5 mx-md-4">
                             <div class="text-center">
-                                <img src="~/img/asi-logo-invert.svg"
-                                     style="width: 185px;" alt="logo">
+                                <img src="~/img/asi-logo-invert.svg" style="width: 185px;" alt="logo">
                             </div>
                             <form method="post" action="/Account/Login" id="loginForm">
                                 <div class="form-outline mb-4">
                                     <label asp-for="UserCode" class="form-label" for="form2Example11"></label>
-                                    <input type="text" id="form2Example11" class="form-control"
-                                           asp-for="UserCode" placeholder="Enter User Code" />
+                                    <input type="text" id="form2Example11" class="form-control" asp-for="UserCode" placeholder="Enter User Code" />
                                     <span asp-validation-for="UserCode" class="text-danger"></span>
                                 </div>
                                 <div class="form-outline mb-4">
                                     <label class="form-label" for="form2Example22">@Password</label>
-                                    <input type="password" id="form2Example22" class="form-control"
-                                           asp-for="Password" placeholder="Enter password" />
+                                    <input type="password" id="form2Example22" class="form-control" asp-for="Password" placeholder="Enter password" />
                                     <span asp-validation-for="Password" class="text-danger"></span>
                                 </div>
                                 <div class="text-center pt-1 mb-5 pb-1 d-flex flex-column align-items-center">
@@ -50,20 +50,10 @@
                         </div>
                     </div>
                     <div class="col-lg-6 d-flex">
-                        <img style="width:400px"src="~/img/LiveIT.png" />
+                        <img style="width:400px" src="~/img/LiveIT.png" />
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-@section scripts {
-    <script>
-        // Check for error message and display Toastr notification
-        var errorMessage = '@TempData["ErrorMessage"]';
-        if (errorMessage) {
-            toastr.error(errorMessage);
-        }
-    </script>
-}
