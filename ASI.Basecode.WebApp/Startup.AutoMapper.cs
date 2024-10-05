@@ -2,6 +2,7 @@
 using ASI.Basecode.Data.Models;
 using ASI.Basecode.Services.ServiceModels;
 using Microsoft.Extensions.DependencyInjection;
+using ASI.Basecode.WebApp.Models;
 
 namespace ASI.Basecode.WebApp
 {
@@ -25,7 +26,7 @@ namespace ASI.Basecode.WebApp
         {
             public AutoMapperProfileConfiguration()
             {
-                CreateMap<LoginViewModel, User>();
+                CreateMap<Services.ServiceModels.LoginViewModel, User>();
                 CreateMap<UserViewModel, SampleCrud>();
             }
         }
