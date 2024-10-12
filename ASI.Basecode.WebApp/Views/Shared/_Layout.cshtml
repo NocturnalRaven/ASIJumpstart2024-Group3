@@ -1,6 +1,6 @@
 ﻿@using static ASI.Basecode.Resources.Views.Screen
 @{
-    var userRole = "Admin"; // Change this to "User" to simulate a Staff/User
+    var userRole = "SuperAdmin"; // Change this to "User" to simulate a Staff/User
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -56,6 +56,18 @@
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link navItemA" asp-controller="Users" asp-action="UserAnalytics">Analytics</a>
+                                </li>
+                            }
+                            else if (userRole == "SuperAdmin")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link navItemA" asp-controller="SuperAdmin" asp-action="Rooms">Rooms</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link navItemA" asp-controller="SuperAdmin" asp-action="Bookings">Bookings</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link navItemA" asp-controller="SuperAdmin" asp-action="Accounts">Accounts</a>
                                 </li>
                             }
                         </ul>
