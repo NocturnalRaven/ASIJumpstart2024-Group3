@@ -97,7 +97,7 @@ namespace ASI.Basecode.WebApp.Controllers
                 // 認証OK
                 await this._signInManager.SignInAsync(user);
                 this._session.SetString("UserName", string.Join(" ", user.FirstName, user.LastName));
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Admindashboard", "AdminDashboard");
             }
             else
             {
