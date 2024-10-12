@@ -58,6 +58,18 @@
                                     <a class="nav-link navItemA" asp-controller="Users" asp-action="UserAnalytics">Analytics</a>
                                 </li>
                             }
+                            else if (userRole == "SuperAdmin")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link navItemA" asp-controller="SuperAdmin" asp-action="Rooms">Rooms</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link navItemA" asp-controller="SuperAdmin" asp-action="Bookings">Bookings</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link navItemA" asp-controller="SuperAdmin" asp-action="Accounts">Accounts</a>
+                                </li>
+                            }
                         </ul>
                         <div class="navItem">
                             <i class="bi bi-person-circle profile-icon navItemA" id="profileIcon"></i>
