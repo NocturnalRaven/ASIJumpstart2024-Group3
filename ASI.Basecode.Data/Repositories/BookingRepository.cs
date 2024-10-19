@@ -1,5 +1,6 @@
 ﻿using ASI.Basecode.Data.Interfaces;
 using ASI.Basecode.Data.Models;
+using ASI.Basecode.WebApp.Models;
 using Basecode.Data.Repositories;
 using System;
 using System.Collections.Generic;
@@ -16,39 +17,39 @@ namespace ASI.Basecode.Data.Repositories
 
         }
 
-        public IQueryable<MBooking> GetBooking()
+        public IQueryable<Booking> GetBooking()
         {
-            return this.GetDbSet<MBooking>();
+            return this.GetDbSet<Booking>();
         }
 
         public bool BookingExists(int bookingId)
         {
-            return this.GetDbSet<MBooking>().Any(x => x.BookingId == bookingId);
+            return this.GetDbSet<Booking>().Any(x => x.Id == bookingId);
         }
 
-        public void AddBooking(MBooking booking)
+        public void AddBooking(Booking booking)
         {
-            var maxId = this.GetDbSet<MBooking>().Max(x => x.BookingId) + 1;
-            booking.BookingId = maxId;
-            booking.UpdDt = DateTime.Now;
-            this.GetDbSet<MBooking>().Add(booking);
+            var maxId = this.GetDbSet<Booking>().Max(x => x.Id) + 1;
+            booking.Id = maxId;
+            booking.CreatedAt = DateTime.Now;
+            this.GetDbSet<Booking>().Add(booking);
             UnitOfWork.SaveChanges();
         }
 
-        public void UpdateBooking(MBooking booking)
+        public void UpdateBooking(Booking booking)
         {
-            this.GetDbSet<MBooking>().Update(booking);
-            booking.UpdDt = DateTime.Now;
+            this.GetDbSet<Booking>().Update(booking);
+            booking.UpdatedAt = DateTime.Now;
             UnitOfWork.SaveChanges();
         }
 
         public void DeleteBooking(int bookingId)
         {
-            var userToDelete = this.GetDbSet<MBooking>().FirstOrDefault(x => x.Deleted != true && x.BookingId == bookingId);
-            if (userToDelete != null)
+            var bookingToDelete = this.GetDbSet<Booking>().FirstOrDefault(x => x.Deleted != true && x.Id == bookingId);
+            if (bookingToDelete != null)
             {
-                userToDelete.Deleted = true;
-                userToDelete.UpdDt = DateTime.Now;
+                bookingToDelete.Deleted = true;
+                bookingToDelete.UpdatedAt = DateTime.Now;
             }
             UnitOfWork.SaveChanges();
         }

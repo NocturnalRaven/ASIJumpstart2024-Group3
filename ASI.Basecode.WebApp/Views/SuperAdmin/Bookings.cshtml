@@ -1,5 +1,9 @@
 ﻿@{
+<<<<<<< HEAD
     Layout = "~/Views/Shared/_Layout.cshtml"; // Reference the layout file
+=======
+    Layout = "~/Views/Shared/_Layout.cshtml";
+>>>>>>> main
 }
 
 <!DOCTYPE html>
@@ -40,8 +44,8 @@
                                 <td>10 Sept 2:00 - 12 Sept 7:30</td>
                                 <td>5</td>
                                 <td>
-                                    <button class="btn btn-primary">Edit</button>
-                                    <button class="btn btn-danger delete-btn">Delete</button>
+                                    <button class="btn btn-primary edit-btn" data-bs-toggle="offcanvas" data-bs-target="#editOffcanvas" aria-controls="editOffcanvas">Edit</button>
+                                    <button class="btn btn-danger delete-btn" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal">Delete</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -50,6 +54,36 @@
             </div>
         </div>
     </main>
+
+    <!-- Edit Offcanvas -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="editOffcanvas" aria-labelledby="editOffcanvasLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="editOffcanvasLabel">Edit Booking</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <form id="editForm">
+                <div class="mb-3">
+                    <label for="editUser" class="form-label">User</label>
+                    <input type="text" class="form-control" id="editUser" value="John Doe">
+                </div>
+                <div class="mb-3">
+                    <label for="editRoom" class="form-label">Room</label>
+                    <input type="text" class="form-control" id="editRoom" value="Room A">
+                </div>
+                <div class="mb-3">
+                    <label for="editDate" class="form-label">Date</label>
+                    <input type="text" class="form-control" id="editDate" value="10 Sept 2:00 - 12 Sept 7:30">
+                </div>
+                <div class="mb-3">
+                    <label for="editPeople" class="form-label">No. of People</label>
+                    <input type="number" class="form-control" id="editPeople" value="5">
+                </div>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveChangesBtn">Save changes</button>
+            </form>
+        </div>
+    </div>
 
     <!-- Delete Confirmation Modal -->
     <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
@@ -60,7 +94,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    Are you sure you want to delete the item <strong id="itemToDelete"></strong>?
+                    Are you sure you want to delete the booking for <strong id="itemToDelete">John Doe</strong>?
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -71,6 +105,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="~/js/superAdmin/bookings.js" asp-append-version="true"></script>
+    <script src="~/js/SA-bookings.js"></script>
 </body>
 </html>

@@ -1,4 +1,5 @@
 ﻿using ASI.Basecode.Data.Models;
+using ASI.Basecode.WebApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +10,10 @@ namespace ASI.Basecode.Data.Interfaces
 {
     public interface IBookingRepository
     {
-        IQueryable<MBooking> GetBooking();
+        IQueryable<Booking> GetBooking();
         bool BookingExists(int bookingId);
-        void AddBooking(MBooking booking);
-        void UpdateBooking(MBooking booking);
+        void AddBooking(Booking booking);
+        void UpdateBooking(Booking booking);
         void DeleteBooking(int bookingId);
     }
 }
