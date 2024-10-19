@@ -1,6 +1,5 @@
 ﻿using ASI.Basecode.Data.Interfaces;
 using ASI.Basecode.Data.Models;
-using ASI.Basecode.WebApp.Models;
 using Basecode.Data.Repositories;
 using System;
 using System.Collections.Generic;

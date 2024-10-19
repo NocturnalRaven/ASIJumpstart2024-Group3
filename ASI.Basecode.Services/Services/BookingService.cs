@@ -4,7 +4,6 @@ using ASI.Basecode.Data.Repositories;
 using ASI.Basecode.Services.Interfaces;
 using ASI.Basecode.Services.Manager;
 using ASI.Basecode.Services.ServiceModels;
-using ASI.Basecode.WebApp.Models;
 using AutoMapper;
 using System;
 using System.Collections.Generic;

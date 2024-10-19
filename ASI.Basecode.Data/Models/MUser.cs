@@ -5,6 +5,11 @@ namespace ASI.Basecode.Data.Models
 {
     public partial class MUser
     {
+        public MUser()
+        {
+            Bookings = new HashSet<Booking>();
+        }
+
         public int UserId { get; set; }
         public string InsBy { get; set; }
         public DateTime InsDt { get; set; }
@@ -21,5 +26,7 @@ namespace ASI.Basecode.Data.Models
         public string Mail { get; set; }
         public int? UserRole { get; set; }
         public string Remarks { get; set; }
+
+        public virtual ICollection<Booking> Bookings { get; set; }
     }
 }
