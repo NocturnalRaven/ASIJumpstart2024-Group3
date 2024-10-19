@@ -17,10 +17,35 @@ namespace ASI.Basecode.Data
         {
         }
 
+        public virtual DbSet<Booking> Bookings { get; set; }
         public virtual DbSet<MUser> MUsers { get; set; }
+        public virtual DbSet<PendingBooking> PendingBookings { get; set; }
+        public virtual DbSet<Room> Rooms { get; set; }
 
+       
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Booking>(entity =>
+            {
+                entity.Property(e => e.Frequency).HasMaxLength(50);
+
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.HasOne(d => d.Room)
+                    .WithMany(p => p.Bookings)
+                    .HasForeignKey(d => d.RoomId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Bookings_Rooms");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Bookings)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Bookings_M_User");
+            });
+
             modelBuilder.Entity<MUser>(entity =>
             {
                 entity.HasKey(e => e.UserId);
@@ -71,6 +96,36 @@ namespace ASI.Basecode.Data
                     .IsRequired()
                     .HasMaxLength(50)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<PendingBooking>(entity =>
+            {
+                entity.Property(e => e.ApprovalStatus)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.HasOne(d => d.Booking)
+                    .WithMany(p => p.PendingBookings)
+                    .HasForeignKey(d => d.BookingId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_PendingBookings_Bookings");
+            });
+
+            modelBuilder.Entity<Room>(entity =>
+            {
+                entity.Property(e => e.Image).HasMaxLength(100);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Style)
+                    .IsRequired()
+                    .HasMaxLength(100);
             });
 
             OnModelCreatingPartial(modelBuilder);
