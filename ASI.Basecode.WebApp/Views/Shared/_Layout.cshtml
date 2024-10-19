@@ -72,7 +72,8 @@
                             }
                         </ul>
                         <div class="navItem">
-                            <i class="bi bi-person-circle profile-icon navItemA" id="profileIcon"></i>
+                            <i class="bi bi-gear settings-icon navItemA" data-bs-toggle="modal" data-bs-target="#settingsModal" style="font-size: 1.5rem; margin-right: 10px;"></i>
+                            <i class="bi bi-person-circle profile-icon navItemA" id="profileIcon" style="font-size: 1.5rem;"></i>
                             <div class="profile-dropdown" id="profileDropdown" style="display:none;">
                                 <p id="userName">John Doe</p>
                                 <button class="btn" id="editProfileBtn" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
@@ -123,6 +124,85 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Settings Modal -->
+            <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Settings</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <!-- Default Booking Duration -->
+                                <div class="mb-3">
+                                    <label for="defaultDuration" class="form-label">Default Booking Duration</label>
+                                    <select class="form-select" id="defaultDuration">
+                                        <option value="30">30 minutes</option>
+                                        <option value="60">1 hour</option>
+                                        <option value="90">1.5 hours</option>
+                                        <option value="120">2 hours</option>
+                                        <option value="180">3 hours</option>
+                                        <option value="240">4 hours</option>
+                                        <option value="300">5 hours</option>
+                                        <!-- Add more options as needed -->
+                                    </select>
+                                </div>
+
+                                <!-- Preferred Room Style -->
+                                <div class="mb-3">
+                                    <label for="preferredRoom" class="form-label">Preferred Room Style</label>
+                                    <select class="form-select" id="preferredRoom">
+                                        <option value="classroom">Classroom</option>
+                                        <option value="u-shape">U-shape</option>
+                                        <option value="boardroom">Boardroom</option>
+                                        <option value="banquet">Banquet</option>
+                                    </select>
+                                </div>
+
+                                <!-- Preferred Days of the Week -->
+                                <div class="mb-3">
+                                    <label class="form-label">Preferred Day/s of the Week</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="monday" id="monday">
+                                        <label class="form-check-label" for="monday">Monday</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="tuesday" id="tuesday">
+                                        <label class="form-check-label" for="tuesday">Tuesday</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="wednesday" id="wednesday">
+                                        <label class="form-check-label" for="wednesday">Wednesday</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="thursday" id="thursday">
+                                        <label class="form-check-label" for="thursday">Thursday</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="friday" id="friday">
+                                        <label class="form-check-label" for="friday">Friday</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="saturday" id="saturday">
+                                        <label class="form-check-label" for="saturday">Saturday</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="sunday" id="sunday">
+                                        <label class="form-check-label" for="sunday">Sunday</label>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
     <footer class="border-top footer text-muted">
@@ -134,36 +214,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="/js/edit-profile.js"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const editProfileModalElement = document.getElementById('editProfileModal');
-            const editProfileBtn = document.getElementById('editProfileBtn');
-            const profileDropdown = document.getElementById('profileDropdown');
-            const profileIcon = document.getElementById('profileIcon');
-
-            // Create Bootstrap Modal Instance
-            const editProfileModal = new bootstrap.Modal(editProfileModalElement);
-
-            // Toggle Dropdown and Show Modal
-            profileIcon.addEventListener('click', () => {
-                profileDropdown.style.display = profileDropdown.style.display === 'none' ? 'block' : 'none';
-            });
-
-            // Open Modal on Button Click
-            editProfileBtn.addEventListener('click', () => {
-                editProfileModal.show();
-            });
-
-            // Remove Backdrop When Modal is Hidden
-            editProfileModalElement.addEventListener('hidden.bs.modal', () => {
-                const backdrop = document.querySelector('.modal-backdrop');
-                if (backdrop) {
-                    backdrop.remove();  // Remove the backdrop if it exists
-                }
-            });
-        });
-    </script>
+    <script src="/js/settings.js"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
