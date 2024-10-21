@@ -34,7 +34,9 @@ namespace ASI.Basecode.Services.Services
                 {
                     Id = s.UserId,
                     Name = string.Concat(s.FirstName, " ", s.LastName),
-                    Description = s.Remarks,
+                    Email = s.Mail,
+                    Role = s.Remarks,
+                    DateCreated = s.InsDt,
                 });
             return data;
         }

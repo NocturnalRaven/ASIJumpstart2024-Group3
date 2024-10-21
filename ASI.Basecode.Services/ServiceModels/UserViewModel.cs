@@ -16,6 +16,11 @@ namespace ASI.Basecode.Services.ServiceModels
 
         public string Description { get; set; }
 
+        public string Role { get; set; }
+        public string Email { get; set; }
+
+        public DateTime DateCreated { get; set; }
+
         [Required(ErrorMessage = "This is required")]
         public string UserCode { get; set; }
 

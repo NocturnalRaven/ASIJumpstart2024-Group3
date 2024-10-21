@@ -15,6 +15,8 @@ namespace ASI.Basecode.WebApp.Controllers
 {
     public class AdminDashboard : ControllerBase<AdminDashboard>
     {
+
+        private readonly IUserService _userService;
         /// <summary>
         /// Constructor
         /// </summary>
@@ -24,13 +26,13 @@ namespace ASI.Basecode.WebApp.Controllers
         /// <param name="localizer"></param>
         /// <param name="mapper"></param>
 
-        public AdminDashboard(
+        public AdminDashboard(IUserService userService,
            IHttpContextAccessor httpContextAccessor,
                              ILoggerFactory loggerFactory,
                              IConfiguration configuration,
                              IMapper mapper = null) : base(httpContextAccessor, loggerFactory, configuration, mapper)
         {
-
+            _userService = userService;
         }
 
 
@@ -49,7 +51,24 @@ namespace ASI.Basecode.WebApp.Controllers
         [Route("/admin-dashboard/users")]
         public IActionResult AdminUserDashboard()
         {
-            return View();
+            try
+            {
+                _logger.LogInformation("=======Retrieve All Start=======");
+                var data = _userService.RetrieveAll();
+                var role = UserRole;
+                ViewData["Role"] = role;
+                var model = new UserListViewModel
+                {
+                    dataList = data
+                };
+                _logger.LogInformation("=======Retrieve All End==========");
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return View(null);
+            }
         }
 
         [HttpGet]
