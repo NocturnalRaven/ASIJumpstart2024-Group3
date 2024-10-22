@@ -35,7 +35,11 @@ namespace ASI.Basecode.Services.Services
                     Id = s.UserId,
                     Name = string.Concat(s.FirstName, " ", s.LastName),
                     Email = s.Mail,
-                    Role = s.Remarks,
+                    Role = s.UserRole == 9 ? "Super Admin"
+                        : s.UserRole == 1 ? "Admin"
+                        : s.UserRole == 2 ? "Staff"
+                        : s.UserRole == 3 ? "User"
+                        : "Unknown",
                     DateCreated = s.InsDt,
                 });
             return data;
@@ -92,7 +96,12 @@ namespace ASI.Basecode.Services.Services
         /// <param name="id">The identifier.</param>
         public void Delete(int id)
         {
-            _userRepository.DeleteUser(id);
+            var user = _userRepository.GetUsers().FirstOrDefault(x => x.UserId == id);
+            if (user != null)
+            {
+                user.Deleted = true;
+                _userRepository.UpdateUser(user);  // Mark user as deleted
+            }
         }
 
         public LoginResult AuthenticateUser(string userCode, string password, ref MUser user)
