@@ -57,10 +57,17 @@ namespace ASI.Basecode.WebApp.Controllers
                 var data = _userService.RetrieveAll();
                 var role = UserRole;
                 ViewData["Role"] = role;
-                var model = new UserListViewModel
+
+                // Pass the correct model type
+                var model = new UserPageViewModel
                 {
-                    dataList = data
+                    UserList = new UserListViewModel
+                    {
+                        dataList = data
+                    },
+                    NewUser = new UserViewModel() // Initialize the NewUser if needed
                 };
+
                 _logger.LogInformation("=======Retrieve All End==========");
                 return View(model);
             }
@@ -79,7 +86,6 @@ namespace ASI.Basecode.WebApp.Controllers
             return View();
         }
 
-
         [HttpGet]
         //[Authorize(Policy = "AdminOnly")]
         [Route("/admin-dashboard/analytics")]
@@ -91,6 +97,24 @@ namespace ASI.Basecode.WebApp.Controllers
 
         #endregion
 
+        #region POST Methods
+        [HttpPost]
+        public IActionResult PostDelete(int Id)
+        {
+            try
+            {
+                _userService.Delete(Id);
+                _logger.LogInformation($"User with Id {Id} deleted successfully.");
 
+                return RedirectToAction("AdminUserDashboard");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error deleting user with Id {Id}: {ex.Message}");
+
+                return RedirectToAction("AdminUserDashboard");
+            }
+        }
+        #endregion
     }
 }
