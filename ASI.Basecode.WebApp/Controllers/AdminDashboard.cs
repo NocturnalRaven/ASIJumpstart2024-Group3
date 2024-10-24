@@ -40,7 +40,7 @@ namespace ASI.Basecode.WebApp.Controllers
 
         [HttpGet]
         //[Authorize(Policy = "AdminOnly")]
-        [Route("/admin-dashboard/index")]
+        [Route("/admin/dashboard")]
         public IActionResult Admindashboard()
         {
             return View();
@@ -54,7 +54,7 @@ namespace ASI.Basecode.WebApp.Controllers
             try
             {
                 _logger.LogInformation("=======Retrieve All Start=======");
-                var data = _userService.RetrieveAll();
+                var data = _userService.RetrieveAll().ToList();
                 var role = UserRole;
                 ViewData["Role"] = role;
 
@@ -65,7 +65,7 @@ namespace ASI.Basecode.WebApp.Controllers
                     {
                         dataList = data
                     },
-                    NewUser = new UserViewModel() // Initialize the NewUser if needed
+                    NewUser = new UserViewModel()
                 };
 
                 _logger.LogInformation("=======Retrieve All End==========");
@@ -76,6 +76,14 @@ namespace ASI.Basecode.WebApp.Controllers
                 _logger.LogError(ex.Message);
                 return View(null);
             }
+        }
+
+        [HttpGet]
+        //[Authorize(Policy = "AdminOnly")]
+        [Route("/admin-dashboard/add-user")]
+        public IActionResult AddUser()
+        {
+            return View();
         }
 
         [HttpGet]
@@ -91,7 +99,6 @@ namespace ASI.Basecode.WebApp.Controllers
         [Route("/admin-dashboard/analytics")]
         public IActionResult AdminAnalytics()
         {
-
             return View();
         }
 
@@ -99,6 +106,39 @@ namespace ASI.Basecode.WebApp.Controllers
 
         #region POST Methods
         [HttpPost]
+        public IActionResult PostCreate(UserViewModel model)
+        {
+            try
+            {
+                // Add the user using the UserService
+                _userService.Add(model);
+                TempData["CreateMessage"] = "User added successfully!";
+
+                return RedirectToAction("AdminUserDashboard");
+            }
+            catch (ArgumentException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message; // Handle validation errors (e.g. empty UserCode)
+                return RedirectToAction("AdminUserDashboard");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                TempData["ErrorMessage"] = "An error occurred while adding the user.";
+                return RedirectToAction("AdminUserDashboard");
+            }
+        }
+
+        [HttpPost]
+        //[Authorize(Policy = "AdminOnly")]
+        public IActionResult PostUpdate(UserViewModel model)
+        {
+            _userService.Update(model);
+            return RedirectToAction("AdminUserDashboard");
+        }
+
+        [HttpPost]
+        //[Authorize(Policy = "AdminOnly")]
         public IActionResult PostDelete(int Id)
         {
             try
@@ -115,6 +155,7 @@ namespace ASI.Basecode.WebApp.Controllers
                 return RedirectToAction("AdminUserDashboard");
             }
         }
+
         #endregion
     }
 }

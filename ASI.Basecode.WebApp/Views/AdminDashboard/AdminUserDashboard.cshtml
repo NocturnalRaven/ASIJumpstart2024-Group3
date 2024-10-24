@@ -28,19 +28,23 @@
                 <div class="bookingsDashboardHeader">
                     <p class="bookingsDashboardTitle">Users</p>
                     <div class="users-inputGroup">
+
                         <div class="input-group">
                             <input type="text" id="filterInput" class="form-control"
                                 placeholder="Search name, role, email" aria-label="Search"
                                 aria-describedby="button-addon2">
-                            <button class="btn btn-outline-secondary" type="button" id="button-addon2"
-                                onclick="applyFilter()"><i class="bi bi-search"></i></button>
+                            <button class="btn btn-secondary" type="button" id="button-addon2" onclick="applyFilter()">
+                                <i class="bi bi-search"></i>
+                            </button>
                         </div>
-                        <button class="btn adminAddUserBtn" type="button" data-bs-toggle="offcanvas"
+
+                        <button class="btn adminAddRoomBtn" type="button" data-bs-toggle="offcanvas"
                             data-bs-target="#addUsers" aria-controls="addUsers">
                             <i class="bi bi-plus-square me-2"></i>
-                            <p class="addUserText">Add User</p>
+                            <p class="addRoomText">Add user</p>
                         </button>
                     </div>
+
                 </div>
                 <table class="table table-striped align-middle" id="adminUserTable">
                     <thead>
@@ -50,6 +54,7 @@
                             <th scope="col">Email</th>
                             <th scope="col">Role</th>
                             <th scope="col">Date Created</th>
+                            <th scope="col">Date Updated</th>
                             <th scope="col">Actions</th>
                         </tr>
                     </thead>
@@ -73,9 +78,12 @@
                                     @Html.DisplayFor(modelItem => item.DateCreated)
                                 </td>
                                 <td>
-                                    <!-- Add action buttons such as Edit or Delete -->
-                                    <a href="javascript:void(0);" onclick="displayEditModal(@item.Id)">Edit</a> |
-                                    <a href="javascript:void(0);" onclick="showDeleteModal(@item.Id)">Delete</a>
+                                    @Html.DisplayFor(modelItem => item.DateModified)
+                                </td>
+                                <td class="">
+                                    <button type="button" class="btn btn-secondary btn-sm"
+                                        donclick="displayEditModal(@item.Id)">Edit</button> | <button type="button"
+                                        class="btn btn-danger btn-sm" onclick="showDeleteModal(@item.Id)">Delete</button>
                                 </td>
                             </tr>
                         }
@@ -89,49 +97,84 @@
         <div class="offcanvas offcanvas-end" data-bs-backdrop="static" tabindex="-1" id="addUsers"
             aria-labelledby="staticBackdropLabel">
             <div class="offcanvas-header">
-                <h5 class="offcanvas-title" id="staticBackdropLabel">Add User</h5>
+                <h5 class="offcanvas-title" id="staticBackdropLabel">Add user</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
             <div class="offcanvas-body">
-                <div class="offcanvas-body-inner">
-                    <div class="offcanvas-body-innerMost">
-                        <div>
-                            <div class="mb-3">
-                                <label for="lastNameInput" class="form-label">Last name</label>
-                                <input type="text" class="form-control" id="lastNameInput" placeholder="">
-                            </div>
-                            <div class="mb-3">
-                                <label for="firstNameInput" class="form-label">First name</label>
-                                <input type="text" class="form-control" id="firstNameInput" placeholder="">
-                            </div>
-                            <div class="mb-3">
-                                <label for="emailInput" class="form-label">Email address</label>
-                                <input type="email" class="form-control" id="emailInput" placeholder="name@example.com">
-                            </div>
-                            <div class="mb-3">
-                                <label for="emailInput" class="form-label">Password</label>
-                                <input type="password" class="form-control">
-                            </div>
-                            <div>
-                                <label for="userRoleAdd" class="form-label">Role</label>
-                                <select class="form-select" aria-label="Default select example" id="userRoleAdd">
-                                    <option selected>User</option>
-                                    <option value="2">Staff</option>
-                                    <option value="3">Admin</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="buttonsOffCanvas">
-                            <button type="button" class="btn btn-outline-secondary mt-4"
-                                data-bs-dismiss="offcanvas">Cancel</button>
-                            <button class="btn adminAddBookingBtn" type="button" aria-controls="staticBackdrop">
-                                <i class="bi bi-plus-square me-2"></i>Add
-                            </button>
-                        </div>
+                <form asp-action="PostCreate" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    @if (TempData["DuplicateErr"] != null)
+
+                    {
+                        <div class="alert alert-danger">@TempData["DuplicateErr"]</div>
+                    }
+
+                    @if (TempData["CreateMessage"] != null)
+
+                    {
+                        <div class="alert alert-success">@TempData["CreateMessage"]</div>
+                    }
+
+                    @if (TempData["ErrorMessage"] != null)
+
+                    {
+                        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+                    }
+
+                    <div class="form-group mb-3">
+                        <label asp-for="NewUser.UserCode" class="control-label">User code</label>
+                        <input name="UserCode" class="form-control" required />
+                        <span asp-validation-for="NewUser.UserCode" class="text-danger"></span>
                     </div>
-                </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="NewUser.FirstName" class="control-label">First name</label>
+                        <input name="FirstName" class="form-control" required />
+                        <span asp-validation-for="NewUser.FirstName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="NewUser.LastName" class="control-label">Last name</label>
+                        <input name="LastName" class="form-control" required />
+                        <span asp-validation-for="NewUser.LastName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="NewUser.Email" class="control-label">Email address</label>
+                        <input name="Email" class="form-control" placeholder="name@example.com" required />
+                        <span asp-validation-for="NewUser.Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="NewUser.Password" class="control-label">Password</label>
+                        <input type="password" name="Password" class="form-control" required />
+                        <span asp-validation-for="NewUser.Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="NewUser.Role" class="control-label">Role</label>
+                        <select name="Role" class="form-select">
+                            <option value="3">User</option>
+                            <option value="2">Staff</option>
+                            <option value="1">Admin</option>
+                            <option value="9">Super Admin</option>
+                        </select>
+                        <span asp-validation-for="NewUser.Role" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group buttonsOffCanvas">
+                        <button type="button" class="btn btn-outline-secondary mt-4" data-bs-dismiss="offcanvas">
+                            Cancel
+                        </button>
+                        <button class="btn btn-primary" type="submit">
+                            <i class="bi bi-plus-square me-2"></i>Add
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
+
 
         <!-- Delete Confirmation Modal -->
         <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -159,7 +202,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-    <!-- Delete Confirmation Modal -->
+    <!-- Delete Confirmation Modal (js)-->
     <script type="text/javascript">
         function showDeleteModal(userId) {
             document.getElementById('deleteUserId').value = userId;
@@ -171,3 +214,12 @@
 </body>
 
 </html>
+
+@section Scripts {
+    <script>
+        var errMessage = '@TempData["DuplicateErr"]';
+        if (errMessage) {
+            toastr.error(errMessage);
+        }
+    </script>
+}

@@ -35,12 +35,13 @@ namespace ASI.Basecode.Services.Services
                     Id = s.UserId,
                     Name = string.Concat(s.FirstName, " ", s.LastName),
                     Email = s.Mail,
-                    Role = s.UserRole == 9 ? "Super Admin"
+                    DisplayRole = s.UserRole == 9 ? "Super Admin"
                         : s.UserRole == 1 ? "Admin"
                         : s.UserRole == 2 ? "Staff"
                         : s.UserRole == 3 ? "User"
                         : "Unknown",
                     DateCreated = s.InsDt,
+                    DateModified = s.UpdDt
                 });
             return data;
         }
@@ -65,12 +66,18 @@ namespace ASI.Basecode.Services.Services
         /// <param name="model">The model.</param>
         public void Add(UserViewModel model)
         {
+            if (string.IsNullOrEmpty(model.UserCode))
+            {
+                throw new ArgumentException("UserCode cannot be null or empty");
+            }
+
             var newModel = new MUser();
             newModel.UserCode = model.UserCode;
             newModel.FirstName = model.FirstName;
             newModel.LastName = model.LastName;
+            newModel.Mail = model.Email;
             newModel.Password = PasswordManager.EncryptPassword(model.Password);
-            newModel.UserRole = 1;
+            newModel.UserRole = model.Role;
 
             _userRepository.AddUser(newModel);
         }
@@ -85,6 +92,7 @@ namespace ASI.Basecode.Services.Services
             existingData.UserCode = model.UserCode;
             existingData.FirstName = model.FirstName;
             existingData.LastName = model.LastName;
+
             existingData.Password = PasswordManager.EncryptPassword(model.Password);
 
             _userRepository.UpdateUser(existingData);
@@ -96,12 +104,7 @@ namespace ASI.Basecode.Services.Services
         /// <param name="id">The identifier.</param>
         public void Delete(int id)
         {
-            var user = _userRepository.GetUsers().FirstOrDefault(x => x.UserId == id);
-            if (user != null)
-            {
-                user.Deleted = true;
-                _userRepository.UpdateUser(user);  // Mark user as deleted
-            }
+            _userRepository.DeleteUser(id);
         }
 
         public LoginResult AuthenticateUser(string userCode, string password, ref MUser user)

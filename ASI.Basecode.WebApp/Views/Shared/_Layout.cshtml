@@ -83,7 +83,7 @@
                                 <p id="userName">John Doe</p>
                                 <button class="btn" id="editProfileBtn" data-bs-toggle="modal"
                                     data-bs-target="#editProfileModal">Edit Profile</button>
-                                    
+
                                 <form asp-action="SignOutUser" asp-controller="Account" method="post">
                                     <button type="submit" class="btn" id="logoutBtn">Logout</button>
                                 </form>
@@ -148,6 +148,9 @@
         crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="/js/edit-profile.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
