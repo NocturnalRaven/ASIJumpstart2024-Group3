@@ -11,138 +11,18 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <link rel="stylesheet" type="text/css" href="/css/style.css" />
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-
 <body>
-    <nav>
-        <div class="navList">
-            <div class="navItem">
-                <a href="#" class="navItemA active">Dashboard</a>
-            </div>
-            <div class="navItem">
-                <a href="admin-bookings.html" class="navItemA">Bookings</a>
-            </div>
-            <div class="navItem">
-                <a href="#" class="navItemA">Rooms</a>
-            </div>
-            <div class="navItem">
-                <a href="#" class="navItemA">Users</a>
-            </div>
-            <div class="navItem">
-                <a href="#" class="navItemA">Analytics</a>
-            </div>
-            <div class="navIndicator"></div> <!-- Indicator -->
-        </div>
-        <div class="hamburger">
-            <span class="line"></span>
-            <span class="line"></span>
-            <span class="line"></span>
-        </div>
-    </nav>
-    <div class="menubar">
-        <ul>
-            <li>
-                <a href="#">Home</a>
-            </li>
-            <li>
-                <a href="#">Services</a>
-            </li>
-            <li>
-                <a href="#">Blog</a>
-            </li>
-            <li>
-                <a href="#">Contact Us</a>
-            </li>
-        </ul>
-    </div>
-
-    <!-- Edit Booking Modal -->
-    <div class="modal fade" id="editBookingModal" tabindex="-1" aria-labelledby="editBookingModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editBookingModalLabel">Edit Booking</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="mb-3">
-                            <label for="bookingUserInput" class="form-label">User</label>
-                            <input type="text" class="form-control" id="bookingUserInput">
-                        </div>
-                        <div class="mb-3">
-                            <label for="bookingRoomInput" class="form-label">Room</label>
-                            <input type="text" class="form-control" id="bookingRoomInput">
-                        </div>
-                        <div class="mb-3">
-                            <label for="bookingDateInput" class="form-label">Date</label>
-                            <input type="text" class="form-control" id="bookingDateInput">
-                        </div>
-                        <div class="mb-3">
-                            <label for="bookingPeopleInput" class="form-label">No. of People</label>
-                            <input type="number" class="form-control" id="bookingPeopleInput">
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <main class="mainBody">
         <div class="mainBodyInner">
             <aside class="calendarSide">
                 <div id="calendar"></div>
                 <div class="recentBookingsOverall">
                     <p class="recentBookingsAside">Recent Bookings</p>
-                    <div class="recentBookingsOverallInner">
-                        <div class="recentBookings">
-                            <p class="userRecentBookings">John Doe</p>
-                            <hr>
-                            <div class="recentBookingsDetailsDiv">
-                                <div class="recentBookingsDetails">
-                                    <i class="bi bi-house-door-fill"></i>
-                                    <p>Room 9</p>
-                                </div>
-                                <div class="recentBookingsDetails">
-                                    <i class="bi bi-calendar2-week"></i>
-                                    <p>10 Sept 2:00 - 12 Sept 7:30</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="recentBookings">
-                            <p class="userRecentBookings">John Doe</p>
-                            <hr>
-                            <div class="recentBookingsDetailsDiv">
-                                <div class="recentBookingsDetails">
-                                    <i class="bi bi-house-door-fill"></i>
-                                    <p>Room 9</p>
-                                </div>
-                                <div class="recentBookingsDetails">
-                                    <i class="bi bi-calendar2-week"></i>
-                                    <p>10 Sept 2:00 - 12 Sept 7:30</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="recentBookings">
-                            <p class="userRecentBookings">John Doe</p>
-                            <hr>
-                            <div class="recentBookingsDetailsDiv">
-                                <div class="recentBookingsDetails">
-                                    <i class="bi bi-house-door-fill"></i>
-                                    <p>Room 9</p>
-                                </div>
-                                <div class="recentBookingsDetails">
-                                    <i class="bi bi-calendar2-week"></i>
-                                    <p>10 Sept 2:00 - 12 Sept 7:30</p>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="recentBookingsOverallInner" id="recentBookingsContainer">
+                        <!-- Dummy data for Recent Bookings will be rendered here -->
                     </div>
                 </div>
             </aside>
@@ -150,12 +30,7 @@
                 <div class="bookingsDashboard">
                     <div class="bookingsDashboardHeader">
                         <p class="bookingsDashboardTitle">Bookings</p>
-                        <div>
-                            <i class="bi bi-filter" data-bs-toggle="modal" data-bs-target="#filterModal"></i>
-                            <button class="btn adminAddBookingBtn" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
-                                <i class="bi bi-plus-square me-2"></i>Book
-                            </button>
-                        </div>
+                        <i class="bi bi-filter"></i>
                     </div>
                     <div class="table-wrapper">
                         <table class="table table-striped align-middle" id="bookingsTable">
@@ -169,7 +44,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Rows will be dynamically generated here -->
+                                <!-- Dummy data for Bookings will be rendered here -->
                             </tbody>
                         </table>
                     </div>
@@ -178,7 +53,7 @@
                     <div class="dashboardPending">
                         <div class="bookingsDashboardHeader">
                             <p class="bookingsDashboardTitle">Pending Bookings</p>
-                            <i class="bi bi-filter" data-bs-toggle="modal" data-bs-target="#filterModal"></i>
+                            <i class="bi bi-filter"></i>
                         </div>
                         <div class="table-wrapper">
                             <table class="table table-striped align-middle" id="pendingsTable">
@@ -191,254 +66,327 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Rows will be dynamically generated here -->
+                                    <!-- Dummy data for Pending Bookings will be rendered here -->
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                </div>
-                <!-- Offcanvas for adding bookings -->
-                <div class="offcanvas offcanvas-end" data-bs-backdrop="static" tabindex="-1" id="staticBackdrop" aria-labelledby="staticBackdropLabel">
-                    <div class="offcanvas-header">
-                        <h5 class="offcanvas-title" id="staticBackdropLabel">Add Bookings</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                    </div>
-                    <div class="offcanvas-body">
-                        <div class="offcanvas-body-inner">
-                            <div>
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput1" class="form-label">Name</label>
-                                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput1" class="form-label">Email address</label>
-                                    <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="userRoleAdd" class="form-label">Meeting Room Style</label>
-                                    <select class="form-select" aria-label="Default select example" id="userRoleAdd">
-                                        <option selected>Classroom</option>
-                                        <option value="1">Banquet</option>
-                                        <option value="2">U-Shape</option>
-                                        <option value="3">Conference</option>
-                                        <option value="4">Auditorium</option>
-                                        <option value="5">Boardroom</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="userRoleAdd" class="form-label">Available Meeting Room</label>
-                                    <select class="form-select" aria-label="Default select example" id="userRoleAdd">
-                                        <option selected>1</option>
-                                        <option value="1">2</option>
-                                        <option value="2">3</option>
-                                        <option value="3">4</option>
-                                        <option value="4">5</option>
-                                        <option value="5">6</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput1" class="form-label">Date</label>
-                                    <input type="date" class="form-control" id="exampleFormControlInput1" placeholder="">
-                                </div>
-                                <div class="mb-3 timeDiv">
-                                    <div>
-                                        <label for="exampleFormControlInput1" class="form-label">Start Time</label>
-                                        <input type="time" class="form-control" id="exampleFormControlInput1" placeholder="">
-                                    </div>
-                                    <div>
-                                        <label for="exampleFormControlInput1" class="form-label">End Time</label>
-                                        <input type="time" class="form-control" id="exampleFormControlInput1" placeholder="">
-                                    </div>
+                    <div class="dashboardAnalytics">
+                        <div class="analytics-card">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <p class="bookingsDashboardTitle">Analytics</p>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle btn-sm analyticsDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        All Time
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item active" href="#">All Time</a></li>
+                                        <li><a class="dropdown-item" href="#">Day</a></li>
+                                        <li><a class="dropdown-item" href="#">Week</a></li>
+                                        <li><a class="dropdown-item" href="#">Month</a></li>
+                                        <li><a class="dropdown-item" href="#">Year</a></li>
+                                    </ul>
                                 </div>
                             </div>
-                            <div class="buttonsOffCanvas">
-                                <button type="button" class="btn btn-outline-secondary">Cancel</button>
-                                <button class="btn adminAddBookingBtn" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
-                                    <i class="bi bi-plus-square me-2"></i>Book
-                                </button>
+                            <div class="chart-container">
+                                <canvas id="analyticsChart"></canvas>
+                            </div>
+                            <div class="legend-container">
+                                <div class="legend-item">
+                                    <div class="legend-color meeting-room"></div>
+                                    <span>Meeting Room</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color event-venue"></div>
+                                    <span>Event Venue</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color unit"></div>
+                                    <span>Unit</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color apartment"></div>
+                                    <span>Apartment</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="offcanvas offcanvas-end" data-bs-backdrop="static" tabindex="-1" id="staticBackdrop" aria-labelledby="staticBackdropLabel">
+                        <div class="offcanvas-header">
+                            <h5 class="offcanvas-title" id="staticBackdropLabel">Add Bookings</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                        </div>
+                        <div class="offcanvas-body">
+                            <div class="offcanvas-body-inner">
+                                <div>
+                                    <div class="mb-3">
+                                        <label for="exampleFormControlInput1" class="form-label">Name</label>
+                                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="exampleFormControlInput1" class="form-label">Email address</label>
+                                        <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="userRoleAdd" class="form-label">Meeting Room Style</label>
+                                        <select class="form-select" aria-label="Default select example" id="userRoleAdd">
+                                            <option selected>Classroom</option>
+                                            <option value="1">Banquet</option>
+                                            <option value="2">U-Shape</option>
+                                            <option value="3">Conference</option>
+                                            <option value="4">Auditorium</option>
+                                            <option value="5">Boardroom</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="userRoleAdd" class="form-label">Available Meeting Room</label>
+                                        <select class="form-select" aria-label="Default select example" id="userRoleAdd">
+                                            <option selected>1</option>
+                                            <option value="1">2</option>
+                                            <option value="2">3</option>
+                                            <option value="3">4</option>
+                                            <option value="4">5</option>
+                                            <option value="5">6</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="exampleFormControlInput1" class="form-label">Date</label>
+                                        <input type="date" class="form-control" id="exampleFormControlInput1" placeholder="">
+                                    </div>
+                                    <div class="mb-3 timeDiv">
+                                        <div>
+                                            <label for="exampleFormControlInput1" class="form-label">Start Time</label>
+                                            <input type="time" class="form-control" id="exampleFormControlInput1" placeholder="">
+                                        </div>
+                                        <div>
+                                            <label for="exampleFormControlInput1" class="form-label">End Time</label>
+                                            <input type="time" class="form-control" id="exampleFormControlInput1" placeholder="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="buttonsOffCanvas">
+                                    <button type="button" class="btn btn-outline-secondary">Cancel</button>
+                                    <button class="btn adminAddBookingBtn" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
+                                        <i class="bi bi-plus-square me-2"></i>Book
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Modal for Filtering -->
-        <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="filterModalLabel">Filter Bookings</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="filterForm">
-                            <div class="mb-3">
-                                <label for="filterRoom" class="form-label">Room</label>
-                                <input type="text" class="form-control" id="filterRoom" placeholder="Enter room name">
-                            </div>
-                            <div class="mb-3">
-                                <label for="filterDate" class="form-label">Date</label>
-                                <input type="date" class="form-control" id="filterDate">
-                            </div>
-                            <div class="mb-3">
-                                <label for="filterUser" class="form-label">User</label>
-                                <input type="text" class="form-control" id="filterUser" placeholder="Enter user name">
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" onclick="applyFilter()">Apply Filter</button>
+            
+            <!-- Edit Booking Modal -->
+            <div class="modal fade" id="editBookingModal" tabindex="-1" aria-labelledby="editBookingModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editBookingModalLabel">Edit Booking</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="editBookingForm">
+                                <div class="mb-3">
+                                    <label for="bookingUserInput" class="form-label">User</label>
+                                    <input type="text" class="form-control" id="bookingUserInput">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bookingRoomInput" class="form-label">Room</label>
+                                    <input type="text" class="form-control" id="bookingRoomInput">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bookingDateInput" class="form-label">Date</label>
+                                    <input type="text" class="form-control" id="bookingDateInput">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bookingPeopleInput" class="form-label">No. of People</label>
+                                    <input type="number" class="form-control" id="bookingPeopleInput">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="saveChangesBtn">Save changes</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <!-- Modal for Filtering -->
+            <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="filterModalLabel">Filter Bookings</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="filterForm">
+                                <div class="mb-3">
+                                    <label for="filterRoom" class="form-label">Room</label>
+                                    <input type="text" class="form-control" id="filterRoom" placeholder="Enter room name">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="filterDate" class="form-label">Date</label>
+                                    <input type="date" class="form-control" id="filterDate">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="filterUser" class="form-label">User</label>
+                                    <input type="text" class="form-control" id="filterUser" placeholder="Enter user name">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" onclick="applyFilter()">Apply Filter</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
     </main>
-
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="/filter.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const bookingsData = [
+            {
+                "user": "Dean Lourence Barquio",
+                "room": "867",
+                "date": "10 Sept 2:00 - 15 Sept 7:30",
+                "no_of_people": "7",
+                "price": "2,800"
+            },
+            {
+                "user": "Jane Smith",
+                "room": "Meeting Room 3",
+                "date": "11 Sept 2:00 - 12 Sept 7:30",
+                "no_of_people": "10",
+                "price": "3,200"
+            },
+            {
+                "user": "John Doe",
+                "room": "Room 9",
+                "date": "12 Sept 3:00 - 13 Sept 5:00",
+                "no_of_people": "5",
+                "price": "1,800"
+            }
+        ];
 
-</body>
+        // Function to render Recent Bookings
+        function renderRecentBookings(bookings) {
+            const container = document.querySelector('#recentBookingsContainer');
+            container.innerHTML = '';  // Clear existing content
 
-<script>
-    const mobileNav = document.querySelector(".hamburger");
-    const navbar = document.querySelector(".menubar");
-
-    const toggleNav = () => {
-        navbar.classList.toggle("active");
-        mobileNav.classList.toggle("hamburger-active");
-    };
-    mobileNav.addEventListener("click", () => toggleNav());
-
-    const navItems = document.querySelectorAll('.navItemA');
-    const navIndicator = document.querySelector('.navIndicator');
-
-    // Function to move the indicator
-    function moveIndicator(navItem) {
-        const navItemRect = navItem.getBoundingClientRect();
-        const navListRect = document.querySelector('.navList').getBoundingClientRect();
-        const offsetLeft = navItemRect.left - navListRect.left;
-        const width = navItemRect.width;
-
-        // Set indicator position and width
-        navIndicator.style.left = `${offsetLeft}px`;
-        navIndicator.style.width = `${width}px`;
-    }
-
-    // Initially position the indicator under the active item
-    document.addEventListener('DOMContentLoaded', () => {
-        const activeItem = document.querySelector('.navItemA.active');
-        if (activeItem) moveIndicator(activeItem);
-    });
-
-    // Add event listeners to all nav items
-    navItems.forEach(item => {
-        item.addEventListener('click', (event) => {
-            event.preventDefault();
-
-            // Remove 'active' class from all items and add to the clicked one
-            navItems.forEach(nav => nav.classList.remove('active'));
-            item.classList.add('active');
-
-            // Move the indicator under the clicked item
-            moveIndicator(item);
-        });
-    });
-
-    // Initialize Flatpickr on the calendar div
-    flatpickr("#calendar", {
-        inline: true,
-        mode: "range",
-        dateFormat: "Y-m-d",
-        defaultDate: ["2024-09-10", "2024-09-15", "2024-10-01", "2024-10-15"],
-        onChange: function (selectedDates, dateStr, instance) {
-            console.log("Selected range:", dateStr);
+            bookings.slice(0, 3).forEach(booking => {
+                const bookingHTML = `
+                    <div class="recentBookings">
+                        <p class="userRecentBookings">${booking.user}</p>
+                        <hr>
+                        <div class="recentBookingsDetailsDiv">
+                            <div class="recentBookingsDetails">
+                                <i class="bi bi-house-door-fill"></i>
+                                <p>${booking.room}</p>
+                            </div>
+                            <div class="recentBookingsDetails">
+                                <i class="bi bi-calendar2-week"></i>
+                                <p>${booking.date}</p>
+                            </div>
+                        </div>
+                    </div>`;
+                container.innerHTML += bookingHTML;
+            });
         }
-    });
 
-    // Function to render bookings table
-    function renderBookings(bookings) {
-        const tbody = document.querySelector('#bookingsTable tbody');
-        const tbody2 = document.querySelector('#pendingsTable tbody');
-        tbody.innerHTML = ''; // Clear previous rows
-        tbody2.innerHTML = ''; // Clear previous rows
+        // Function to render main Bookings table
+        function renderBookings(bookings) {
+            const tbody = document.querySelector('#bookingsTable tbody');
+            tbody.innerHTML = '';  // Clear existing content
 
-        bookings.forEach((booking, index) => {
-            const row = document.createElement('tr');
-
-            row.innerHTML = `
+            bookings.forEach((booking) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
                     <td>${booking.user}</td>
                     <td>${booking.room}</td>
                     <td>${booking.date}</td>
                     <td>${booking.no_of_people}</td>
                     <td>
-                        <button onclick="editBooking(${index})" class="btn editBtn">Edit</button>
-                        <button onclick="deleteBooking(${index})" class="btn deleteBtn">Delete</button>
-                    </td>
-                `;
+                        <button class="btn btn-primary btn-sm" onclick="viewBooking(${booking.id})">View</button>
+                        <button class="btn btn-info btn-sm" onclick="editBooking(${booking.id}, '${booking.user}', '${booking.room}', '${booking.date}', ${booking.no_of_people})">Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="cancelBooking(${booking.id})">Cancel</button>
+                    </td>`;
+                tbody.appendChild(row);
+            });
+        }
 
-            tbody.appendChild(row);
-        });
-    }
+        function editBooking(id, user, room, date, no_of_people) {
+            // Populate the modal fields with the booking details
+            document.getElementById('bookingUserInput').value = user;
+            document.getElementById('bookingRoomInput').value = room;
+            document.getElementById('bookingDateInput').value = date;
+            document.getElementById('bookingPeopleInput').value = no_of_people;
 
-    function renderPendings(bookings) {
-        const tbody2 = document.querySelector('#pendingsTable tbody');
-        tbody2.innerHTML = ''; // Clear previous rows
+            // Set an event listener for saving changes
+            const saveButton = document.getElementById('saveChangesBtn');
+            saveButton.onclick = () => {
+                // Handle save changes logic here
+                const updatedBooking = {
+                    id: id,
+                    user: document.getElementById('bookingUserInput').value,
+                    room: document.getElementById('bookingRoomInput').value,
+                    date: document.getElementById('bookingDateInput').value,
+                    no_of_people: parseInt(document.getElementById('bookingPeopleInput').value, 10)
+                };
+                saveUpdatedBooking(updatedBooking);
+                $('#editBookingModal').modal('hide'); // Hide modal after saving
+            };
 
-        bookings.forEach((booking, index) => {
-            const row = document.createElement('tr');
+            // Show the modal
+            $('#editBookingModal').modal('show');
+        }
 
-            row.innerHTML = `
+        function saveUpdatedBooking(updatedBooking) {
+            // Logic to save the updated booking, e.g., making an API call to update the booking on the server
+            console.log('Saving updated booking:', updatedBooking);
+            // Implement your save logic here, like updating the bookings array or making an API request
+        }
+
+
+        // Render pending bookings using the same data
+        function renderPendings(bookings) {
+            const tbody = document.querySelector('#pendingsTable tbody');
+            tbody.innerHTML = '';  // Clear existing content
+
+            bookings.forEach((booking) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
                     <td>${booking.user}</td>
                     <td>${booking.room}</td>
                     <td>${booking.date}</td>
                     <td>
-                        <button onclick="editBooking(${index})" class="btn editBtn">Edit</button>
-                        <button onclick="deleteBooking(${index})" class="btn deleteBtn">Delete</button>
-                    </td>
-                `;
-
-            tbody2.appendChild(row);
-        });
-    }
-
-    // Show Edit Booking modal when the edit button is clicked
-    function editBooking(index) {
-        // Fetch the booking data for the specific booking
-        const bookingData = bookings[index];
-
-        // Populate modal fields with the booking data
-        document.getElementById('bookingUserInput').value = bookingData.user;
-        document.getElementById('bookingRoomInput').value = bookingData.room;
-        document.getElementById('bookingDateInput').value = bookingData.date;
-        document.getElementById('bookingPeopleInput').value = bookingData.no_of_people;
-
-        // Show the modal
-        const editBookingModal = new bootstrap.Modal(document.getElementById('editBookingModal'));
-        editBookingModal.show();
-    }
-
-    function deleteBooking(index) {
-        if (confirm(`Are you sure you want to delete the booking of ${bookings[index].user}?`)) {
-            bookings.splice(index, 1);
-            renderBookings(bookings); // Re-render table after deletion
+                        <button class="btn btn-primary btn-sm">View</button>
+                        <button class="btn btn-info btn-sm">Edit</button>
+                        <button class="btn btn-danger btn-sm">Cancel</button>
+                    </td>`;
+                tbody.appendChild(row);
+            });
         }
-    }
 
-    // Fetch bookings from JSON file
-    fetch('/data/bookingsDashboard.json')
-        .then(response => response.json())
-        .then(data => {
-            bookings = data;
-            renderBookings(data);
-            renderPendings(data);
-        })
-        .catch(error => console.error('Error fetching data:', error));
+        // Render the recent bookings and tables with dummy data
+        renderRecentBookings(bookingsData);
+        renderBookings(bookingsData);
+        renderPendings(bookingsData);
 
-    const ctx = document.getElementById('analyticsChart')?.getContext('2d');
-    if (ctx) {
-        const data = {
+        // Initialize Flatpickr on the calendar div
+        flatpickr("#calendar", {
+            inline: true,
+            mode: "range",
+            dateFormat: "Y-m-d",
+            defaultDate: ["2024-09-10", "2024-09-15", "2024-10-01", "2024-10-15"]
+        });
+
+        // Pie chart data
+        const ctx = document.getElementById('analyticsChart').getContext('2d');
+        const analyticsData = {
             labels: ['Meeting Room', 'Event Venue', 'Unit', 'Apartment'],
             datasets: [{
                 label: 'Bookings by Type',
@@ -447,9 +395,9 @@
                 borderWidth: 0
             }]
         };
-        const config = {
+        new Chart(ctx, {
             type: 'pie',
-            data: data,
+            data: analyticsData,
             options: {
                 responsive: true,
                 plugins: {
@@ -458,8 +406,8 @@
                     }
                 }
             }
-        };
-        const analyticsChart = new Chart(ctx, config);
-    }
-</script>
+        });
+
+    </script>
+</body>
 </html>
