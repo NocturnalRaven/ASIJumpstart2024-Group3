@@ -108,12 +108,22 @@ namespace ASI.Basecode.WebApp.Controllers
         [HttpPost]
         public IActionResult PostCreate(UserViewModel model)
         {
+            _logger.LogInformation("=======User Creation: PostCreate Start=======");
+
             try
             {
+                // Check for duplicate UserCode
+                bool isExist = _userService.RetrieveAll().Any(data => data.UserCode == model.UserCode);
+                if (isExist)
+                {
+                    TempData["DuplicateErr"] = "Duplicate UserCode: " + model.UserCode;
+                    _logger.LogError($"Duplicate UserCode: {model.UserCode}");
+                    return RedirectToAction("AdminUserDashboard");
+                }
+
                 // Add the user using the UserService
                 _userService.Add(model);
                 TempData["CreateMessage"] = "User added successfully!";
-
                 return RedirectToAction("AdminUserDashboard");
             }
             catch (ArgumentException ex)
@@ -128,6 +138,7 @@ namespace ASI.Basecode.WebApp.Controllers
                 return RedirectToAction("AdminUserDashboard");
             }
         }
+
 
         [HttpPost]
         //[Authorize(Policy = "AdminOnly")]

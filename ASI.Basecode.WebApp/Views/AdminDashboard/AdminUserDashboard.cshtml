@@ -72,7 +72,7 @@
                                     @Html.DisplayFor(modelItem => item.Email)
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.Role)
+                                    @Html.DisplayFor(modelItem => item.DisplayRole)
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.DateCreated)
@@ -82,8 +82,10 @@
                                 </td>
                                 <td class="">
                                     <button type="button" class="btn btn-secondary btn-sm"
-                                        donclick="displayEditModal(@item.Id)">Edit</button> | <button type="button"
-                                        class="btn btn-danger btn-sm" onclick="showDeleteModal(@item.Id)">Delete</button>
+                                        donclick="displayEditModal(@item.Id)">Edit</button>
+                                        
+                                    <button type="button" class="btn btn-danger btn-sm"
+                                        onclick="showDeleteModal(@item.Id)">Delete</button>
                                 </td>
                             </tr>
                         }
@@ -142,7 +144,7 @@
 
                     <div class="form-group mb-3">
                         <label asp-for="NewUser.Email" class="control-label">Email address</label>
-                        <input name="Email" class="form-control" placeholder="name@example.com" required />
+                        <input name="Email" class="form-control" type="email" placeholder="name@gmail.com" required />
                         <span asp-validation-for="NewUser.Email" class="text-danger"></span>
                     </div>
 
@@ -215,11 +217,24 @@
 
 </html>
 
-@section Scripts {
-    <script>
-        var errMessage = '@TempData["DuplicateErr"]';
-        if (errMessage) {
-            toastr.error(errMessage);
-        }
-    </script>
+@* @section Scripts {
+<script>
+// Check for DuplicateErr
+var duplicateErrMessage = '@TempData["DuplicateErr"]';
+if (duplicateErrMessage) {
+toastr.error(duplicateErrMessage);
 }
+
+// Check for CreateMessage
+var createMessage = '@TempData["CreateMessage"]';
+if (createMessage) {
+toastr.success(createMessage);
+}
+
+// Check for ErrorMessage
+var errorMessage = '@TempData["ErrorMessage"]';
+if (errorMessage) {
+toastr.error(errorMessage);
+}
+</script>
+} *@
