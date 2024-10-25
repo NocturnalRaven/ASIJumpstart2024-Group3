@@ -25,10 +25,11 @@ namespace ASI.Basecode.Data.Repositories
 
         public void AddRoom(Room room)
         {
-            var maxId = this.GetDbSet<Room>().Max(x => x.Id) + 1;
-            room.Id = maxId;
+            var maxId = this.GetDbSet<Room>().Select(x => (int?)x.Id).ToList().DefaultIfEmpty(0).Max() + 1;
+            room.Id = maxId ?? 0;
             room.CreatedAt = DateTime.Now;
             room.UpdatedAt = DateTime.Now;
+            room.Deleted = false;
             this.GetDbSet<Room>().Add(room);
             UnitOfWork.SaveChanges();
         }

@@ -17,6 +17,7 @@ namespace ASI.Basecode.Data.Models
         public string Status { get; set; }
         public int? Floor { get; set; }
         public string Image { get; set; }
+        public string Details { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public bool Deleted { get; set; }

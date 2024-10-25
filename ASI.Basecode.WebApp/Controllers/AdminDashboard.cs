@@ -17,6 +17,7 @@ namespace ASI.Basecode.WebApp.Controllers
     {
 
         private readonly IUserService _userService;
+        private readonly IRoomService _roomService;
         /// <summary>
         /// Constructor
         /// </summary>
@@ -26,13 +27,14 @@ namespace ASI.Basecode.WebApp.Controllers
         /// <param name="localizer"></param>
         /// <param name="mapper"></param>
 
-        public AdminDashboard(IUserService userService,
+        public AdminDashboard(IUserService userService, IRoomService roomService,
            IHttpContextAccessor httpContextAccessor,
                              ILoggerFactory loggerFactory,
                              IConfiguration configuration,
                              IMapper mapper = null) : base(httpContextAccessor, loggerFactory, configuration, mapper)
         {
             _userService = userService;
+            _roomService = roomService;
         }
 
 
@@ -80,10 +82,34 @@ namespace ASI.Basecode.WebApp.Controllers
 
         [HttpGet]
         //[Authorize(Policy = "AdminOnly")]
-        [Route("/admin-dashboard/rooms")]
+        [Route("/admin/dashboard/rooms")]
         public IActionResult Rooms()
         {
-            return View();
+            try
+            {
+                _logger.LogInformation("=======Retrieve All Start=======");
+                var data = _roomService.RetrieveAll().ToList();
+                var role = UserRole;
+                ViewData["Role"] = role;
+
+                // Pass the correct model type
+                var model = new RoomPageViewModel
+                {
+                    RoomList = new RoomListViewModel
+                    {
+                        dataList = data
+                    },
+                    NewRoom = new RoomViewModel()
+                };
+
+                _logger.LogInformation("=======Retrieve All End==========");
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return View(null);
+            }
         }
 
         [HttpGet]
@@ -157,6 +183,19 @@ namespace ASI.Basecode.WebApp.Controllers
 
                 return RedirectToAction("AdminUserDashboard");
             }
+        }
+
+        [HttpPost]
+        public IActionResult PostCreateRoom(RoomViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model); // Or return the appropriate view with the model to re-render the form
+            }
+
+            _roomService.Add(model);
+            TempData["CreateMessage"] = "Room added successfully!";
+            return RedirectToAction("Rooms");
         }
 
         #endregion
