@@ -142,7 +142,14 @@ namespace ASI.Basecode.WebApp.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> SignOutUser()
         {
+            // Sign out the user
             await this._signInManager.SignOutAsync();
+
+            // Clear the session and any additional user data if necessary
+            this._session.Clear(); // Optional: Clears all session data, adjust as needed
+            TempData["SuccessMessage"] = "You have been logged out successfully."; // Optional: Add a success message
+
+            // Redirect to the login view
             return RedirectToAction("Login", "Account");
         }
     }

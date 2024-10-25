@@ -3,7 +3,6 @@
 ﻿@{
     // Simulate the user role for now
     var userRole = "Admin"; // Change this to "SuperAdmin" to simulate a Super Admin
-                            // var userRole = "SuperAdmin"; // Uncomment to simulate Admin
 }
 @section styles {
     <style>
@@ -41,6 +40,7 @@
         }
     </style>
 }
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -56,7 +56,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-    @RenderSection("styles", required: false) <!-- This line renders the optional styles section -->
+    @RenderSection("styles", required: false)
 </head>
 <body>
     <header>
@@ -124,7 +124,9 @@
                             <div class="profile-dropdown" id="profileDropdown">
                                 <p id="userName">John Doe</p>
                                 <button class="btn btn-primary mb-2" id="editProfileBtn" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
-                                <button class="btn btn-danger" id="logoutBtn">Logout</button>
+                                <form asp-controller="Account" asp-action="SignOutUser" method="post" style="display:inline;">
+                                    <button type="submit" id="logoutBtn" class="btn btn-danger">Logout</button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -147,7 +149,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form id="editProfileForm">
                         <div class="mb-3">
                             <label for="userNameInput" class="form-label">Name</label>
                             <input type="text" class="form-control" id="userNameInput" value="John Doe">
@@ -168,7 +170,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-primary" id="saveProfileBtn">Save changes</button>
                 </div>
             </div>
         </div>
@@ -183,80 +185,62 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form>
-                        <!-- Default Booking Duration -->
+                    <form id="settingsForm">
                         <div class="mb-3">
-                            <label for="defaultDuration" class="form-label">Default Booking Duration</label>
-                            <select class="form-select" id="defaultDuration">
-                                <option value="30">30 minutes</option>
-                                <option value="60">1 hour</option>
-                                <option value="90">1.5 hours</option>
-                                <option value="120">2 hours</option>
-                                <option value="180">3 hours</option>
-                                <option value="240">4 hours</option>
-                                <option value="300">5 hours</option>
-                                <!-- Add more options as needed -->
-                            </select>
+                            <label for="setting1" class="form-label">Setting 1</label>
+                            <input type="text" class="form-control" id="setting1" placeholder="Enter setting 1">
                         </div>
-
-                        <!-- Preferred Room Style -->
                         <div class="mb-3">
-                            <label for="preferredRoom" class="form-label">Preferred Room Style</label>
-                            <select class="form-select" id="preferredRoom">
-                                <option value="classroom">Classroom</option>
-                                <option value="u-shape">U-shape</option>
-                                <option value="boardroom">Boardroom</option>
-                                <option value="banquet">Banquet</option>
-                            </select>
-                        </div>
-
-                        <!-- Preferred Days of the Week -->
-                        <div class="mb-3">
-                            <label class="form-label">Preferred Day/s of the Week</label>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="monday" id="monday">
-                                <label class="form-check-label" for="monday">Monday</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="tuesday" id="tuesday">
-                                <label class="form-check-label" for="tuesday">Tuesday</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="wednesday" id="wednesday">
-                                <label class="form-check-label" for="wednesday">Wednesday</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="thursday" id="thursday">
-                                <label class="form-check-label" for="thursday">Thursday</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="friday" id="friday">
-                                <label class="form-check-label" for="friday">Friday</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="saturday" id="saturday">
-                                <label class="form-check-label" for="saturday">Saturday</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="sunday" id="sunday">
-                                <label class="form-check-label" for="sunday">Sunday</label>
-                            </div>
+                            <label for="setting2" class="form-label">Setting 2</label>
+                            <input type="text" class="form-control" id="setting2" placeholder="Enter setting 2">
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-primary" id="saveSettingsBtn">Save changes</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="~/js/edit-profile.js"></script>
-    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Show/hide profile dropdown
+            const profileIcon = document.getElementById("profileIcon");
+            const profileDropdown = document.getElementById("profileDropdown");
 
-    @await RenderSectionAsync("Scripts", required: false)
+            profileIcon.addEventListener("click", function () {
+                profileDropdown.style.display = profileDropdown.style.display === "block" ? "none" : "block";
+            });
+
+            // Save profile changes
+            document.getElementById("saveProfileBtn").addEventListener("click", function () {
+                // Handle saving logic (e.g., send data to the server via AJAX)
+                const name = document.getElementById("userNameInput").value;
+                const email = document.getElementById("userEmailInput").value;
+                const resetPassword = document.getElementById("resetPasswordInput").value;
+
+                // Simulate an AJAX request (replace with actual AJAX call)
+                alert(`Profile updated: \nName: ${name}\nEmail: ${email}\nPassword: ${resetPassword}`);
+                $('#editProfileModal').modal('hide'); // Close modal
+            });
+
+            // Logout functionality
+            document.getElementById("logoutBtn").addEventListener("click", function () {
+               SignOutUser()
+            });
+
+            // Save settings changes
+            document.getElementById("saveSettingsBtn").addEventListener("click", function () {
+                const setting1 = document.getElementById("setting1").value;
+                const setting2 = document.getElementById("setting2").value;
+
+                // Simulate an AJAX request (replace with actual AJAX call)
+                alert(`Settings saved: \nSetting 1: ${setting1}\nSetting 2: ${setting2}`);
+                $('#settingsModal').modal('hide'); // Close modal
+            });
+        });
+    </script>
 </body>
 </html>
