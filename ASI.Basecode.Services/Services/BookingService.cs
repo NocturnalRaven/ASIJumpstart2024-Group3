@@ -37,11 +37,11 @@ namespace ASI.Basecode.Services.Services
                     BookingId = s.Id,
                     UserId = s.UserId,
                     RoomId = s.RoomId,
-                    StartDate = s.StartDate,
-                    EndDate = s.EndDate,
-                    NoOfPeople = s.NoOfPeople,
+                    StartDate = s.StartDate ?? DateTime.MinValue, 
+                    EndDate = s.EndDate ?? DateTime.MinValue,     
+                    NoOfPeople = s.NoOfPeople ?? 0,              
                     Status = s.Status,
-                    IsRecurring = s.IsRecurring,
+                    IsRecurring = s.IsRecurring ?? false,       
                     Frequency = s.Frequency
                 });
 
@@ -57,11 +57,11 @@ namespace ASI.Basecode.Services.Services
                 BookingId = data.Id,
                 UserId = data.UserId,
                 RoomId = data.RoomId,
-                StartDate = data.StartDate,
-                EndDate = data.EndDate,
-                NoOfPeople = data.NoOfPeople,
+                StartDate = data.StartDate ?? DateTime.MinValue, 
+                EndDate = data.EndDate ?? DateTime.MinValue,    
+                NoOfPeople = data.NoOfPeople ?? 0,             
                 Status = data.Status,
-                IsRecurring = data.IsRecurring,
+                IsRecurring = data.IsRecurring ?? false,       
                 Frequency = data.Frequency
             };
             return model;

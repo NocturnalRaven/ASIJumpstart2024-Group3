@@ -13,16 +13,16 @@ namespace ASI.Basecode.Data.Models
         public int Id { get; set; }
         public int UserId { get; set; }
         public int RoomId { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
-        public int NoOfPeople { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public int? NoOfPeople { get; set; }
         public string Status { get; set; }
-        public bool IsRecurring { get; set; }
+        public bool? IsRecurring { get; set; }
         public string Frequency { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public bool Deleted { get; set; }
-        public DateTime? DeletedAt { get; set; }
+        public DateTime DeletedAt { get; set; }
 
         public virtual Room Room { get; set; }
         public virtual MUser User { get; set; }

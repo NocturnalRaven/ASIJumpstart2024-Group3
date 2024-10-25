@@ -29,9 +29,9 @@ namespace ASI.Basecode.Data
             {
                 entity.Property(e => e.Frequency).HasMaxLength(50);
 
-                entity.Property(e => e.Status)
-                    .IsRequired()
-                    .HasMaxLength(50);
+                entity.Property(e => e.IsRecurring).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.Status).HasMaxLength(50);
 
                 entity.HasOne(d => d.Room)
                     .WithMany(p => p.Bookings)
@@ -100,9 +100,7 @@ namespace ASI.Basecode.Data
 
             modelBuilder.Entity<PendingBooking>(entity =>
             {
-                entity.Property(e => e.ApprovalStatus)
-                    .IsRequired()
-                    .HasMaxLength(50);
+                entity.Property(e => e.ApprovalStatus).HasMaxLength(50);
 
                 entity.HasOne(d => d.Booking)
                     .WithMany(p => p.PendingBookings)
@@ -115,17 +113,11 @@ namespace ASI.Basecode.Data
             {
                 entity.Property(e => e.Image).HasMaxLength(100);
 
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(100);
+                entity.Property(e => e.Name).HasMaxLength(100);
 
-                entity.Property(e => e.Status)
-                    .IsRequired()
-                    .HasMaxLength(50);
+                entity.Property(e => e.Status).HasMaxLength(50);
 
-                entity.Property(e => e.Style)
-                    .IsRequired()
-                    .HasMaxLength(100);
+                entity.Property(e => e.Style).HasMaxLength(100);
             });
 
             OnModelCreatingPartial(modelBuilder);
