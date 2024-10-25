@@ -48,7 +48,7 @@ namespace ASI.Basecode.WebApp.Controllers
 
         [HttpGet]
         //[Authorize(Policy = "AdminOnly")]
-        [Route("/admin-dashboard/users")]
+        [Route("/admin/dashboard/users")]
         public IActionResult AdminUserDashboard()
         {
             try
@@ -80,14 +80,6 @@ namespace ASI.Basecode.WebApp.Controllers
 
         [HttpGet]
         //[Authorize(Policy = "AdminOnly")]
-        [Route("/admin-dashboard/add-user")]
-        public IActionResult AddUser()
-        {
-            return View();
-        }
-
-        [HttpGet]
-        //[Authorize(Policy = "AdminOnly")]
         [Route("/admin-dashboard/rooms")]
         public IActionResult Rooms()
         {
@@ -96,7 +88,7 @@ namespace ASI.Basecode.WebApp.Controllers
 
         [HttpGet]
         //[Authorize(Policy = "AdminOnly")]
-        [Route("/admin-dashboard/analytics")]
+        [Route("/admin/dashboard/analytics")]
         public IActionResult AdminAnalytics()
         {
             return View();

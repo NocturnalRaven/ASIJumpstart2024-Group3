@@ -11,7 +11,7 @@ namespace ASI.Basecode.Data.Models
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public bool Deleted { get; set; }
-        public DateTime DeletedAt { get; set; }
+        public DateTime? DeletedAt { get; set; }
 
         public virtual Booking Booking { get; set; }
     }

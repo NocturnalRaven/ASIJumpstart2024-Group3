@@ -22,7 +22,7 @@ namespace ASI.Basecode.Data.Models
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public bool Deleted { get; set; }
-        public DateTime DeletedAt { get; set; }
+        public DateTime? DeletedAt { get; set; }
 
         public virtual Room Room { get; set; }
         public virtual MUser User { get; set; }
