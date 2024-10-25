@@ -3,6 +3,7 @@
 @{
     var userRole = "Admin"; // Change this to "User" to simulate a Staff/User
 }
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,8 +11,6 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - MeetingRoomBookingSystem</title>
-
-    <!-- Corrected CSS file paths -->
     <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="/MeetingRoomBookingSystem.styles.css" asp-append-version="true" />
@@ -92,24 +91,25 @@
                         </div>
                     </div>
                 </div>
-            </nav>
-        </header>
-    }
-    <div class="render-container">
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
-
             <!-- Edit Profile Modal -->
             <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+                            <h5 class="modal-title">Settings</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <form>
+                                <!-- Default Booking Duration -->
                                 <div class="mb-3">
                                     <label for="userNameInput" class="form-label">Name</label>
                                     <input type="text" class="form-control" id="userNameInput" value="John Doe">
@@ -119,13 +119,49 @@
                                     <input type="email" class="form-control" id="userEmailInput"
                                         value="john.doe@example.com">
                                 </div>
+
+                                <!-- Preferred Room Style -->
                                 <div class="mb-3">
-                                    <label for="userRoleInput" class="form-label">Role</label>
-                                    <input type="text" class="form-control" id="userRoleInput" value="Admin">
+                                    <label for="preferredRoom" class="form-label">Preferred Room Style</label>
+                                    <select class="form-select" id="preferredRoom">
+                                        <option value="classroom">Classroom</option>
+                                        <option value="u-shape">U-shape</option>
+                                        <option value="boardroom">Boardroom</option>
+                                        <option value="banquet">Banquet</option>
+                                    </select>
                                 </div>
+
+                                <!-- Preferred Days of the Week -->
                                 <div class="mb-3">
-                                    <label for="resetPasswordInput" class="form-label">Reset Password</label>
-                                    <input type="password" class="form-control" id="resetPasswordInput">
+                                    <label class="form-label">Preferred Day/s of the Week</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="monday" id="monday">
+                                        <label class="form-check-label" for="monday">Monday</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="tuesday" id="tuesday">
+                                        <label class="form-check-label" for="tuesday">Tuesday</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="wednesday" id="wednesday">
+                                        <label class="form-check-label" for="wednesday">Wednesday</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="thursday" id="thursday">
+                                        <label class="form-check-label" for="thursday">Thursday</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="friday" id="friday">
+                                        <label class="form-check-label" for="friday">Friday</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="saturday" id="saturday">
+                                        <label class="form-check-label" for="saturday">Saturday</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="sunday" id="sunday">
+                                        <label class="form-check-label" for="sunday">Sunday</label>
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -136,14 +172,9 @@
                     </div>
                 </div>
             </div>
+
         </main>
     </div>
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            @Copyright
-        </div>
-    </footer>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
@@ -152,36 +183,19 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const editProfileModalElement = document.getElementById('editProfileModal');
-            const editProfileBtn = document.getElementById('editProfileBtn');
-            const profileDropdown = document.getElementById('profileDropdown');
-            const profileIcon = document.getElementById('profileIcon');
+        const profileIcon = document.getElementById("profileIcon");
+        const profileDropdown = document.getElementById("profileDropdown");
 
-            // Create Bootstrap Modal Instance
-            const editProfileModal = new bootstrap.Modal(editProfileModalElement);
-
-            // Toggle Dropdown and Show Modal
-            profileIcon.addEventListener('click', () => {
-                profileDropdown.style.display = profileDropdown.style.display === 'none' ? 'block' : 'none';
-            });
-
-            // Open Modal on Button Click
-            editProfileBtn.addEventListener('click', () => {
-                editProfileModal.show();
-            });
-
-            // Remove Backdrop When Modal is Hidden
-            editProfileModalElement.addEventListener('hidden.bs.modal', () => {
-                const backdrop = document.querySelector('.modal-backdrop');
-                if (backdrop) {
-                    backdrop.remove();  // Remove the backdrop if it exists
-                }
-            });
+        profileIcon.addEventListener("click", function () {
+            profileDropdown.style.display = profileDropdown.style.display === "block" ? "none" : "block";
         });
     </script>
+    @RenderSection("Scripts", required: false)
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="/js/edit-profile.js"></script>
+    <script src="/js/settings.js"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

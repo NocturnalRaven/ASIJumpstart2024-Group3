@@ -1,5 +1,7 @@
 ﻿@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Reference the layout file
+
 }
 
 <!DOCTYPE html>
@@ -32,13 +34,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Example row, you can add dynamic data here -->
                             <tr>
                                 <td>Room A</td>
                                 <td>10</td>
                                 <td>1st Floor</td>
                                 <td>
-                                    <button class="btn btn-primary">Edit</button>
+                                    <button class="btn btn-primary edit-btn" data-bs-toggle="offcanvas" data-bs-target="#editRoom" data-bs-whatever="Room A" data-capacity="10" data-location="1st Floor">Edit</button>
                                     <button class="btn btn-danger delete-btn">Delete</button>
                                 </td>
                             </tr>
@@ -68,7 +69,33 @@
         </div>
     </div>
 
+    <!-- Edit Room Offcanvas -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="editRoom" aria-labelledby="editRoomLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="editRoomLabel">Edit Room</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <form id="editRoomForm">
+                <div class="mb-3">
+                    <label for="roomName" class="form-label">Room Name</label>
+                    <input type="text" class="form-control" id="roomName" required>
+                </div>
+                <div class="mb-3">
+                    <label for="roomCapacity" class="form-label">Capacity</label>
+                    <input type="number" class="form-control" id="roomCapacity" required>
+                </div>
+                <div class="mb-3">
+                    <label for="roomLocation" class="form-label">Location</label>
+                    <input type="text" class="form-control" id="roomLocation" required>
+                </div>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveRoomChanges">Save changes</button>
+            </form>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="~/js/superAdmin/rooms.js" asp-append-version="true"></script>
+    <script src="~/js/SA-rooms.js"></script>
 </body>
 </html>

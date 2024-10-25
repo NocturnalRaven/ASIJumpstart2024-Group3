@@ -1,5 +1,7 @@
 ﻿@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Reference the layout file
+
 }
 
 <!DOCTYPE html>
@@ -32,14 +34,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Example row, you can add dynamic data here -->
                             <tr>
                                 <td>johndoe</td>
                                 <td>johndoe@example.com</td>
                                 <td>Admin</td>
                                 <td>
-                                    <button class="btn btn-primary">Edit</button>
-                                    <button class="btn btn-danger delete-btn">Delete</button>
+                                    <button class="btn btn-primary edit-btn" data-bs-toggle="offcanvas" data-bs-target="#editOffcanvas">Edit</button>
+                                    <button class="btn btn-danger delete-btn" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal">Delete</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -48,6 +49,35 @@
             </div>
         </div>
     </main>
+
+    <!-- Edit Offcanvas -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="editOffcanvas" aria-labelledby="editOffcanvasLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="editOffcanvasLabel">Edit Account</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <form id="editForm">
+                <div class="mb-3">
+                    <label for="editUsername" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="editUsername" value="johndoe">
+                </div>
+                <div class="mb-3">
+                    <label for="editEmail" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="editEmail" value="johndoe@example.com">
+                </div>
+                <div class="mb-3">
+                    <label for="editRole" class="form-label">Role</label>
+                    <input type="text" class="form-control" id="editRole" value="Admin">
+                </div>
+                <div class="mb-3">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveChangesBtn">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
     <!-- Delete Confirmation Modal -->
     <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
@@ -69,5 +99,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="~/js/SA-accounts.js"></script>
 </body>
 </html>
