@@ -11,7 +11,7 @@ namespace ASI.Basecode.Data.Repositories
 {
     public class UserRepository : BaseRepository, IUserRepository
     {
-        public UserRepository(IUnitOfWork unitOfWork) : base(unitOfWork) 
+        public UserRepository(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
 
         }
@@ -30,6 +30,7 @@ namespace ASI.Basecode.Data.Repositories
         {
             var maxId = this.GetDbSet<MUser>().Max(x => x.UserId) + 1;
             user.UserId = maxId;
+            user.InsDt = DateTime.Now;
             user.UpdDt = DateTime.Now;
             this.GetDbSet<MUser>().Add(user);
             UnitOfWork.SaveChanges();
@@ -52,6 +53,5 @@ namespace ASI.Basecode.Data.Repositories
             }
             UnitOfWork.SaveChanges();
         }
-
     }
 }

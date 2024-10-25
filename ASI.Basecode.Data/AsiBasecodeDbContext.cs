@@ -32,15 +32,14 @@ namespace ASI.Basecode.Data
             }
         }
 
+       
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Booking>(entity =>
             {
                 entity.Property(e => e.Frequency).HasMaxLength(50);
-
-                entity.Property(e => e.Status)
-                    .IsRequired()
-                    .HasMaxLength(50);
+                entity.Property(e => e.IsRecurring).HasDefaultValueSql("((0))");
+                entity.Property(e => e.Status).HasMaxLength(50);
 
                 entity.HasOne(d => d.Room)
                     .WithMany(p => p.Bookings)
@@ -52,21 +51,7 @@ namespace ASI.Basecode.Data
                     .WithMany(p => p.Bookings)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Bookings_Users");
-            });
-
-            modelBuilder.Entity<MRole>(entity =>
-            {
-                entity.HasKey(e => e.RoleId);
-
-                entity.ToTable("M_ROLE");
-
-                entity.Property(e => e.RoleId).ValueGeneratedNever();
-
-                entity.Property(e => e.RoleName)
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .IsUnicode(false);
+                    .HasConstraintName("FK_Bookings_M_User");
             });
 
             modelBuilder.Entity<MUser>(entity =>
@@ -123,10 +108,7 @@ namespace ASI.Basecode.Data
 
             modelBuilder.Entity<PendingBooking>(entity =>
             {
-                entity.Property(e => e.ApprovalStatus)
-                    .IsRequired()
-                    .HasMaxLength(50);
-
+                entity.Property(e => e.ApprovalStatus).HasMaxLength(50);
                 entity.HasOne(d => d.Booking)
                     .WithMany(p => p.PendingBookings)
                     .HasForeignKey(d => d.BookingId)
@@ -138,17 +120,11 @@ namespace ASI.Basecode.Data
             {
                 entity.Property(e => e.Image).HasMaxLength(100);
 
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(100);
+                entity.Property(e => e.Name).HasMaxLength(100);
 
-                entity.Property(e => e.Status)
-                    .IsRequired()
-                    .HasMaxLength(50);
+                entity.Property(e => e.Status).HasMaxLength(50);
 
-                entity.Property(e => e.Style)
-                    .IsRequired()
-                    .HasMaxLength(100);
+                entity.Property(e => e.Style).HasMaxLength(100);
             });
 
             OnModelCreatingPartial(modelBuilder);

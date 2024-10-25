@@ -17,6 +17,18 @@ namespace ASI.Basecode.Services.ServiceModels
         public string Description { get; set; }
 
         [Required(ErrorMessage = "This is required")]
+        public int Role { get; set; }
+
+        public string DisplayRole { get; set; }
+        
+        [Required(ErrorMessage = "This is required")]
+        public string Email { get; set; }
+
+        public DateTime DateCreated { get; set; }
+
+        public DateTime DateModified { get; set; }
+
+        [Required(ErrorMessage = "This is required")]
         public string UserCode { get; set; }
 
         [Required(ErrorMessage = "This is required")]
@@ -39,4 +51,11 @@ namespace ASI.Basecode.Services.ServiceModels
 
         public IEnumerable<UserViewModel> dataList { get; set; }
     }
+
+    public class UserPageViewModel
+    {
+        public UserListViewModel UserList { get; set; }
+        public UserViewModel NewUser { get; set; }
+    }
+
 }

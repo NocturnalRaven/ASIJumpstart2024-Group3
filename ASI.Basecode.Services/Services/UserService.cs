@@ -34,7 +34,14 @@ namespace ASI.Basecode.Services.Services
                 {
                     Id = s.UserId,
                     Name = string.Concat(s.FirstName, " ", s.LastName),
-                    Description = s.Remarks,
+                    Email = s.Mail,
+                    DisplayRole = s.UserRole == 9 ? "Super Admin"
+                        : s.UserRole == 1 ? "Admin"
+                        : s.UserRole == 2 ? "Staff"
+                        : s.UserRole == 3 ? "User"
+                        : "Unknown",
+                    DateCreated = s.InsDt,
+                    DateModified = s.UpdDt
                 });
             return data;
         }
@@ -59,12 +66,18 @@ namespace ASI.Basecode.Services.Services
         /// <param name="model">The model.</param>
         public void Add(UserViewModel model)
         {
+            if (string.IsNullOrEmpty(model.UserCode))
+            {
+                throw new ArgumentException("UserCode cannot be null or empty");
+            }
+
             var newModel = new MUser();
             newModel.UserCode = model.UserCode;
             newModel.FirstName = model.FirstName;
             newModel.LastName = model.LastName;
+            newModel.Mail = model.Email;
             newModel.Password = PasswordManager.EncryptPassword(model.Password);
-            newModel.UserRole = 1;
+            newModel.UserRole = model.Role;
 
             _userRepository.AddUser(newModel);
         }
@@ -79,6 +92,7 @@ namespace ASI.Basecode.Services.Services
             existingData.UserCode = model.UserCode;
             existingData.FirstName = model.FirstName;
             existingData.LastName = model.LastName;
+
             existingData.Password = PasswordManager.EncryptPassword(model.Password);
 
             _userRepository.UpdateUser(existingData);
