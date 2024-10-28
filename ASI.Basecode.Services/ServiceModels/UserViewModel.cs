@@ -10,6 +10,7 @@ namespace ASI.Basecode.Services.ServiceModels
 {
     public class UserViewModel
     {
+        [DisplayName("Id #")]
         public int Id { get; set; }
 
         public string Name { get; set; }
@@ -20,25 +21,34 @@ namespace ASI.Basecode.Services.ServiceModels
         public int Role { get; set; }
 
         public string DisplayRole { get; set; }
-        
+
         [Required(ErrorMessage = "This is required")]
         public string Email { get; set; }
+        public string Mail { get; set; }
 
+        [DisplayName("Date Created")]
         public DateTime DateCreated { get; set; }
 
+        [DisplayName("Date Modified")]
         public DateTime DateModified { get; set; }
 
         [Required(ErrorMessage = "This is required")]
         public string UserCode { get; set; }
 
         [Required(ErrorMessage = "This is required")]
+
+        [DisplayName("Last Name")]
         public string FirstName { get; set; }
 
         [Required(ErrorMessage = "This is required")]
+
+        [DisplayName("Last Name")]
         public string LastName { get; set; }
 
         [Required(ErrorMessage = "This is required")]
         public string Password { get; set; }
+        public string Action { get; set; }
+
     }
 
     public class UserListViewModel
