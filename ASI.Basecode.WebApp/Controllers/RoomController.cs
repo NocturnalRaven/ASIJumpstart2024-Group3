@@ -1,25 +1,38 @@
-﻿using ASI.Basecode.Services.Interfaces;
-using ASI.Basecode.WebApp.Mvc;
-using AutoMapper;
-using Microsoft.AspNetCore.Http;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using ASI.Basecode.WebApp.Models;
 
-namespace ASI.Basecode.WebApp.Controllers
+namespace ASI.Basecode.WebApp.Controllers;
+
+public class RoomController : Controller
 {
-    public class RoomController : ControllerBase<RoomController>
-    {
-        private readonly IRoomService _roomService;
+  private readonly ILogger<RoomController> _logger;
 
-        public RoomController(
-            IHttpContextAccessor httpContextAccessor,
-            ILoggerFactory loggerFactory,
-            IConfiguration configuration,
-            IMapper mapper,
-            IRoomService roomService)  : base(httpContextAccessor, loggerFactory, configuration, mapper)
-        {
-            _roomService = roomService;
-        }
-    }
+  public RoomController(ILogger<RoomController> logger)
+  {
+    _logger = logger;
+  }
+
+  #region HTTP GET
+
+  [HttpGet]
+  [Route("admin/dashboard/room")]
+  public IActionResult Index()
+  {
+    return View("~/Views/Dashboard/Room/Index.cshtml");
+  }
+
+  [Route("admin/dashboard/room/edit")]
+  public IActionResult Edit()
+  {
+    return View("~/Views/Dashboard/Room/Edit.cshtml");
+  }
+
+  [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+  public IActionResult Error()
+  {
+    return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+  }
+
+  #endregion
 }

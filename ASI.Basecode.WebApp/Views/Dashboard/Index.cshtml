@@ -1,0 +1,90 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<section class="section">
+
+    <div class="section-header">
+        <h1>@ViewData["Title"]</h1>
+    </div>
+
+    <div class="row">
+        <!-- Total rooms Card -->
+        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+            <a asp-controller="Room" asp-action="Index" class="card-link">
+                <div class="card card-statistic-1">
+                    <div class="card-icon bg-danger">
+                        <i class="fas fa-door-open"></i>
+                    </div>
+                    <div class="card-wrap">
+                        <div class="card-header">
+                            <h4>Total rooms</h4>
+                        </div>
+                        <div class="card-body">
+                            10
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Total users Card -->
+        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+            <a asp-action="Index" asp-controller="User" class="card-link">
+                <div class="card card-statistic-1">
+                    <div class="card-icon bg-danger">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="card-wrap">
+                        <div class="card-header">
+                            <h4>Total users</h4>
+                        </div>
+                        <div class="card-body">
+                            15
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+
+        <!-- Analytics Card -->
+        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+            <a asp-controller="Analytics" asp-action="Index" class="card-link">
+                <div class="card card-statistic-1">
+                    <div class="card-icon bg-danger">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="card-wrap">
+                        <div class="card-header">
+                            <h4>Analytics</h4>
+                        </div>
+                        <div class="card-body">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Profile Card -->
+        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+            <a asp-controller="Analytics" asp-action="Index" class="card-link">
+                <div class="card card-statistic-1">
+                    <div class="card-icon bg-danger">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="card-wrap">
+                        <div class="card-header">
+                            <h4>Profile</h4>
+                        </div>
+                        <div class="card-body">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+</section>
