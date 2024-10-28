@@ -13,6 +13,7 @@ public class DashboardController : Controller
         _logger = logger;
     }
 
+    [Route("admin/dashboard")]
     public IActionResult Index()
     {
         return View();

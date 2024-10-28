@@ -5,7 +5,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-	<ItemGroup>
+<ItemGroup>
+	  <EmbeddedResource Remove="**/*.resx" />
 		<PackageReference Include="AutoMapper" Version="11.0.1" />
 		<PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
 		<PackageReference Include="LinqKit" Version="1.2.2" />
@@ -30,5 +31,4 @@
 		<ProjectReference Include="..\ASI.Basecode.Resources\ASI.Basecode.Resources.csproj" />
 		<ProjectReference Include="..\ASI.Basecode.Services\ASI.Basecode.Services.csproj" />
 	</ItemGroup>
-
 </Project>

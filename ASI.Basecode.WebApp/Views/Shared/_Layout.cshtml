@@ -32,32 +32,43 @@
 </head>
 
 <body>
-  <div id="app">
-    <div class="main-wrapper main-wrapper-1">
-      <div class="navbar-bg"></div>
+  @* this hides the sidebar, navbar, and footer *@
+  @if (!(ViewData["HideNavbarSidebarFooter"] as bool? ?? false))
+  {
+    <div id="app">
+      <div class="main-wrapper main-wrapper-1">
+        <div class="navbar-bg"></div>
 
-      <!-- Main Navbar -->
-      @await Html.PartialAsync("_Navbar")
+        <!-- Main Navbar -->
+        @await Html.PartialAsync("_Navbar")
 
-      <!-- Main Sidebar -->
-      @await Html.PartialAsync("_Sidebar")
+        <!-- Main Sidebar -->
+        @await Html.PartialAsync("_Sidebar")
 
-      <!-- Main Content -->
-      <div class="main-content">
-        @RenderBody()
+        <!-- Main Content -->
+        <div class="main-content">
+          @RenderBody()
+        </div>
+
+        <!-- Main Footer -->
+        <footer class="main-footer">
+          <div class="footer-left">
+            Copyright &copy; 2025 <div class="bullet"></div> <a href="#">MRBS</a>
+          </div>
+          <div class="footer-right">
+          </div>
+        </footer>
       </div>
-
-      <!-- Main Footer -->
-      <footer class="main-footer">
-        <div class="footer-left">
-          Copyright &copy; 2025 <div class="bullet"></div> <a href="#">MRBS</a>
-        </div>
-        <div class="footer-right">
-
-        </div>
-      </footer>
     </div>
-  </div>
+  }
+  else
+  {
+    @* Login *@
+    <!-- Main Auth -->
+    <div id="app">
+      @RenderBody()
+    </div>
+  }
 
   <!-- General JS Scripts -->
   <script src="~/assets/modules/jquery.min.js"></script>
