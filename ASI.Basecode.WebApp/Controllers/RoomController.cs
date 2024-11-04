@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ASI.Basecode.WebApp.Controllers
 {
+    [Route("api/[controller]")]
     public class RoomController : ControllerBase<RoomController>
     {
         private readonly IRoomService _roomService;
@@ -17,9 +18,16 @@ namespace ASI.Basecode.WebApp.Controllers
             ILoggerFactory loggerFactory,
             IConfiguration configuration,
             IMapper mapper,
-            IRoomService roomService)  : base(httpContextAccessor, loggerFactory, configuration, mapper)
+            IRoomService roomService) : base(httpContextAccessor, loggerFactory, configuration, mapper)
         {
             _roomService = roomService;
+        }
+
+        [HttpGet("GetRooms")]
+        public IActionResult GetRooms()
+        {
+            var rooms = _roomService.GetAllRooms();
+            return Ok(rooms);
         }
     }
 }

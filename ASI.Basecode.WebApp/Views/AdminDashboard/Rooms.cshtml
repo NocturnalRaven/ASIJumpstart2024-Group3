@@ -135,71 +135,62 @@
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
-        // Dummy Data for Rooms
-        const roomsData = [
-            { room: 2, style: 'Classroom', capacity: 30, status: 'Available', floor: 2 },
-            { room: 4, style: 'Banquet', capacity: 40, status: 'Booked', floor: 4 },
-            { room: 6, style: 'Auditorium', capacity: 50, status: 'Available', floor: 8 },
-            { room: 11, style: 'Boardroom', capacity: 15, status: 'Available', floor: 1 },
-            { room: 1, style: 'Boardroom', capacity: 15, status: 'Booked', floor: 1 },
-            { room: 9, style: 'U-Shape', capacity: 18, status: 'Booked', floor: 3 }
-        ];
+        // // Dummy Data for Rooms
+        // const roomsData = [
+        //     { room: 2, style: 'Classroom', capacity: 30, status: 'Available', floor: 2 },
+        //     { room: 4, style: 'Banquet', capacity: 40, status: 'Booked', floor: 4 },
+        //     { room: 6, style: 'Auditorium', capacity: 50, status: 'Available', floor: 8 },
+        //     { room: 11, style: 'Boardroom', capacity: 15, status: 'Available', floor: 1 },
+        //     { room: 1, style: 'Boardroom', capacity: 15, status: 'Booked', floor: 1 },
+        //     { room: 9, style: 'U-Shape', capacity: 18, status: 'Booked', floor: 3 }
+        // ];
 
-        // Dummy Data for Booked Rooms
-        const bookedRoomsData = [
-            { room: 2, style: 'Classroom', user: 'Dean Lourence Barquio', no_of_people: 7, date_booked: '01/23/2024' },
-            { room: 4, style: 'Banquet', user: 'Dean Lourence Barquio', no_of_people: 25, date_booked: '02/06/2024' },
-            { room: 6, style: 'Auditorium', user: 'Dean Lourence Barquio', no_of_people: 12, date_booked: '05/18/2024' },
-            { room: 11, style: 'Boardroom', user: 'Dean Lourence Barquio', no_of_people: 10, date_booked: '06/01/2024' },
-            { room: 8, style: 'Boardroom', user: 'Dean Lourence Barquio', no_of_people: 15, date_booked: '07/10/2024' },
-            { room: 9, style: 'U-Shape', user: 'Dean Lourence Barquio', no_of_people: 20, date_booked: '08/15/2024' }
-        ];
+        // // Dummy Data for Booked Rooms
+        // const bookedRoomsData = [
+        //     { room: 2, style: 'Classroom', user: 'Dean Lourence Barquio', no_of_people: 7, date_booked: '01/23/2024' },
+        //     { room: 4, style: 'Banquet', user: 'Dean Lourence Barquio', no_of_people: 25, date_booked: '02/06/2024' },
+        //     { room: 6, style: 'Auditorium', user: 'Dean Lourence Barquio', no_of_people: 12, date_booked: '05/18/2024' },
+        //     { room: 11, style: 'Boardroom', user: 'Dean Lourence Barquio', no_of_people: 10, date_booked: '06/01/2024' },
+        //     { room: 8, style: 'Boardroom', user: 'Dean Lourence Barquio', no_of_people: 15, date_booked: '07/10/2024' },
+        //     { room: 9, style: 'U-Shape', user: 'Dean Lourence Barquio', no_of_people: 20, date_booked: '08/15/2024' }
+        // ];
 
-        // Function to render Rooms Table
+        document.addEventListener('DOMContentLoaded', fetchRooms);
+
+        async function fetchRooms() {
+            try {
+                const response = await fetch('/api/Room/GetRooms');
+                if (response.ok) {
+                    const rooms = await response.json();
+                    renderRooms(rooms);
+                } else {
+                    console.error('Failed to fetch room data');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
         function renderRooms(rooms) {
             const tbody = document.querySelector('#adminRoomTable tbody');
             tbody.innerHTML = ''; // Clear previous rows
 
-            rooms.forEach((room, index) => {
+            rooms.forEach(room => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${room.room}</td>
+                    <td>${room.name}</td>
                     <td>${room.style}</td>
                     <td>${room.capacity}</td>
                     <td style="color: ${room.status === 'Available' ? 'green' : 'red'}">${room.status}</td>
                     <td>${room.floor}</td>
                     <td class="actionBtnUsers">
-                        <i class="bi bi-pencil-square editIconBtn" onclick="editRoom(${index})"></i>
-                        <i class="bi bi-trash3 ms-2 deleteIconBtn" onclick="deleteRoom(${index})"></i>
+                        <i class="bi bi-pencil-square editIconBtn" onclick="editRoom(${room.roomId})"></i>
+                        <i class="bi bi-trash3 ms-2 deleteIconBtn" onclick="deleteRoom(${room.roomId})"></i>
                     </td>`;
                 tbody.appendChild(row);
             });
         }
 
-        // Function to render Booked Rooms Table
-        function renderBookedRooms(bookedRooms) {
-            const tbody = document.querySelector('#adminBookedTable tbody');
-            tbody.innerHTML = ''; // Clear previous rows
-
-            bookedRooms.forEach((booking, index) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${booking.room}</td>
-                    <td>${booking.style}</td>
-                    <td>${booking.user}</td>
-                    <td>${booking.no_of_people}</td>
-                    <td>${booking.date_booked}</td>
-                    <td class="actionBtnUsers">
-                        <i class="bi bi-pencil-square editIconBtn" onclick="editBooking(${index})"></i>
-                        <i class="bi bi-trash3 ms-2 deleteIconBtn" onclick="deleteBooking(${index})"></i>
-                    </td>`;
-                tbody.appendChild(row);
-            });
-        }
-
-        // Call the functions to render data
-        renderRooms(roomsData);
-        renderBookedRooms(bookedRoomsData);
     </script>
 </body>
 

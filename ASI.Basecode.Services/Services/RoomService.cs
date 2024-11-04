@@ -1,20 +1,27 @@
-﻿using ASI.Basecode.Services.Interfaces;
-using ASI.Basecode.Data.Interfaces;
-using System;
+﻿using ASI.Basecode.Data.Interfaces;
+using ASI.Basecode.Services.Interfaces;
+using ASI.Basecode.Services.ServiceModels;
+using AutoMapper;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ASI.Basecode.Services.Services
 {
     public class RoomService : IRoomService
     {
-        private readonly IRoomRepository _roomReposity;
+        private readonly IRoomRepository _roomRepository;
+        private readonly IMapper _mapper;
 
-        public RoomService(IRoomRepository roomRepository)
+        public RoomService(IRoomRepository roomRepository, IMapper mapper)
         {
-            _roomReposity = roomRepository;
+            _roomRepository = roomRepository;
+            _mapper = mapper;
+        }
+
+        public IEnumerable<RoomViewModel> GetAllRooms()
+        {
+            var rooms = _roomRepository.GetRooms().Where(r => !r.Deleted);
+            return _mapper.Map<IEnumerable<RoomViewModel>>(rooms);
         }
     }
 }
