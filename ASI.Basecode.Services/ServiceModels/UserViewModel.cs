@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ASI.Basecode.Services.ServiceModels
 {
@@ -19,9 +16,11 @@ namespace ASI.Basecode.Services.ServiceModels
         [Required(ErrorMessage = "This is required")]
         public int Role { get; set; }
 
-        public string DisplayRole { get; set; }
-        
+        // Computed property for display based on the Role
+        public string DisplayRole => GetRoleDisplayName(Role);
+
         [Required(ErrorMessage = "This is required")]
+        [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string Email { get; set; }
 
         public DateTime DateCreated { get; set; }
@@ -38,7 +37,21 @@ namespace ASI.Basecode.Services.ServiceModels
         public string LastName { get; set; }
 
         [Required(ErrorMessage = "This is required")]
+        [MinLength(6, ErrorMessage = "Password must be at least 6 characters long")]
         public string Password { get; set; }
+
+        // Method to get the role display name
+        private string GetRoleDisplayName(int role)
+        {
+            return role switch
+            {
+                9 => "Super Admin",
+                1 => "Admin",
+                2 => "Staff",
+                3 => "User",
+                _ => "Unknown"
+            };
+        }
     }
 
     public class UserListViewModel
@@ -46,7 +59,7 @@ namespace ASI.Basecode.Services.ServiceModels
         [DisplayName("ID")]
         public string IdFilter { get; set; }
 
-        [Display(Name = "FirstName", ResourceType = typeof(Resources.Views.Screen))]
+        [Display(Name = "First Name")]
         public string FirstNameFilter { get; set; }
 
         public IEnumerable<UserViewModel> dataList { get; set; }
@@ -57,5 +70,4 @@ namespace ASI.Basecode.Services.ServiceModels
         public UserListViewModel UserList { get; set; }
         public UserViewModel NewUser { get; set; }
     }
-
 }

@@ -28,7 +28,6 @@
                 <div class="bookingsDashboardHeader">
                     <p class="bookingsDashboardTitle">Users</p>
                     <div class="users-inputGroup">
-
                         <div class="input-group">
                             <input type="text" id="filterInput" class="form-control"
                                    placeholder="Search name, role, email" aria-label="Search"
@@ -44,8 +43,8 @@
                             <p class="addRoomText">Add user</p>
                         </button>
                     </div>
-
                 </div>
+
                 <table class="table table-striped align-middle" id="adminUserTable">
                     <thead>
                         <tr>
@@ -62,33 +61,15 @@
                         @foreach (var item in Model.UserList.dataList)
                         {
                             <tr>
+                                <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                                <td>@Html.DisplayFor(modelItem => item.DisplayRole)</td>
+                                <td>@Html.DisplayFor(modelItem => item.DateCreated)</td>
+                                <td>@Html.DisplayFor(modelItem => item.DateModified)</td>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.Id)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Name)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Email)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.DisplayRole)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.DateCreated)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.DateModified)
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-secondary btn-sm"
-                                            onclick="editUser(@item.Id)">
-                                        Edit
-                                    </button>
-                                    <button type="button" class="btn btn-danger btn-sm"
-                                            onclick="showDeleteModal(@item.Id)">
-                                        Delete
-                                    </button>
+                                    <button type="button" class="btn btn-secondary btn-sm" onclick="editUser(@item.Id)">Edit</button>
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="showDeleteModal(@item.Id)">Delete</button>
                                 </td>
                             </tr>
                         }
@@ -185,18 +166,18 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form>
+                        <form id="editUserForm">
                             <div class="mb-3">
                                 <label for="editUserNameInput" class="form-label">Name</label>
-                                <input type="text" class="form-control" id="editUserNameInput">
+                                <input type="text" class="form-control" id="editUserNameInput" disabled required>
                             </div>
                             <div class="mb-3">
                                 <label for="editUserEmailInput" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="editUserEmailInput">
+                                <input type="email" class="form-control" id="editUserEmailInput" required>
                             </div>
                             <div class="mb-3">
                                 <label for="editUserRoleInput" class="form-label">Role</label>
-                                <select class="form-select" id="editUserRoleInput">
+                                <select class="form-select" id="editUserRoleInput" required>
                                     <option value="3">User</option>
                                     <option value="2">Staff</option>
                                     <option value="1">Admin</option>
@@ -204,6 +185,22 @@
                                 </select>
                             </div>
                             <input type="hidden" id="editUserIdInput" />
+                            <div class="mb-3">
+                                <label for="editUserCodeInput" class="form-label">User Code</label>
+                                <input type="text" class="form-control" id="editUserCodeInput" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editUserFirstNameInput" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="editUserFirstNameInput" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editUserLastNameInput" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="editUserLastNameInput" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editUserPasswordInput" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="editUserPasswordInput" required>
+                            </div>
                         </form>
                     </div>
                     <div class="modal-footer">
@@ -236,6 +233,18 @@
 
         <script>
             const users = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.UserList.dataList));
+            
+            async function fetchUsers() {
+                try {
+                    const response = await fetch('/admin/dashboard/users'); // Adjust the URL if necessary
+                    if (!response.ok) throw new Error("Failed to fetch users.");
+
+                    const data = await response.json(); // Ensure this returns JSON
+                    renderUserTable(data); // Render the updated user list
+                } catch (error) {
+                    console.error("Error fetching users:", error);
+                }
+            }
 
             function applyFilter() {
                 const filter = document.getElementById('filterInput').value.toLowerCase();
@@ -247,24 +256,24 @@
                 renderUserTable(filteredUsers);
             }
 
-            function renderUserTable(usersToRender) {
+            function renderUserTable(users) {
                 const tbody = document.querySelector('#adminUserTable tbody');
-                tbody.innerHTML = '';
+                tbody.innerHTML = ''; // Clear existing rows
 
-                usersToRender.forEach(user => {
+                users.forEach(user => {
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                                    <td>${user.Id}</td>
-                                    <td>${user.Name}</td>
-                                    <td>${user.Email}</td>
-                                    <td>${user.DisplayRole}</td>
-                                    <td>${user.DateCreated}</td>
-                                    <td>${user.DateModified}</td>
-                                    <td>
-                                        <button type="button" class="btn btn-secondary btn-sm" onclick="editUser(${user.Id})">Edit</button>
-                                        <button type="button" class="btn btn-danger btn-sm" onclick="showDeleteModal(${user.Id})">Delete</button>
-                                    </td>
-                                `;
+                        <td>${user.Id}</td>
+                        <td>${user.Name}</td>
+                        <td>${user.Email}</td>
+                        <td>${user.DisplayRole}</td>
+                        <td>${new Date(user.DateCreated).toLocaleDateString()}</td>
+                        <td>${new Date(user.DateModified).toLocaleDateString()}</td>
+                        <td>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="editUser(${user.Id})">Edit</button>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="showDeleteModal(${user.Id})">Delete</button>
+                        </td>
+                    `;
                     tbody.appendChild(tr);
                 });
             }
@@ -287,27 +296,77 @@
                 modal.show();
             }
 
-            function updateUser() {
-                const id = document.getElementById('editUserIdInput').value;
+            async function updateUser() {
+                const id = parseInt(document.getElementById('editUserIdInput').value, 10);
                 const name = document.getElementById('editUserNameInput').value;
                 const email = document.getElementById('editUserEmailInput').value;
-                const role = document.getElementById('editUserRoleInput').value;
+                const role = parseInt(document.getElementById('editUserRoleInput').value, 10);
 
-                // Logic for updating the user goes here (e.g., AJAX call to the server)
+                // Assuming these values are available in the form or hardcoded for testing
+                const userCode = document.getElementById('editUserCodeInput').value || "SomeDefaultCode"; // Replace with actual user code input
+                const firstName = document.getElementById('editUserFirstNameInput').value || "DefaultFirstName"; // Replace with actual first name input
+                const lastName = document.getElementById('editUserLastNameInput').value || "DefaultLastName"; // Replace with actual last name input
+                const password = document.getElementById('editUserPasswordInput').value || "defaultPassword123"; // Replace with actual password input if updating
 
-                const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
-                modal.hide();
+                const updatedUser = {
+                    id,
+                    name,
+                    email,
+                    role,
+                    userCode,    // Required field
+                    firstName,   // Required field
+                    lastName,    // Required field
+                    password     // Required field
+                };
+
+                try {
+                    const response = await fetch(`/UpdateUser`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(updatedUser)
+                    });
+
+                    if (response.ok) {
+                        await fetchUsers(); // Refresh user list
+                        alert("User updated successfully.");
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+                        modal.hide();
+                    } else {
+                        const errorText = await response.text();
+                        console.error("Failed to update user:", errorText);
+                        alert("Error updating user: " + errorText);
+                    }
+                } catch (error) {
+                    console.error("Error updating user:", error);
+                }
             }
 
-            function deleteUser() {
+            async function deleteUser() {
                 const id = document.getElementById('deleteUserIdInput').value;
 
-                // Logic for deleting the user goes here (e.g., AJAX call to the server)
+                try {
+                    const response = await fetch(`/DeleteUser/${id}`, {
+                        method: 'DELETE'
+                    });
 
-                const modal = bootstrap.Modal.getInstance(document.getElementById('deleteUserModal'));
-                modal.hide();
+                    if (response.ok) {
+                        await fetchUsers(); // Refresh user list after deletion
+                        alert("User deleted successfully.");
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('deleteUserModal'));
+                        modal.hide();
+                    } else {
+                        const errorText = await response.text();
+                        console.error("Failed to delete user:", errorText);
+                        alert("Error deleting user: " + errorText);
+                    }
+                } catch (error) {
+                    console.error("Error deleting user:", error);
+                }
             }
         </script>
+
     </main>
 </body>
 
