@@ -246,15 +246,42 @@
                 }
             }
 
+            document.getElementById('filterInput').addEventListener('input', applyFilter);
+
             function applyFilter() {
                 const filter = document.getElementById('filterInput').value.toLowerCase();
                 const filteredUsers = users.filter(user => {
-                    return user.Name.toLowerCase().includes(filter) ||
-                        user.Email.toLowerCase().includes(filter) ||
-                        user.DisplayRole.toLowerCase().includes(filter);
+                    const name = user.Name ? user.Name.toLowerCase() : '';
+                    const email = user.Email ? user.Email.toLowerCase() : '';
+                    const displayRole = user.DisplayRole ? user.DisplayRole.toLowerCase() : '';
+
+                    return name.includes(filter) || email.includes(filter) || displayRole.includes(filter);
                 });
                 renderUserTable(filteredUsers);
             }
+
+            function renderUserTable(usersToRender) {
+                const tbody = document.querySelector('#adminUserTable tbody');
+                tbody.innerHTML = ''; // Clear existing rows
+
+                usersToRender.forEach(user => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${user.Id}</td>
+                        <td>${user.Name}</td>
+                        <td>${user.Email}</td>
+                        <td>${user.DisplayRole}</td>
+                        <td>${new Date(user.DateCreated).toLocaleDateString()}</td>
+                        <td>${new Date(user.DateModified).toLocaleDateString()}</td>
+                        <td>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="editUser(${user.Id})">Edit</button>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="showDeleteModal(${user.Id})">Delete</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
 
             function renderUserTable(users) {
                 const tbody = document.querySelector('#adminUserTable tbody');
