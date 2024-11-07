@@ -6,11 +6,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Bookings Dashboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -22,7 +22,7 @@
                 <div class="recentBookingsOverall">
                     <p class="recentBookingsAside">Recent Bookings</p>
                     <div class="recentBookingsOverallInner" id="recentBookingsContainer">
-                        <!-- Dummy data for Recent Bookings will be rendered here -->
+                        <!-- Recent Bookings will be rendered here -->
                     </div>
                 </div>
             </aside>
@@ -30,25 +30,34 @@
                 <div class="bookingsDashboard">
                     <div class="bookingsDashboardHeader">
                         <p class="bookingsDashboardTitle">Bookings</p>
-                        <i class="bi bi-filter"></i>
+                        <div class="headerActions">
+                            <button class="btn btn-primary btn-sm addBookingBtn" type="button" data-bs-toggle="modal" data-bs-target="#addBookingModal">
+                                <i class="bi bi-plus-square me-2"></i> Add Booking
+                            </button>
+                            <i class="bi bi-filter ms-3"></i>
+                        </div>
                     </div>
                     <div class="table-wrapper">
                         <table class="table table-striped align-middle" id="bookingsTable">
                             <thead>
                                 <tr>
-                                    <th scope="col">User</th>
-                                    <th scope="col">Room</th>
+                                    <th scope="col">User ID</th>
+                                    <th scope="col">User Name</th>
+                                    <th scope="col">Room ID</th>
+                                    <th scope="col">Room Name</th>
                                     <th scope="col">Date</th>
                                     <th scope="col">No. of People</th>
                                     <th scope="col">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Dummy data for Bookings will be rendered here -->
+                                <!-- Bookings will be rendered here -->
                             </tbody>
                         </table>
                     </div>
                 </div>
+
+                <!-- Pending Bookings Table -->
                 <div class="bookingsDashboardLower">
                     <div class="dashboardPending">
                         <div class="bookingsDashboardHeader">
@@ -59,123 +68,109 @@
                             <table class="table table-striped align-middle" id="pendingsTable">
                                 <thead>
                                     <tr>
-                                        <th scope="col">User</th>
-                                        <th scope="col">Room</th>
+                                        <th scope="col">User ID</th>
+                                        <th scope="col">User Name</th>
+                                        <th scope="col">Room ID</th>
+                                        <th scope="col">Room Name</th>
                                         <th scope="col">Date</th>
                                         <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Dummy data for Pending Bookings will be rendered here -->
+                                    <!-- Pending Bookings will be rendered here -->
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                    <div class="dashboardAnalytics">
-                        <div class="analytics-card">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <p class="bookingsDashboardTitle">Analytics</p>
-                                <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle btn-sm analyticsDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        All Time
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item active" href="#">All Time</a></li>
-                                        <li><a class="dropdown-item" href="#">Day</a></li>
-                                        <li><a class="dropdown-item" href="#">Week</a></li>
-                                        <li><a class="dropdown-item" href="#">Month</a></li>
-                                        <li><a class="dropdown-item" href="#">Year</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="chart-container">
-                                <canvas id="analyticsChart"></canvas>
-                            </div>
-                            <div class="legend-container">
-                                <div class="legend-item">
-                                    <div class="legend-color meeting-room"></div>
-                                    <span>Meeting Room</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="legend-color event-venue"></div>
-                                    <span>Event Venue</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="legend-color unit"></div>
-                                    <span>Unit</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="legend-color apartment"></div>
-                                    <span>Apartment</span>
-                                </div>
-                            </div>
+                </div>
+            </div>
+
+            <!-- Analytics Section -->
+            <div class="dashboardAnalytics">
+                <div class="analytics-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <p class="bookingsDashboardTitle">Analytics</p>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle btn-sm analyticsDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                All Time
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item active" href="#">All Time</a></li>
+                                <li><a class="dropdown-item" href="#">Day</a></li>
+                                <li><a class="dropdown-item" href="#">Week</a></li>
+                                <li><a class="dropdown-item" href="#">Month</a></li>
+                                <li><a class="dropdown-item" href="#">Year</a></li>
+                            </ul>
                         </div>
                     </div>
-                    <div class="offcanvas offcanvas-end" data-bs-backdrop="static" tabindex="-1" id="staticBackdrop" aria-labelledby="staticBackdropLabel">
-                        <div class="offcanvas-header">
-                            <h5 class="offcanvas-title" id="staticBackdropLabel">Add Bookings</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    <div class="chart-container">
+                        <canvas id="analyticsChart"></canvas>
+                    </div>
+                    <div class="legend-container">
+                        <div class="legend-item"><div class="legend-color meeting-room"></div><span>Meeting Room</span></div>
+                        <div class="legend-item"><div class="legend-color event-venue"></div><span>Event Venue</span></div>
+                        <div class="legend-item"><div class="legend-color unit"></div><span>Unit</span></div>
+                        <div class="legend-item"><div class="legend-color apartment"></div><span>Apartment</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Booking Modal -->
+            <div class="modal fade" id="addBookingModal" tabindex="-1" aria-labelledby="addBookingModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addBookingModalLabel">Add Booking</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="offcanvas-body">
-                            <div class="offcanvas-body-inner">
-                                <div>
-                                    <div class="mb-3">
-                                        <label for="exampleFormControlInput1" class="form-label">Name</label>
-                                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="exampleFormControlInput1" class="form-label">Email address</label>
-                                        <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="userRoleAdd" class="form-label">Meeting Room Style</label>
-                                        <select class="form-select" aria-label="Default select example" id="userRoleAdd">
-                                            <option selected>Classroom</option>
-                                            <option value="1">Banquet</option>
-                                            <option value="2">U-Shape</option>
-                                            <option value="3">Conference</option>
-                                            <option value="4">Auditorium</option>
-                                            <option value="5">Boardroom</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="userRoleAdd" class="form-label">Available Meeting Room</label>
-                                        <select class="form-select" aria-label="Default select example" id="userRoleAdd">
-                                            <option selected>1</option>
-                                            <option value="1">2</option>
-                                            <option value="2">3</option>
-                                            <option value="3">4</option>
-                                            <option value="4">5</option>
-                                            <option value="5">6</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="exampleFormControlInput1" class="form-label">Date</label>
-                                        <input type="date" class="form-control" id="exampleFormControlInput1" placeholder="">
-                                    </div>
-                                    <div class="mb-3 timeDiv">
-                                        <div>
-                                            <label for="exampleFormControlInput1" class="form-label">Start Time</label>
-                                            <input type="time" class="form-control" id="exampleFormControlInput1" placeholder="">
-                                        </div>
-                                        <div>
-                                            <label for="exampleFormControlInput1" class="form-label">End Time</label>
-                                            <input type="time" class="form-control" id="exampleFormControlInput1" placeholder="">
-                                        </div>
-                                    </div>
+                        <div class="modal-body">
+                            <form id="addBookingForm">
+                                <div class="mb-3">
+                                    <label for="addBookingUser" class="form-label">User</label>
+                                    <select class="form-select" id="addBookingUser" required>
+                                        <!-- User options will be filled dynamically -->
+                                    </select>
                                 </div>
-                                <div class="buttonsOffCanvas">
-                                    <button type="button" class="btn btn-outline-secondary">Cancel</button>
-                                    <button class="btn adminAddBookingBtn" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
-                                        <i class="bi bi-plus-square me-2"></i>Book
-                                    </button>
+                                <div class="mb-3">
+                                    <label for="addBookingRoom" class="form-label">Room</label>
+                                    <select class="form-select" id="addBookingRoom" required>
+                                        <!-- Room options will be filled dynamically -->
+                                    </select>
                                 </div>
-                            </div>
+                                <div class="mb-3">
+                                    <label for="addBookingDate" class="form-label">Date</label>
+                                    <input type="date" class="form-control" id="addBookingDate" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="addBookingStartTime" class="form-label">Start Time</label>
+                                    <input type="time" class="form-control" id="addBookingStartTime" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="addBookingEndTime" class="form-label">End Time</label>
+                                    <input type="time" class="form-control" id="addBookingEndTime" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="addBookingPeople" class="form-label">No. of People</label>
+                                    <input type="number" class="form-control" id="addBookingPeople" min="1" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="addBookingStatus" class="form-label">Status</label>
+                                    <select class="form-select" id="addBookingStatus" required>
+                                        <option value="Confirmed">Confirmed</option>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Canceled">Canceled</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" onclick="addBooking()">Add Booking</button>
                         </div>
                     </div>
                 </div>
             </div>
-            
+
             <!-- Edit Booking Modal -->
             <div class="modal fade" id="editBookingModal" tabindex="-1" aria-labelledby="editBookingModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -188,19 +183,39 @@
                             <form id="editBookingForm">
                                 <div class="mb-3">
                                     <label for="bookingUserInput" class="form-label">User</label>
-                                    <input type="text" class="form-control" id="bookingUserInput">
+                                    <select class="form-select" id="bookingUserInput" required>
+                                        <!-- User options will be filled dynamically -->
+                                    </select>
                                 </div>
                                 <div class="mb-3">
                                     <label for="bookingRoomInput" class="form-label">Room</label>
-                                    <input type="text" class="form-control" id="bookingRoomInput">
+                                    <select class="form-select" id="bookingRoomInput" required>
+                                        <!-- Room options will be filled dynamically -->
+                                    </select>
                                 </div>
                                 <div class="mb-3">
                                     <label for="bookingDateInput" class="form-label">Date</label>
-                                    <input type="text" class="form-control" id="bookingDateInput">
+                                    <input type="date" class="form-control" id="bookingDateInput" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bookingStartTimeInput" class="form-label">Start Time</label>
+                                    <input type="time" class="form-control" id="bookingStartTimeInput" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bookingEndTimeInput" class="form-label">End Time</label>
+                                    <input type="time" class="form-control" id="bookingEndTimeInput" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="bookingPeopleInput" class="form-label">No. of People</label>
-                                    <input type="number" class="form-control" id="bookingPeopleInput">
+                                    <input type="number" class="form-control" id="bookingPeopleInput" min="1" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bookingStatusInput" class="form-label">Status</label>
+                                    <select class="form-select" id="bookingStatusInput" required>
+                                        <option value="Confirmed">Confirmed</option>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Canceled">Canceled</option>
+                                    </select>
                                 </div>
                             </form>
                         </div>
@@ -212,202 +227,340 @@
                 </div>
             </div>
 
-            <!-- Modal for Filtering -->
-            <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="filterModalLabel">Filter Bookings</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="filterForm">
-                                <div class="mb-3">
-                                    <label for="filterRoom" class="form-label">Room</label>
-                                    <input type="text" class="form-control" id="filterRoom" placeholder="Enter room name">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="filterDate" class="form-label">Date</label>
-                                    <input type="date" class="form-control" id="filterDate">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="filterUser" class="form-label">User</label>
-                                    <input type="text" class="form-control" id="filterUser" placeholder="Enter user name">
-                                </div>
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" onclick="applyFilter()">Apply Filter</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-    </main>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
-    <script>
-        const bookingsData = [
-            {
-                "user": "Dean Lourence Barquio",
-                "room": "867",
-                "date": "10 Sept 2:00 - 15 Sept 7:30",
-                "no_of_people": "7",
-                "price": "2,800"
-            },
-            {
-                "user": "Jane Smith",
-                "room": "Meeting Room 3",
-                "date": "11 Sept 2:00 - 12 Sept 7:30",
-                "no_of_people": "10",
-                "price": "3,200"
-            },
-            {
-                "user": "John Doe",
-                "room": "Room 9",
-                "date": "12 Sept 3:00 - 13 Sept 5:00",
-                "no_of_people": "5",
-                "price": "1,800"
-            }
-        ];
+            <!-- JS Libraries -->
+            <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+            <script>
+                let bookingsData = []; // Global variable to store fetched bookings
 
-        // Function to render Recent Bookings
-        function renderRecentBookings(bookings) {
-            const container = document.querySelector('#recentBookingsContainer');
-            container.innerHTML = '';  // Clear existing content
+                async function fetchBookings() {
+                    try {
+                        const response = await fetch('/api/bookings/GetAllBookings');
+                        if (!response.ok) throw new Error("Failed to load bookings");
 
-            bookings.slice(0, 3).forEach(booking => {
-                const bookingHTML = `
-                    <div class="recentBookings">
-                        <p class="userRecentBookings">${booking.user}</p>
-                        <hr>
-                        <div class="recentBookingsDetailsDiv">
-                            <div class="recentBookingsDetails">
-                                <i class="bi bi-house-door-fill"></i>
-                                <p>${booking.room}</p>
-                            </div>
-                            <div class="recentBookingsDetails">
-                                <i class="bi bi-calendar2-week"></i>
-                                <p>${booking.date}</p>
-                            </div>
-                        </div>
-                    </div>`;
-                container.innerHTML += bookingHTML;
-            });
-        }
+                        const usersResponse = await fetch('/api/bookings/GetAllUsers');
+                        const roomsResponse = await fetch('/api/bookings/GetAllRooms');
 
-        // Function to render main Bookings table
-        function renderBookings(bookings) {
-            const tbody = document.querySelector('#bookingsTable tbody');
-            tbody.innerHTML = '';  // Clear existing content
+                        const users = await usersResponse.json();
+                        const rooms = await roomsResponse.json();
+                        const bookings = await response.json();
 
-            bookings.forEach((booking) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${booking.user}</td>
-                    <td>${booking.room}</td>
-                    <td>${booking.date}</td>
-                    <td>${booking.no_of_people}</td>
-                    <td>
-                        <button class="btn btn-primary btn-sm" onclick="viewBooking(${booking.id})">View</button>
-                        <button class="btn btn-info btn-sm" onclick="editBooking(${booking.id}, '${booking.user}', '${booking.room}', '${booking.date}', ${booking.no_of_people})">Edit</button>
-                        <button class="btn btn-danger btn-sm" onclick="cancelBooking(${booking.id})">Cancel</button>
-                    </td>`;
-                tbody.appendChild(row);
-            });
-        }
+                        // Add User ID and Room ID in the display
+                        bookingsData = bookings.map(booking => {
+                            const user = users.find(user => user.id === booking.userId);
+                            const room = rooms.find(room => room.roomId === booking.roomId);
 
-        function editBooking(id, user, room, date, no_of_people) {
-            // Populate the modal fields with the booking details
-            document.getElementById('bookingUserInput').value = user;
-            document.getElementById('bookingRoomInput').value = room;
-            document.getElementById('bookingDateInput').value = date;
-            document.getElementById('bookingPeopleInput').value = no_of_people;
+                            // Log if user or room is not found
+                            if (!user) console.warn(`User with ID ${booking.userId} not found`);
+                            if (!room) console.warn(`Room with ID ${booking.roomId} not found`);
 
-            // Set an event listener for saving changes
-            const saveButton = document.getElementById('saveChangesBtn');
-            saveButton.onclick = () => {
-                // Handle save changes logic here
-                const updatedBooking = {
-                    id: id,
-                    user: document.getElementById('bookingUserInput').value,
-                    room: document.getElementById('bookingRoomInput').value,
-                    date: document.getElementById('bookingDateInput').value,
-                    no_of_people: parseInt(document.getElementById('bookingPeopleInput').value, 10)
-                };
-                saveUpdatedBooking(updatedBooking);
-                $('#editBookingModal').modal('hide'); // Hide modal after saving
-            };
+                            return {
+                                ...booking,
+                                userName: user ? user.name : 'Unknown User',
+                                roomName: room ? room.name : 'Unknown Room'
+                            };
+                        });
 
-            // Show the modal
-            $('#editBookingModal').modal('show');
-        }
-
-        function saveUpdatedBooking(updatedBooking) {
-            // Logic to save the updated booking, e.g., making an API call to update the booking on the server
-            console.log('Saving updated booking:', updatedBooking);
-            // Implement your save logic here, like updating the bookings array or making an API request
-        }
-
-
-        // Render pending bookings using the same data
-        function renderPendings(bookings) {
-            const tbody = document.querySelector('#pendingsTable tbody');
-            tbody.innerHTML = '';  // Clear existing content
-
-            bookings.forEach((booking) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${booking.user}</td>
-                    <td>${booking.room}</td>
-                    <td>${booking.date}</td>
-                    <td>
-                        <button class="btn btn-primary btn-sm">View</button>
-                        <button class="btn btn-info btn-sm">Edit</button>
-                        <button class="btn btn-danger btn-sm">Cancel</button>
-                    </td>`;
-                tbody.appendChild(row);
-            });
-        }
-
-        // Render the recent bookings and tables with dummy data
-        renderRecentBookings(bookingsData);
-        renderBookings(bookingsData);
-        renderPendings(bookingsData);
-
-        // Initialize Flatpickr on the calendar div
-        flatpickr("#calendar", {
-            inline: true,
-            mode: "range",
-            dateFormat: "Y-m-d",
-            defaultDate: ["2024-09-10", "2024-09-15", "2024-10-01", "2024-10-15"]
-        });
-
-        // Pie chart data
-        const ctx = document.getElementById('analyticsChart').getContext('2d');
-        const analyticsData = {
-            labels: ['Meeting Room', 'Event Venue', 'Unit', 'Apartment'],
-            datasets: [{
-                label: 'Bookings by Type',
-                data: [40, 30, 20, 10],
-                backgroundColor: ['#6848FF', '#AFAEFF', '#E6DEFF', '#F3F0FF'],
-                borderWidth: 0
-            }]
-        };
-        new Chart(ctx, {
-            type: 'pie',
-            data: analyticsData,
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: false
+                        renderBookings(bookingsData);
+                        renderRecentBookings(bookingsData);
+                        renderPendings(bookingsData);
+                        populateUserAndRoomSelect(users, rooms);
+                        updateAnalyticsChart();
+                    } catch (error) {
+                        console.error(error.message);
                     }
                 }
-            }
-        });
 
-    </script>
+                function updateAnalyticsChart() {
+                    const roomTypeCounts = bookingsData.reduce((acc, booking) => {
+                        acc[booking.roomType] = (acc[booking.roomType] || 0) + 1;
+                        return acc;
+                    }, {});
+
+                    const roomTypes = Object.keys(roomTypeCounts);
+                    const counts = Object.values(roomTypeCounts);
+
+                    const ctx = document.getElementById('analyticsChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'pie',
+                        data: {
+                            labels: roomTypes,
+                            datasets: [{
+                                label: 'Bookings by Room Type',
+                                data: counts,
+                                backgroundColor: ['#6848FF', '#AFAEFF', '#E6DEFF', '#F3F0FF'],
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { display: false }
+                            }
+                        }
+                    });
+                }
+                function populateUserAndRoomSelect(users, rooms) {
+                    const addBookingUserSelect = document.getElementById('addBookingUser');
+                    const bookingUserInputSelect = document.getElementById('bookingUserInput');
+                    const addBookingRoomSelect = document.getElementById('addBookingRoom');
+                    const bookingRoomInputSelect = document.getElementById('bookingRoomInput');
+
+                    users.forEach(user => {
+                        const optionText = `${user.id} - ${user.name}`;
+                        const option = new Option(optionText, user.id);
+                        addBookingUserSelect.add(option);
+                        bookingUserInputSelect.add(option.cloneNode(true));
+                    });
+
+                    rooms.forEach(room => {
+                        const optionText = `${room.roomId} - ${room.name}`;
+                        const option = new Option(optionText, room.roomId);
+                        addBookingRoomSelect.add(option);
+                        bookingRoomInputSelect.add(option.cloneNode(true));
+                    });
+                }
+
+                function renderBookings(bookings) {
+                    const tbody = document.querySelector('#bookingsTable tbody');
+                    tbody.innerHTML = '';
+                    bookings.forEach(booking => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                                            <td>${booking.userId}</td>
+                                            <td>${booking.userName}</td>
+                                            <td>${booking.roomId}</td>
+                                            <td>${booking.roomName}</td>
+                                            <td>${new Date(booking.startDate).toLocaleDateString()}</td>
+                                            <td>${booking.noOfPeople}</td>
+                                            <td>
+                                                <button class="btn btn-primary btn-sm" onclick="viewBooking(${booking.bookingId})">View</button>
+                                                <button class="btn btn-info btn-sm" onclick="editBooking(${booking.bookingId}, ${booking.userId}, ${booking.roomId}, '${booking.startDate}', '${booking.endDate}', ${booking.noOfPeople}, '${booking.status}')">Edit</button>
+                                                <button class="btn btn-danger btn-sm" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
+                                            </td>`;
+                        tbody.appendChild(row);
+                    });
+                }
+
+                function renderRecentBookings(bookings) {
+                    const container = document.querySelector('#recentBookingsContainer');
+                    container.innerHTML = '';
+
+                    bookings.slice(0, 3).forEach(booking => {
+                        const bookingHTML = `
+                                            <div class="recentBookings">
+                                                <p class="userRecentBookings">${booking.userName}</p>
+                                                <hr>
+                                                <div class="recentBookingsDetailsDiv">
+                                                    <div class="recentBookingsDetails">
+                                                        <i class="bi bi-house-door-fill"></i>
+                                                        <p>${booking.roomName}</p>
+                                                    </div>
+                                                    <div class="recentBookingsDetails">
+                                                        <i class="bi bi-calendar2-week"></i>
+                                                        <p>${new Date(booking.startDate).toLocaleDateString()}</p>
+                                                    </div>
+                                                </div>
+                                            </div>`;
+                        container.innerHTML += bookingHTML;
+                    });
+                }
+
+                function renderPendings(bookings) {
+                    const tbody = document.querySelector('#pendingsTable tbody');
+                    tbody.innerHTML = '';
+
+                    const pendingBookings = bookings.filter(booking => booking.status === "Pending");
+                    pendingBookings.forEach(booking => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                                            <td>${booking.userName}</td>
+                                            <td>${booking.roomName}</td>
+                                            <td>${new Date(booking.startDate).toLocaleDateString()}</td>
+                                            <td>
+                                                <button class="btn btn-primary btn-sm" onclick="viewBooking(${booking.bookingId})">View</button>
+                                                <button class="btn btn-info btn-sm" onclick="editBooking(${booking.bookingId}, ${booking.userId}, ${booking.roomId}, '${booking.startDate}', '${booking.endDate}', ${booking.noOfPeople}, '${booking.status}')">Edit</button>
+                                                <button class="btn btn-danger btn-sm" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
+                                            </td>`;
+                        tbody.appendChild(row);
+                    });
+                }
+
+                async function addBooking() {
+                    const newBooking = {
+                        userId: parseInt(document.getElementById('addBookingUser').value, 10),
+                        roomId: parseInt(document.getElementById('addBookingRoom').value, 10),
+                        startDate: document.getElementById('addBookingDate').value + "T" + document.getElementById('addBookingStartTime').value,
+                        endDate: document.getElementById('addBookingDate').value + "T" + document.getElementById('addBookingEndTime').value,
+                        noOfPeople: parseInt(document.getElementById('addBookingPeople').value, 10),
+                        status: document.getElementById('addBookingStatus').value
+                    };
+
+                    try {
+                        const response = await fetch('/api/bookings/AddBooking', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(newBooking)
+                        });
+
+                        if (response.ok) {
+                            await fetchBookings();
+                            $('#addBookingModal').modal('hide');
+                        } else {
+                            const errorText = await response.text();
+                            alert("Error adding booking: " + errorText);
+                        }
+                    } catch (error) {
+                        console.error("Network error:", error);
+                        alert("Unexpected error adding booking.");
+                    }
+                }
+
+                function editBooking(bookingId, userId, roomId, startDate, endDate, noOfPeople, status) {
+                    document.getElementById('bookingUserInput').value = userId;
+                    document.getElementById('bookingRoomInput').value = roomId;
+                    document.getElementById('bookingDateInput').value = new Date(startDate).toISOString().split("T")[0];
+                    document.getElementById('bookingStartTimeInput').value = new Date(startDate).toISOString().split("T")[1].slice(0, 5);
+                    document.getElementById('bookingEndTimeInput').value = new Date(endDate).toISOString().split("T")[1].slice(0, 5);
+                    document.getElementById('bookingPeopleInput').value = noOfPeople;
+                    document.getElementById('bookingStatusInput').value = status;
+
+                    document.getElementById('saveChangesBtn').onclick = async function () {
+                        const updatedBooking = {
+                            bookingId,
+                            userId: parseInt(document.getElementById('bookingUserInput').value, 10),
+                            roomId: parseInt(document.getElementById('bookingRoomInput').value, 10),
+                            startDate: `${document.getElementById('bookingDateInput').value}T${document.getElementById('bookingStartTimeInput').value}`,
+                            endDate: `${document.getElementById('bookingDateInput').value}T${document.getElementById('bookingEndTimeInput').value}`,
+                            noOfPeople: parseInt(document.getElementById('bookingPeopleInput').value, 10),
+                            status: document.getElementById('bookingStatusInput').value
+                        };
+
+                        await saveUpdatedBooking(updatedBooking);
+                        $('#editBookingModal').modal('hide');
+                    };
+
+                    $('#editBookingModal').modal('show');
+                }
+
+                async function saveUpdatedBooking(updatedBooking) {
+                    try {
+                        const response = await fetch('/api/bookings/UpdateBooking', {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(updatedBooking)
+                        });
+
+                        if (response.ok) {
+                            await fetchBookings();
+                            alert("Booking updated successfully.");
+                        } else {
+                            const errorText = await response.text();
+                            alert("Error updating booking: " + errorText);
+                        }
+                    } catch (error) {
+                        console.error("Error updating booking:", error);
+                    }
+                }
+
+                async function cancelBooking(bookingId) {
+                    if (confirm("Are you sure you want to cancel this booking?")) {
+                        try {
+                            const response = await fetch(`/api/bookings/DeleteBooking/${bookingId}`, { method: 'DELETE' });
+                            if (response.ok) {
+                                await fetchBookings();
+                                alert("Booking canceled successfully.");
+                            } else {
+                                alert("Error canceling booking.");
+                            }
+                        } catch (error) {
+                            console.error("Error canceling booking:", error);
+                        }
+                    }
+                }
+
+                async function viewBooking(bookingId) {
+                    try {
+                        const booking = bookingsData.find(b => b.bookingId === bookingId);
+
+                        if (!booking) throw new Error("Booking not found in fetched data");
+
+                        alert(`Booking Details:\nUser: ${booking.userName}\nRoom: ${booking.roomName}\nDate: ${new Date(booking.startDate).toLocaleDateString()}`);
+                    } catch (error) {
+                        console.error("Error viewing booking:", error);
+                        alert("An error occurred while viewing booking details.");
+                    }
+                }
+
+                async function editBooking(bookingId) {
+                    try {
+                        const response = await fetch(`/api/bookings/GetBookedRoomById/${bookingId}`);
+                        if (!response.ok) throw new Error("Booking not found");
+
+                        const booking = await response.json();
+
+                        // Populate edit form with booking details
+                        document.getElementById('bookingUserInput').value = booking.userId;
+                        document.getElementById('bookingRoomInput').value = booking.roomId;
+                        document.getElementById('bookingDateInput').value = new Date(booking.startDate).toISOString().split("T")[0];
+                        document.getElementById('bookingStartTimeInput').value = new Date(booking.startDate).toISOString().split("T")[1].slice(0, 5);
+                        document.getElementById('bookingEndTimeInput').value = new Date(booking.endDate).toISOString().split("T")[1].slice(0, 5);
+                        document.getElementById('bookingPeopleInput').value = booking.noOfPeople;
+                        document.getElementById('bookingStatusInput').value = booking.status;
+
+                        document.getElementById('saveChangesBtn').onclick = async function () {
+                            const updatedBooking = {
+                                bookingId,
+                                userId: parseInt(document.getElementById('bookingUserInput').value, 10),
+                                roomId: parseInt(document.getElementById('bookingRoomInput').value, 10),
+                                startDate: `${document.getElementById('bookingDateInput').value}T${document.getElementById('bookingStartTimeInput').value}`,
+                                endDate: `${document.getElementById('bookingDateInput').value}T${document.getElementById('bookingEndTimeInput').value}`,
+                                noOfPeople: parseInt(document.getElementById('bookingPeopleInput').value, 10),
+                                status: document.getElementById('bookingStatusInput').value
+                            };
+
+                            await saveUpdatedBooking(updatedBooking);
+                            $('#editBookingModal').modal('hide');
+                        };
+
+                        $('#editBookingModal').modal('show');
+                    } catch (error) {
+                        console.error("Error fetching booking for editing:", error);
+                        alert("An error occurred while editing the booking.");
+                    }
+                }
+
+                async function saveUpdatedBooking(updatedBooking) {
+                    try {
+                        const response = await fetch(`/api/bookings/UpdateBookedRoom/${updatedBooking.bookingId}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(updatedBooking)
+                        });
+
+                        if (response.ok) {
+                            await fetchBookings();
+                            alert("Booking updated successfully.");
+                        } else {
+                            const errorText = await response.text();
+                            console.error("Failed to update booking:", errorText);
+                            alert("Error updating booking: " + errorText);
+                        }
+                    } catch (error) {
+                        console.error("Error updating booking:", error);
+                    }
+                }
+
+
+                flatpickr("#calendar", {
+                    inline: true,
+                    mode: "range",
+                    dateFormat: "Y-m-d",
+                    defaultDate: ["2024-09-10", "2024-09-15", "2024-10-01", "2024-10-15"]
+                });
+
+                document.addEventListener("DOMContentLoaded", fetchBookings);
+            </script>
 </body>
 </html>

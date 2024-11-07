@@ -13,6 +13,7 @@ namespace ASI.Basecode.Services.Interfaces
         void Add(BookingViewModel model);
         void Update(BookingViewModel model);
         void Delete(int id);
+        IEnumerable<BookedRoomViewModel> RetrieveBookedRooms();
 
     }
 }

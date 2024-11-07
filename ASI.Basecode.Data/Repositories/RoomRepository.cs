@@ -2,10 +2,7 @@
 using ASI.Basecode.Data.Models;
 using Basecode.Data.Repositories;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ASI.Basecode.Data.Repositories
 {
@@ -13,42 +10,46 @@ namespace ASI.Basecode.Data.Repositories
     {
         public RoomRepository(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
+        // Retrieves all rooms, including both active and deleted rooms if needed
         public IQueryable<Room> GetRooms()
         {
             return this.GetDbSet<Room>();
         }
 
+        // Checks if a room with the specified ID exists
         public bool RoomExists(int roomId)
         {
             return this.GetDbSet<Room>().Any(x => x.Id == roomId);
         }
 
+        // Adds a new room to the database
         public void AddRoom(Room room)
         {
-            var maxId = this.GetDbSet<Room>().Max(x => x.Id) + 1;
-            room.Id = maxId;
+            // Do not set room.Id manually; let the database handle the auto-increment
             room.CreatedAt = DateTime.Now;
             room.UpdatedAt = DateTime.Now;
             this.GetDbSet<Room>().Add(room);
             UnitOfWork.SaveChanges();
         }
 
+        // Updates the information of an existing room
         public void UpdateRoom(Room room)
         {
-            this.GetDbSet<Room>().Update(room);
             room.UpdatedAt = DateTime.Now;
+            this.GetDbSet<Room>().Update(room);
             UnitOfWork.SaveChanges();
         }
 
+        // Soft-deletes a room by marking it as deleted and setting the DeletedAt timestamp
         public void DeleteRoom(int roomId)
         {
-            var roomToDelete = this.GetDbSet<Room>().FirstOrDefault(x => x.Deleted != true && x.Id == roomId);
+            var roomToDelete = this.GetDbSet<Room>().FirstOrDefault(x => !x.Deleted && x.Id == roomId);
             if (roomToDelete != null)
             {
                 roomToDelete.Deleted = true;
                 roomToDelete.DeletedAt = DateTime.Now;
+                UnitOfWork.SaveChanges();
             }
-            UnitOfWork.SaveChanges();
         }
     }
 }

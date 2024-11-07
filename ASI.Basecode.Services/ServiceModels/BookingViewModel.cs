@@ -23,12 +23,4 @@ namespace ASI.Basecode.Services.ServiceModels
         public bool IsRecurring { get; set; }
         public string Frequency { get; set; }
     }
-
-    public class BookingListViewModel
-    {
-        [DisplayName("ID")]
-        public string IdFilter { get; set; }
-
-        public IEnumerable<BookingViewModel> dataList { get; set; }
-    }
 }

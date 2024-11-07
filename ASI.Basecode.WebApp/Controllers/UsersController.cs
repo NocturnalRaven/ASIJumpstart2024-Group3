@@ -9,7 +9,9 @@ namespace ASI.Basecode.WebApp.Controllers
             return View();
         }
 
-        public IActionResult UserBookings() { return View(); }
+        public IActionResult UserBookings() 
+        { return View(); 
+        }
 
         public IActionResult UserAnalytics()
         {

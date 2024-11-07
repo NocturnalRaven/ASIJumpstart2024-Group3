@@ -28,12 +28,11 @@ namespace ASI.Basecode.Data.Repositories
 
         public void AddBooking(Booking booking)
         {
-            var maxId = this.GetDbSet<Booking>().Max(x => x.Id) + 1;
-            booking.Id = maxId;
             booking.CreatedAt = DateTime.Now;
             this.GetDbSet<Booking>().Add(booking);
-            UnitOfWork.SaveChanges();
+            UnitOfWork.SaveChanges(); // The database will handle ID assignment
         }
+
 
         public void UpdateBooking(Booking booking)
         {

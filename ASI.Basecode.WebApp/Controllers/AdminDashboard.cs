@@ -1,9 +1,7 @@
 ﻿using ASI.Basecode.Services.Interfaces;
 using ASI.Basecode.Services.ServiceModels;
-using ASI.Basecode.Services.Services;
 using ASI.Basecode.WebApp.Mvc;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -15,31 +13,24 @@ namespace ASI.Basecode.WebApp.Controllers
 {
     public class AdminDashboard : ControllerBase<AdminDashboard>
     {
-
         private readonly IUserService _userService;
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="httpContextAccessor"></param>
-        /// <param name="loggerFactory"></param>
-        /// <param name="configuration"></param>
-        /// <param name="localizer"></param>
-        /// <param name="mapper"></param>
 
+        /// <summary>
+        /// Constructor for AdminDashboard
+        /// </summary>
         public AdminDashboard(IUserService userService,
            IHttpContextAccessor httpContextAccessor,
-                             ILoggerFactory loggerFactory,
-                             IConfiguration configuration,
-                             IMapper mapper = null) : base(httpContextAccessor, loggerFactory, configuration, mapper)
+           ILoggerFactory loggerFactory,
+           IConfiguration configuration,
+           IMapper mapper = null)
+           : base(httpContextAccessor, loggerFactory, configuration, mapper)
         {
             _userService = userService;
         }
 
-
         #region GET Methods
 
         [HttpGet]
-        //[Authorize(Policy = "AdminOnly")]
         [Route("/admin/dashboard")]
         public IActionResult Admindashboard()
         {
@@ -47,39 +38,32 @@ namespace ASI.Basecode.WebApp.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Policy = "AdminOnly")]
         [Route("/admin/dashboard/users")]
         public IActionResult AdminUserDashboard()
         {
             try
             {
-                _logger.LogInformation("=======Retrieve All Start=======");
+                _logger.LogInformation("Start retrieving all users for Admin User Dashboard.");
                 var data = _userService.RetrieveAll().ToList();
-                var role = UserRole;
-                ViewData["Role"] = role;
+                ViewData["Role"] = UserRole;
 
-                // Pass the correct model type
                 var model = new UserPageViewModel
                 {
-                    UserList = new UserListViewModel
-                    {
-                        dataList = data
-                    },
+                    UserList = new UserListViewModel { dataList = data },
                     NewUser = new UserViewModel()
                 };
 
-                _logger.LogInformation("=======Retrieve All End==========");
+                _logger.LogInformation("Successfully retrieved all users for Admin User Dashboard.");
                 return View(model);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError("Error retrieving users: {Message}", ex.Message);
                 return View(null);
             }
         }
 
         [HttpGet]
-        //[Authorize(Policy = "AdminOnly")]
         [Route("/admin-dashboard/rooms")]
         public IActionResult Rooms()
         {
@@ -87,7 +71,6 @@ namespace ASI.Basecode.WebApp.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Policy = "AdminOnly")]
         [Route("/admin/dashboard/analytics")]
         public IActionResult AdminAnalytics()
         {
@@ -97,66 +80,72 @@ namespace ASI.Basecode.WebApp.Controllers
         #endregion
 
         #region POST Methods
+
         [HttpPost]
         public IActionResult PostCreate(UserViewModel model)
         {
-            _logger.LogInformation("=======User Creation: PostCreate Start=======");
+            _logger.LogInformation("Start user creation.");
 
             try
             {
-                // Check for duplicate UserCode
-                bool isExist = _userService.RetrieveAll().Any(data => data.UserCode == model.UserCode);
-                if (isExist)
+                if (_userService.RetrieveAll().Any(data => data.UserCode == model.UserCode))
                 {
-                    TempData["DuplicateErr"] = "Duplicate UserCode: " + model.UserCode;
-                    _logger.LogError($"Duplicate UserCode: {model.UserCode}");
+                    TempData["DuplicateErr"] = $"Duplicate UserCode: {model.UserCode}";
+                    _logger.LogWarning("Attempted to create a duplicate UserCode: {UserCode}", model.UserCode);
                     return RedirectToAction("AdminUserDashboard");
                 }
 
-                // Add the user using the UserService
                 _userService.Add(model);
                 TempData["CreateMessage"] = "User added successfully!";
+                _logger.LogInformation("User created successfully.");
                 return RedirectToAction("AdminUserDashboard");
             }
             catch (ArgumentException ex)
             {
-                TempData["ErrorMessage"] = ex.Message; // Handle validation errors (e.g. empty UserCode)
+                TempData["ErrorMessage"] = ex.Message;
+                _logger.LogError("User creation failed due to invalid input: {Message}", ex.Message);
                 return RedirectToAction("AdminUserDashboard");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError("Error occurred while adding user: {Message}", ex.Message);
                 TempData["ErrorMessage"] = "An error occurred while adding the user.";
                 return RedirectToAction("AdminUserDashboard");
             }
         }
 
-
         [HttpPost]
-        //[Authorize(Policy = "AdminOnly")]
         public IActionResult PostUpdate(UserViewModel model)
         {
-            _userService.Update(model);
+            try
+            {
+                _userService.Update(model);
+                TempData["UpdateMessage"] = "User updated successfully!";
+                _logger.LogInformation("User with Id {Id} updated successfully.", model.Id);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error updating user.";
+                _logger.LogError("Error updating user with Id {Id}: {Message}", model.Id, ex.Message);
+            }
             return RedirectToAction("AdminUserDashboard");
         }
 
         [HttpPost]
-        //[Authorize(Policy = "AdminOnly")]
-        public IActionResult PostDelete(int Id)
+        public IActionResult PostDelete(int id)
         {
             try
             {
-                _userService.Delete(Id);
-                _logger.LogInformation($"User with Id {Id} deleted successfully.");
-
-                return RedirectToAction("AdminUserDashboard");
+                _userService.Delete(id);
+                TempData["DeleteMessage"] = $"User with Id {id} deleted successfully.";
+                _logger.LogInformation("User with Id {Id} deleted successfully.", id);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error deleting user with Id {Id}: {ex.Message}");
-
-                return RedirectToAction("AdminUserDashboard");
+                TempData["ErrorMessage"] = $"Error deleting user with Id {id}.";
+                _logger.LogError("Error deleting user with Id {Id}: {Message}", id, ex.Message);
             }
+            return RedirectToAction("AdminUserDashboard");
         }
 
         #endregion
