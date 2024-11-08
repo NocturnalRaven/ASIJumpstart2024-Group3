@@ -18,8 +18,11 @@ namespace ASI.Basecode.Data.Repositories
 
         public IQueryable<Booking> GetBooking()
         {
-            return this.GetDbSet<Booking>();
+            var bookings = this.GetDbSet<Booking>();
+            Console.WriteLine($"Total Bookings Retrieved: {bookings.Count()}"); // Log the count for debugging
+            return bookings;
         }
+
 
         public bool BookingExists(int bookingId)
         {

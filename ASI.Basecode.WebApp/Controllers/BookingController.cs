@@ -10,6 +10,7 @@ using System.Security.Claims;
 namespace ASI.Basecode.WebApp.Controllers
 {
     [Route("api/bookings")]
+    [ApiController]
     public class BookingController : Controller
     {
         private readonly IBookingService _bookingService;
@@ -30,7 +31,7 @@ namespace ASI.Basecode.WebApp.Controllers
         }
 
         [HttpGet("GetAllBookings")]
-        public JsonResult GetAllBookings()
+        public IActionResult GetAllBookings()
         {
             try
             {
@@ -39,13 +40,13 @@ namespace ASI.Basecode.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error fetching all bookings: ", ex);
-                return Json(new { error = "Failed to retrieve bookings" });
+                _logger.LogError("Error fetching all bookings: {Message}", ex.Message);
+                return StatusCode(500, new { error = "Failed to retrieve bookings" });
             }
         }
 
         [HttpGet("GetBookedRooms")]
-        public JsonResult GetBookedRooms()
+        public IActionResult GetBookedRooms()
         {
             try
             {
@@ -54,81 +55,79 @@ namespace ASI.Basecode.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error fetching booked rooms: ", ex);
-                return Json(new { error = "Failed to retrieve booked rooms" });
+                _logger.LogError("Error fetching booked rooms: {Message}", ex.Message);
+                return StatusCode(500, new { error = "Failed to retrieve booked rooms" });
             }
         }
 
         [HttpGet("GetBookedRoomById/{id}")]
-        public JsonResult GetBookedRoomById(int id)
+        public IActionResult GetBookedRoomById(int id)
         {
             try
             {
                 var bookedRoom = _bookingService.RetrieveBooking(id);
                 if (bookedRoom == null)
                 {
-                    return Json(new { error = "Booked room not found" });
+                    return NotFound(new { error = "Booked room not found" });
                 }
                 return Json(bookedRoom);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error fetching booked room with ID {id}: ", ex);
-                return Json(new { error = "Failed to retrieve booked room" });
+                _logger.LogError("Error fetching booked room with ID {Id}: {Message}", id, ex.Message);
+                return StatusCode(500, new { error = "Failed to retrieve booked room" });
             }
         }
 
         [HttpPost("AddBooking")]
         public IActionResult AddBooking([FromBody] BookingViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _bookingService.Add(model);
-                    return Ok("Booking added successfully.");
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError("Error adding booking: ", ex);
-                    return StatusCode(500, "Internal server error while adding booking");
-                }
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                _logger.LogWarning("Invalid booking data: {Errors}", string.Join(", ", errors));
+                return BadRequest("Invalid booking data");
             }
 
-            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-            _logger.LogWarning("Invalid booking data: {Errors}", string.Join(", ", errors));
-
-            return BadRequest("Invalid booking data");
+            try
+            {
+                _bookingService.Add(model);
+                return Ok(new { message = "Booking added successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error adding booking: {Message}", ex.Message);
+                return StatusCode(500, "Internal server error while adding booking");
+            }
         }
 
         [HttpPut("UpdateBooking/{id}")]
         public IActionResult UpdateBooking(int id, [FromBody] BookingViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    var existingBooking = _bookingService.RetrieveBooking(id);
-                    if (existingBooking == null)
-                    {
-                        return NotFound("Booking not found.");
-                    }
-
-                    model.BookingId = id; // Ensure the ID in the model matches the URL parameter
-                    _bookingService.Update(model);
-                    return Ok("Booking updated successfully.");
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError("Error updating booking: ", ex);
-                    return StatusCode(500, "Internal server error while updating booking");
-                }
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                _logger.LogWarning("Invalid booking data: {Errors}", string.Join(", ", errors));
+                return BadRequest("Invalid booking data");
             }
 
-            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-            _logger.LogWarning("Invalid booking data: {Errors}", string.Join(", ", errors));
+            try
+            {
+                var existingBooking = _bookingService.RetrieveBooking(id);
+                if (existingBooking == null)
+                {
+                    return NotFound(new { error = "Booking not found" });
+                }
 
-            return BadRequest("Invalid booking data");
+                model.BookingId = id;
+                _bookingService.Update(model);
+                return Ok(new { message = "Booking updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error updating booking with ID {Id}: {Message}", id, ex.Message);
+                return StatusCode(500, "Internal server error while updating booking");
+            }
         }
 
         [HttpDelete("DeleteBooking/{id}")]
@@ -139,21 +138,19 @@ namespace ASI.Basecode.WebApp.Controllers
                 var booking = _bookingService.RetrieveBooking(id);
                 if (booking == null)
                 {
-                    _logger.LogWarning("Booking with ID {BookingId} not found for deletion", id);
-                    return NotFound(new { message = "Booking not found." });
+                    _logger.LogWarning("Booking with ID {Id} not found for deletion", id);
+                    return NotFound(new { error = "Booking not found" });
                 }
 
                 _bookingService.Delete(id);
-                _logger.LogInformation("Booking with ID {BookingId} deleted successfully", id);
-                return Ok(new { message = "Booking deleted successfully." });
+                return Ok(new { message = "Booking deleted successfully" });
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error deleting booking with ID {BookingId}: {Exception}", id, ex);
-                return StatusCode(500, new { error = "Internal server error while deleting booking." });
+                _logger.LogError("Error deleting booking with ID {Id}: {Message}", id, ex.Message);
+                return StatusCode(500, "Internal server error while deleting booking");
             }
         }
-
 
         [HttpDelete("DeleteBookedRoom/{id}")]
         public IActionResult DeleteBookedRoom(int id)
@@ -161,12 +158,12 @@ namespace ASI.Basecode.WebApp.Controllers
             try
             {
                 _bookingService.Delete(id);
-                return Ok("Booking deleted successfully.");
+                return Ok(new { message = "Booked room deleted successfully" });
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error deleting booking: ", ex);
-                return StatusCode(500, "Internal server error while deleting booking");
+                _logger.LogError("Error deleting booked room with ID {Id}: {Message}", id, ex.Message);
+                return StatusCode(500, "Internal server error while deleting booked room");
             }
         }
 
@@ -176,7 +173,7 @@ namespace ASI.Basecode.WebApp.Controllers
             if (!ModelState.IsValid)
             {
                 var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
-                _logger.LogWarning("Model validation failed: {Errors}", string.Join(", ", errors));
+                _logger.LogWarning("Invalid booking data: {Errors}", string.Join(", ", errors));
                 return BadRequest("Invalid booking data");
             }
 
@@ -185,68 +182,77 @@ namespace ASI.Basecode.WebApp.Controllers
                 var existingBooking = _bookingService.RetrieveBooking(id);
                 if (existingBooking == null)
                 {
-                    return NotFound("Booking not found.");
+                    return NotFound(new { error = "Booking not found" });
                 }
 
                 _bookingService.Update(model);
-                return Ok("Booking updated successfully.");
+                return Ok(new { message = "Booking updated successfully" });
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error updating booking: ", ex);
+                _logger.LogError("Error updating booking with ID {Id}: {Message}", id, ex.Message);
                 return StatusCode(500, "Internal server error while updating booking");
             }
         }
 
-
         [HttpGet("ViewBooking/{id}")]
-        public JsonResult ViewBooking(int id)
+        public IActionResult ViewBooking(int id)
         {
             try
             {
                 var booking = _bookingService.RetrieveBooking(id);
                 if (booking == null)
                 {
-                    return Json(new { error = "Booking not found" });
+                    return NotFound(new { error = "Booking not found" });
                 }
                 return Json(booking);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error fetching booking with ID {id}: ", ex);
-                return Json(new { error = "Failed to retrieve booking" });
+                _logger.LogError("Error fetching booking with ID {Id}: {Message}", id, ex.Message);
+                return StatusCode(500, "Failed to retrieve booking");
             }
         }
 
-        // Additional endpoints
         [HttpGet("UserBookings")]
         public IActionResult UserBookings()
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (string.IsNullOrEmpty(userIdString))
+            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
             {
-                return Unauthorized();
+                return Unauthorized("Invalid User ID");
             }
 
-            if (!int.TryParse(userIdString, out int userId))
+            try
             {
-                return BadRequest("Invalid User ID");
+                var bookings = _bookingService.RetrieveAll(userId: userId) ?? new List<BookingViewModel>();
+                return View(bookings);
             }
-
-            var bookings = _bookingService.RetrieveAll(userId: userId) ?? new List<BookingViewModel>();
-            return View(bookings);
+            catch (Exception ex)
+            {
+                _logger.LogError("Error fetching user bookings for User ID {UserId}: {Message}", userId, ex.Message);
+                return StatusCode(500, "Failed to retrieve user bookings");
+            }
         }
 
         [HttpGet("RecurringBookings")]
         public IActionResult RecurringBookings()
         {
-            var recurringBookings = _bookingService.RetrieveAll(status: "Recurring");
-            return View(recurringBookings);
+            try
+            {
+                var recurringBookings = _bookingService.RetrieveAll(status: "Recurring");
+                return View(recurringBookings);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error fetching recurring bookings: {Message}", ex.Message);
+                return StatusCode(500, "Failed to retrieve recurring bookings");
+            }
         }
 
         [HttpGet("GetAllUsers")]
-        public JsonResult GetAllUsers()
+        public IActionResult GetAllUsers()
         {
             try
             {
@@ -255,13 +261,13 @@ namespace ASI.Basecode.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error fetching all users: ", ex);
-                return Json(new { error = "Failed to retrieve users" });
+                _logger.LogError("Error fetching all users: {Message}", ex.Message);
+                return StatusCode(500, "Failed to retrieve users");
             }
         }
 
         [HttpGet("GetAllRooms")]
-        public JsonResult GetAllRooms()
+        public IActionResult GetAllRooms()
         {
             try
             {
@@ -270,8 +276,8 @@ namespace ASI.Basecode.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error fetching all rooms: ", ex);
-                return Json(new { error = "Failed to retrieve rooms" });
+                _logger.LogError("Error fetching all rooms: {Message}", ex.Message);
+                return StatusCode(500, "Failed to retrieve rooms");
             }
         }
     }

@@ -3,9 +3,11 @@ using ASI.Basecode.Data.Models;
 using ASI.Basecode.Services.Interfaces;
 using ASI.Basecode.Services.ServiceModels;
 using AutoMapper;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace ASI.Basecode.Services.Services
 {
@@ -13,6 +15,7 @@ namespace ASI.Basecode.Services.Services
     {
         private readonly IBookingRepository _bookingRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger<BookingService> _logger;
 
         public BookingService(IBookingRepository repository, IMapper mapper)
         {
@@ -28,77 +31,43 @@ namespace ASI.Basecode.Services.Services
                         && (!userId.HasValue || x.UserId == userId)
                         && (!startDate.HasValue || x.StartDate == startDate)
                         && (string.IsNullOrEmpty(status) || x.Status.Contains(status)))
-                .Select(s => new BookingViewModel
-                {
-                    BookingId = s.Id,
-                    UserId = s.UserId,
-                    RoomId = s.RoomId,
-                    StartDate = s.StartDate ?? DateTime.MinValue,
-                    EndDate = s.EndDate ?? DateTime.MinValue,
-                    NoOfPeople = s.NoOfPeople ?? 0,
-                    Status = s.Status,
-                    IsRecurring = s.IsRecurring ?? false,
-                    Frequency = s.Frequency
-                });
+                .Select(s => _mapper.Map<BookingViewModel>(s));
 
             return data;
         }
 
         public BookingViewModel RetrieveBooking(int id)
         {
-            var data = _bookingRepository.GetBooking().FirstOrDefault(x => !x.Deleted && x.Id == id);
-            if (data == null) return null;
-
-            return new BookingViewModel
-            {
-                BookingId = data.Id,
-                UserId = data.UserId,
-                RoomId = data.RoomId,
-                StartDate = data.StartDate ?? DateTime.MinValue,
-                EndDate = data.EndDate ?? DateTime.MinValue,
-                NoOfPeople = data.NoOfPeople ?? 0,
-                Status = data.Status,
-                IsRecurring = data.IsRecurring ?? false,
-                Frequency = data.Frequency
-            };
+            var booking = _bookingRepository.GetBooking().FirstOrDefault(x => !x.Deleted && x.Id == id);
+            return booking != null ? _mapper.Map<BookingViewModel>(booking) : null;
         }
 
         public void Add(BookingViewModel model)
         {
-            var newModel = new Booking
-            {
-                UserId = model.UserId,
-                RoomId = model.RoomId,
-                StartDate = model.StartDate,
-                EndDate = model.EndDate,
-                NoOfPeople = model.NoOfPeople,
-                Status = model.Status,
-                IsRecurring = model.IsRecurring,
-                Frequency = model.Frequency,
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now
-            };
+            var newBooking = _mapper.Map<Booking>(model);
+            newBooking.CreatedAt = DateTime.Now;
+            newBooking.UpdatedAt = DateTime.Now;
 
-            _bookingRepository.AddBooking(newModel);
+            _bookingRepository.AddBooking(newBooking);
         }
 
         public void Update(BookingViewModel model)
         {
-            var existingData = _bookingRepository.GetBooking()
-                .FirstOrDefault(s => !s.Deleted && s.Id == model.BookingId);
+            var existingBooking = _bookingRepository.GetBooking().FirstOrDefault(s => !s.Deleted && s.Id == model.BookingId);
 
-            if (existingData != null)
+            if (existingBooking != null)
             {
-                existingData.UserId = model.UserId;
-                existingData.RoomId = model.RoomId;
-                existingData.StartDate = model.StartDate;
-                existingData.EndDate = model.EndDate;
-                existingData.NoOfPeople = model.NoOfPeople;
-                existingData.Status = model.Status;
-                existingData.IsRecurring = model.IsRecurring;
-                existingData.Frequency = model.Frequency;
+                existingBooking.UserId = model.UserId;
+                existingBooking.RoomId = model.RoomId;
+                existingBooking.StartDate = model.StartDate;
+                existingBooking.EndDate = model.EndDate;
+                existingBooking.NoOfPeople = model.NoOfPeople;
+                existingBooking.Status = model.Status;
+                existingBooking.IsRecurring = model.IsRecurring;
+                existingBooking.Frequency = model.Frequency;
+                existingBooking.UpdatedAt = DateTime.Now;
 
-                _bookingRepository.UpdateBooking(existingData);
+                _bookingRepository.UpdateBooking(existingBooking);
             }
             else
             {
@@ -117,20 +86,25 @@ namespace ASI.Basecode.Services.Services
         public IEnumerable<BookedRoomViewModel> RetrieveBookedRooms()
         {
             var data = _bookingRepository.GetBooking()
-                .Where(x => !x.Deleted && x.Status == "Booked") // Only retrieve rooms marked as "Booked"
+                .Where(x => !x.Deleted && x.Room.Status == "Booked") // Check Room status instead of Booking status
+                .Include(b => b.Room)    // Load Room details
+                .Include(b => b.User)    // Load User details
                 .Select(s => new BookedRoomViewModel
                 {
                     RoomId = s.RoomId,
-                    RoomName = s.Room.Name, // Assuming Room navigation property is available
+                    RoomName = s.Room.Name ?? "Unknown Room",
                     UserId = s.UserId,
-                    UserName = s.User.LastName, // Assuming User navigation property is available
+                    UserName = s.User.LastName ?? "Unknown User",
                     StartDate = s.StartDate ?? DateTime.MinValue,
                     EndDate = s.EndDate ?? DateTime.MinValue,
                     NoOfPeople = s.NoOfPeople ?? 0,
-                    Status = s.Status
-                });
+                    Status = s.Room.Status ?? "Unknown Status" // Display Room's Status
+                })
+                .ToList(); // Materialize the results to ensure query execution
 
             return data;
         }
+
+
     }
 }

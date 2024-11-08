@@ -233,6 +233,8 @@
             <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
             <script>
                 let bookingsData = []; // Global variable to store fetched bookings
+                let analyticsChart;
+                let bookingDates = []; // Array to store unique booking dates
 
                 async function fetchBookings() {
                     try {
@@ -246,14 +248,18 @@
                         const rooms = await roomsResponse.json();
                         const bookings = await response.json();
 
-                        // Add User ID and Room ID in the display
                         bookingsData = bookings.map(booking => {
                             const user = users.find(user => user.id === booking.userId);
                             const room = rooms.find(room => room.roomId === booking.roomId);
 
-                            // Log if user or room is not found
                             if (!user) console.warn(`User with ID ${booking.userId} not found`);
                             if (!room) console.warn(`Room with ID ${booking.roomId} not found`);
+
+                            // Add booking date to bookingDates array if not already present
+                            const bookingDate = new Date(booking.startDate).toISOString().split("T")[0];
+                            if (!bookingDates.includes(bookingDate)) {
+                                bookingDates.push(bookingDate);
+                            }
 
                             return {
                                 ...booking,
@@ -267,6 +273,7 @@
                         renderPendings(bookingsData);
                         populateUserAndRoomSelect(users, rooms);
                         updateAnalyticsChart();
+                        updateCalendarWithBookings();
                     } catch (error) {
                         console.error(error.message);
                     }
@@ -281,8 +288,13 @@
                     const roomTypes = Object.keys(roomTypeCounts);
                     const counts = Object.values(roomTypeCounts);
 
+                    // Destroy existing chart instance if it exists
+                    if (analyticsChart) {
+                        analyticsChart.destroy();
+                    }
+
                     const ctx = document.getElementById('analyticsChart').getContext('2d');
-                    new Chart(ctx, {
+                    analyticsChart = new Chart(ctx, {
                         type: 'pie',
                         data: {
                             labels: roomTypes,
@@ -296,6 +308,15 @@
                         options: {
                             responsive: true,
                             plugins: {
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (tooltipItem) {
+                                            const label = roomTypes[tooltipItem.dataIndex] || '';
+                                            const value = counts[tooltipItem.dataIndex];
+                                            return `${label}: ${value}`;
+                                        }
+                                    }
+                                },
                                 legend: { display: false }
                             }
                         }
@@ -328,17 +349,17 @@
                     bookings.forEach(booking => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                                            <td>${booking.userId}</td>
-                                            <td>${booking.userName}</td>
-                                            <td>${booking.roomId}</td>
-                                            <td>${booking.roomName}</td>
-                                            <td>${new Date(booking.startDate).toLocaleDateString()}</td>
-                                            <td>${booking.noOfPeople}</td>
-                                            <td>
-                                                <button class="btn btn-primary btn-sm" onclick="viewBooking(${booking.bookingId})">View</button>
-                                                <button class="btn btn-info btn-sm" onclick="editBooking(${booking.bookingId}, ${booking.userId}, ${booking.roomId}, '${booking.startDate}', '${booking.endDate}', ${booking.noOfPeople}, '${booking.status}')">Edit</button>
-                                                <button class="btn btn-danger btn-sm" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
-                                            </td>`;
+                                                                            <td>${booking.userId}</td>
+                                                                            <td>${booking.userName}</td>
+                                                                            <td>${booking.roomId}</td>
+                                                                            <td>${booking.roomName}</td>
+                                                                            <td>${new Date(booking.startDate).toLocaleDateString()}</td>
+                                                                            <td>${booking.noOfPeople}</td>
+                                                                            <td>
+                                                                                <button class="btn btn-primary btn-sm" onclick="viewBooking(${booking.bookingId})">View</button>
+                                                                                <button class="btn btn-info btn-sm" onclick="editBooking(${booking.bookingId}, ${booking.userId}, ${booking.roomId}, '${booking.startDate}', '${booking.endDate}', ${booking.noOfPeople}, '${booking.status}')">Edit</button>
+                                                                                <button class="btn btn-danger btn-sm" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
+                                                                            </td>`;
                         tbody.appendChild(row);
                     });
                 }
@@ -349,20 +370,20 @@
 
                     bookings.slice(0, 3).forEach(booking => {
                         const bookingHTML = `
-                                            <div class="recentBookings">
-                                                <p class="userRecentBookings">${booking.userName}</p>
-                                                <hr>
-                                                <div class="recentBookingsDetailsDiv">
-                                                    <div class="recentBookingsDetails">
-                                                        <i class="bi bi-house-door-fill"></i>
-                                                        <p>${booking.roomName}</p>
-                                                    </div>
-                                                    <div class="recentBookingsDetails">
-                                                        <i class="bi bi-calendar2-week"></i>
-                                                        <p>${new Date(booking.startDate).toLocaleDateString()}</p>
-                                                    </div>
-                                                </div>
-                                            </div>`;
+                                                                            <div class="recentBookings">
+                                                                                <p class="userRecentBookings">${booking.userName}</p>
+                                                                                <hr>
+                                                                                <div class="recentBookingsDetailsDiv">
+                                                                                    <div class="recentBookingsDetails">
+                                                                                        <i class="bi bi-house-door-fill"></i>
+                                                                                        <p>${booking.roomName}</p>
+                                                                                    </div>
+                                                                                    <div class="recentBookingsDetails">
+                                                                                        <i class="bi bi-calendar2-week"></i>
+                                                                                        <p>${new Date(booking.startDate).toLocaleDateString()}</p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>`;
                         container.innerHTML += bookingHTML;
                     });
                 }
@@ -375,14 +396,14 @@
                     pendingBookings.forEach(booking => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                                            <td>${booking.userName}</td>
-                                            <td>${booking.roomName}</td>
-                                            <td>${new Date(booking.startDate).toLocaleDateString()}</td>
-                                            <td>
-                                                <button class="btn btn-primary btn-sm" onclick="viewBooking(${booking.bookingId})">View</button>
-                                                <button class="btn btn-info btn-sm" onclick="editBooking(${booking.bookingId}, ${booking.userId}, ${booking.roomId}, '${booking.startDate}', '${booking.endDate}', ${booking.noOfPeople}, '${booking.status}')">Edit</button>
-                                                <button class="btn btn-danger btn-sm" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
-                                            </td>`;
+                                                                            <td>${booking.userName}</td>
+                                                                            <td>${booking.roomName}</td>
+                                                                            <td>${new Date(booking.startDate).toLocaleDateString()}</td>
+                                                                            <td>
+                                                                                <button class="btn btn-primary btn-sm" onclick="viewBooking(${booking.bookingId})">View</button>
+                                                                                <button class="btn btn-info btn-sm" onclick="editBooking(${booking.bookingId}, ${booking.userId}, ${booking.roomId}, '${booking.startDate}', '${booking.endDate}', ${booking.noOfPeople}, '${booking.status}')">Edit</button>
+                                                                                <button class="btn btn-danger btn-sm" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
+                                                                            </td>`;
                         tbody.appendChild(row);
                     });
                 }
@@ -405,6 +426,11 @@
                         });
 
                         if (response.ok) {
+                            // Booking was added successfully; now update the room status
+                            const roomId = newBooking.roomId;
+                            await updateRoomStatus(roomId, "Booked");
+
+                            // Refresh bookings and close the modal
                             await fetchBookings();
                             $('#addBookingModal').modal('hide');
                         } else {
@@ -467,18 +493,33 @@
                 async function cancelBooking(bookingId) {
                     if (confirm("Are you sure you want to cancel this booking?")) {
                         try {
+                            const booking = bookingsData.find(b => b.bookingId === bookingId);
+                            if (!booking) {
+                                alert("Booking not found.");
+                                return;
+                            }
+
+                            const roomId = booking.roomId;
+
+                            // First, delete the booking
                             const response = await fetch(`/api/bookings/DeleteBooking/${bookingId}`, { method: 'DELETE' });
                             if (response.ok) {
+                                // Update the room status to "Available"
+                                await updateRoomStatus(roomId, "Available");
+
+                                // Refresh the bookings data
                                 await fetchBookings();
-                                alert("Booking canceled successfully.");
+                                alert("Booking canceled successfully and room is now available.");
                             } else {
                                 alert("Error canceling booking.");
                             }
                         } catch (error) {
                             console.error("Error canceling booking:", error);
+                            alert("An unexpected error occurred.");
                         }
                     }
                 }
+
 
                 async function viewBooking(bookingId) {
                     try {
@@ -553,13 +594,59 @@
                 }
 
 
-                flatpickr("#calendar", {
-                    inline: true,
-                    mode: "range",
-                    dateFormat: "Y-m-d",
-                    defaultDate: ["2024-09-10", "2024-09-15", "2024-10-01", "2024-10-15"]
-                });
+                function updateCalendarWithBookings() {
+                    flatpickr("#calendar", {
+                        inline: true,
+                        mode: "range",
+                        dateFormat: "Y-m-d",
+                        defaultDate: bookingDates, // Highlighted dates with bookings
+                        onDayCreate: function (dObj, dStr, fp, dayElem) {
+                            const dateStr = dayElem.dateObj.toISOString().split("T")[0];
+                            if (bookingDates.includes(dateStr)) {
+                                dayElem.classList.add("has-booking"); // Add a CSS class for booked dates
+                            }
+                        }
+                    });
+                }
+                // Helper function to update the room status to "Booked" without affecting other fields
+                async function updateRoomStatus(roomId, status) {
+                    try {
+                        // Fetch the full room details to get all attributes
+                        const roomResponse = await fetch(`/api/rooms/${roomId}`);
 
+                        if (!roomResponse.ok) {
+                            console.error("Failed to fetch room details for status update.");
+                            alert("Error fetching room details before updating status.");
+                            return;
+                        }
+
+                        const roomData = await roomResponse.json();
+
+                        // Check the values of the room data before updating
+                        console.log("Room data fetched before update:", roomData);
+
+                        // Ensure we only modify the status field while preserving other attributes
+                        roomData.status = status;
+
+                        // Send back the full room data to preserve all properties
+                        const updateResponse = await fetch(`/api/rooms/${roomId}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(roomData),
+                        });
+
+                        if (!updateResponse.ok) {
+                            const errorText = await updateResponse.text();
+                            console.error("Failed to update room status:", errorText);
+                            alert(`Error updating room status: ${errorText}`);
+                        } else {
+                            console.log("Room status updated successfully:", roomData);
+                        }
+                    } catch (error) {
+                        console.error("Error updating room status:", error);
+                        alert("An unexpected error occurred while updating room status.");
+                    }
+                }
                 document.addEventListener("DOMContentLoaded", fetchBookings);
             </script>
 </body>
