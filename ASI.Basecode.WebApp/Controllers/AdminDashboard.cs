@@ -44,7 +44,7 @@ namespace ASI.Basecode.WebApp.Controllers
             try
             {
                 _logger.LogInformation("Start retrieving all users for Admin User Dashboard.");
-                var data = _userService.RetrieveAll().ToList();
+                var data = _userService.RetrieveAll().Where(data => data.Role != 9).ToList();
                 ViewData["Role"] = UserRole;
 
                 var model = new UserPageViewModel
