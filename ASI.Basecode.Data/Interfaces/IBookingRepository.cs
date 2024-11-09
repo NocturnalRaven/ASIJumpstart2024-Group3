@@ -14,5 +14,6 @@ namespace ASI.Basecode.Data.Interfaces
         void AddBooking(Booking booking);
         void UpdateBooking(Booking booking);
         void DeleteBooking(int bookingId);
+        int ArchiveExpiredBookings();
     }
 }
