@@ -1,19 +1,26 @@
-﻿@{
+﻿@model ASI.Basecode.Services.ServiceModels.UserPageViewModel
+
+@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Management</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
     <main class="mainBody">
         <div class="mainBodyInner">
@@ -22,133 +29,371 @@
                     <p class="bookingsDashboardTitle">Users</p>
                     <div class="users-inputGroup">
                         <div class="input-group">
-                            <input type="text" id="filterInput" class="form-control" placeholder="Search name, role, email" aria-label="Search" aria-describedby="button-addon2">
-                            <button class="btn btn-outline-secondary" type="button" id="button-addon2" onclick="applyFilter()"><i class="bi bi-search"></i></button>
+                            <input type="text" id="filterInput" class="form-control"
+                                   placeholder="Search name, role, email" aria-label="Search"
+                                   aria-describedby="button-addon2">
+                            <button class="btn btn-secondary" type="button" id="button-addon2" onclick="applyFilter()">
+                                <i class="bi bi-search"></i>
+                            </button>
                         </div>
-                        <button class="btn adminAddUserBtn" type="button" data-bs-toggle="offcanvas" data-bs-target="#addUsers" aria-controls="addUsers">
-                            <i class="bi bi-plus-square me-2"></i><p class="addUserText">Add User</p>
+
+                        <button class="btn adminAddRoomBtn" type="button" data-bs-toggle="offcanvas"
+                                data-bs-target="#addUsers" aria-controls="addUsers">
+                            <i class="bi bi-plus-square me-2"></i>
+                            <p class="addRoomText">Add user</p>
                         </button>
                     </div>
                 </div>
-                <div class="table-wrapper">
-                    <table class="table table-striped align-middle" id="adminUserTable">
-                        <thead>
+
+                <table class="table table-striped align-middle" id="adminUserTable">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Role</th>
+                            <th scope="col">Date Created</th>
+                            <th scope="col">Date Updated</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.UserList.dataList)
+                        {
                             <tr>
-                                <th scope="col">ID</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Role</th>
-                                <th scope="col">Date Created</th>
-                                <th scope="col">Actions</th>
+                                <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                                <td>@Html.DisplayFor(modelItem => item.DisplayRole)</td>
+                                <td>@Html.DisplayFor(modelItem => item.DateCreated)</td>
+                                <td>@Html.DisplayFor(modelItem => item.DateModified)</td>
+                                <td>
+                                    <button type="button" class="btn btn-secondary btn-sm" onclick="editUser(@item.Id)">Edit</button>
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="showDeleteModal(@item.Id)">Delete</button>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Dummy data for users will be rendered here -->
-                        </tbody>
-                    </table>
-                </div>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
 
         <!-- Offcanvas for Adding Users -->
-        <div class="offcanvas offcanvas-end" data-bs-backdrop="static" tabindex="-1" id="addUsers" aria-labelledby="staticBackdropLabel">
+        <div class="offcanvas offcanvas-end" data-bs-backdrop="static" tabindex="-1" id="addUsers"
+             aria-labelledby="staticBackdropLabel">
             <div class="offcanvas-header">
-                <h5 class="offcanvas-title" id="staticBackdropLabel">Add User</h5>
+                <h5 class="offcanvas-title" id="staticBackdropLabel">Add user</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
             <div class="offcanvas-body">
-                <div class="offcanvas-body-inner">
-                    <div class="offcanvas-body-innerMost">
-                        <div>
+                <form asp-action="PostCreate" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    @if (TempData["DuplicateErr"] != null)
+                    {
+                        <div class="alert alert-danger">@TempData["DuplicateErr"]</div>
+                    }
+
+                    @if (TempData["CreateMessage"] != null)
+                    {
+                        <div class="alert alert-success">@TempData["CreateMessage"]</div>
+                    }
+
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+                    }
+
+                    <div class="form-group mb-3">
+                        <label asp-for="NewUser.UserCode" class="control-label">User code</label>
+                        <input name="UserCode" class="form-control" required />
+                        <span asp-validation-for="NewUser.UserCode" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="NewUser.FirstName" class="control-label">First name</label>
+                        <input name="FirstName" class="form-control" required />
+                        <span asp-validation-for="NewUser.FirstName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="NewUser.LastName" class="control-label">Last name</label>
+                        <input name="LastName" class="form-control" required />
+                        <span asp-validation-for="NewUser.LastName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="NewUser.Email" class="control-label">Email address</label>
+                        <input name="Email" class="form-control" type="email" placeholder="name@gmail.com" required />
+                        <span asp-validation-for="NewUser.Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="NewUser.Password" class="control-label">Password</label>
+                        <input type="password" name="Password" class="form-control" required />
+                        <span asp-validation-for="NewUser.Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="NewUser.Role" class="control-label">Role</label>
+                        <select name="Role" class="form-select">
+                            <option value="3">User</option>
+                            <option value="2">Staff</option>
+                            <option value="1">Admin</option>
+                        </select>
+                        <span asp-validation-for="NewUser.Role" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group buttonsOffCanvas">
+                        <button type="button" class="btn btn-outline-secondary mt-4" data-bs-dismiss="offcanvas">
+                            Cancel
+                        </button>
+                        <button class="btn btn-primary" type="submit">
+                            <i class="bi bi-plus-square me-2"></i>Add
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Edit User Modal -->
+        <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editUserForm">
                             <div class="mb-3">
-                                <label for="lastNameInput" class="form-label">Last name</label>
-                                <input type="text" class="form-control" id="lastNameInput" placeholder="">
+                                <label for="editUserNameInput" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="editUserNameInput" disabled required>
                             </div>
                             <div class="mb-3">
-                                <label for="firstNameInput" class="form-label">First name</label>
-                                <input type="text" class="form-control" id="firstNameInput" placeholder="">
+                                <label for="editUserEmailInput" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="editUserEmailInput" required>
                             </div>
                             <div class="mb-3">
-                                <label for="emailInput" class="form-label">Email address</label>
-                                <input type="email" class="form-control" id="emailInput" placeholder="name@example.com">
-                            </div>
-                            <div>
-                                <label for="userRoleAdd" class="form-label">Role</label>
-                                <select class="form-select" aria-label="Default select example" id="userRoleAdd">
-                                    <option selected>Role</option>
+                                <label for="editUserRoleInput" class="form-label">Role</label>
+                                <select class="form-select" id="editUserRoleInput" required>
+                                    <option value="3">User</option>
                                     <option value="2">Staff</option>
-                                    <option value="3">Admin</option>
+                                    <option value="1">Admin</option>
+                                    <option value="9">Super Admin</option>
                                 </select>
                             </div>
-                        </div>
-                        <div class="buttonsOffCanvas">
-                            <button type="button" class="btn btn-outline-secondary">Cancel</button>
-                            <button class="btn adminAddBookingBtn" type="button" aria-controls="staticBackdrop">
-                                <i class="bi bi-plus-square me-2"></i>Add
-                            </button>
-                        </div>
+                            <input type="hidden" id="editUserIdInput" />
+                            <div class="mb-3">
+                                <label for="editUserCodeInput" class="form-label">User Code</label>
+                                <input type="text" class="form-control" id="editUserCodeInput" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editUserFirstNameInput" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="editUserFirstNameInput" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editUserLastNameInput" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="editUserLastNameInput" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editUserPasswordInput" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="editUserPasswordInput" required>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="updateUser()">Save changes</button>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Delete User Modal -->
+        <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteUserModalLabel">Confirm Deletion</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to delete this user?
+                        <input type="hidden" id="deleteUserIdInput" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" onclick="deleteUser()">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const users = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.UserList.dataList));
+            
+            async function fetchUsers() {
+                try {
+                    const response = await fetch('/admin/dashboard/users'); // Adjust the URL if necessary
+                    if (!response.ok) throw new Error("Failed to fetch users.");
+
+                    const data = await response.json(); // Ensure this returns JSON
+                    renderUserTable(data); // Render the updated user list
+                } catch (error) {
+                    console.error("Error fetching users:", error);
+                }
+            }
+
+            document.getElementById('filterInput').addEventListener('input', applyFilter);
+
+            function applyFilter() {
+                const filter = document.getElementById('filterInput').value.toLowerCase();
+                const filteredUsers = users.filter(user => {
+                    const name = user.Name ? user.Name.toLowerCase() : '';
+                    const email = user.Email ? user.Email.toLowerCase() : '';
+                    const displayRole = user.DisplayRole ? user.DisplayRole.toLowerCase() : '';
+
+                    return name.includes(filter) || email.includes(filter) || displayRole.includes(filter);
+                });
+                renderUserTable(filteredUsers);
+            }
+
+            function renderUserTable(usersToRender) {
+                const tbody = document.querySelector('#adminUserTable tbody');
+                tbody.innerHTML = ''; // Clear existing rows
+
+                usersToRender.forEach(user => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${user.Id}</td>
+                        <td>${user.Name}</td>
+                        <td>${user.Email}</td>
+                        <td>${user.DisplayRole}</td>
+                        <td>${new Date(user.DateCreated).toLocaleDateString()}</td>
+                        <td>${new Date(user.DateModified).toLocaleDateString()}</td>
+                        <td>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="editUser(${user.Id})">Edit</button>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="showDeleteModal(${user.Id})">Delete</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+
+            function renderUserTable(users) {
+                const tbody = document.querySelector('#adminUserTable tbody');
+                tbody.innerHTML = ''; // Clear existing rows
+
+                users.forEach(user => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${user.Id}</td>
+                        <td>${user.Name}</td>
+                        <td>${user.Email}</td>
+                        <td>${user.DisplayRole}</td>
+                        <td>${new Date(user.DateCreated).toLocaleDateString()}</td>
+                        <td>${new Date(user.DateModified).toLocaleDateString()}</td>
+                        <td>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="editUser(${user.Id})">Edit</button>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="showDeleteModal(${user.Id})">Delete</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            function editUser(id) {
+                const user = users.find(user => user.Id === id);
+                document.getElementById('editUserIdInput').value = user.Id;
+                document.getElementById('editUserNameInput').value = user.Name;
+                document.getElementById('editUserEmailInput').value = user.Email;
+                document.getElementById('editUserRoleInput').value = user.Role;
+
+                const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+                modal.show();
+            }
+
+            function showDeleteModal(id) {
+                document.getElementById('deleteUserIdInput').value = id;
+
+                const modal = new bootstrap.Modal(document.getElementById('deleteUserModal'));
+                modal.show();
+            }
+
+            async function updateUser() {
+                const id = parseInt(document.getElementById('editUserIdInput').value, 10);
+                const name = document.getElementById('editUserNameInput').value;
+                const email = document.getElementById('editUserEmailInput').value;
+                const role = parseInt(document.getElementById('editUserRoleInput').value, 10);
+
+                // Assuming these values are available in the form or hardcoded for testing
+                const userCode = document.getElementById('editUserCodeInput').value || "SomeDefaultCode"; // Replace with actual user code input
+                const firstName = document.getElementById('editUserFirstNameInput').value || "DefaultFirstName"; // Replace with actual first name input
+                const lastName = document.getElementById('editUserLastNameInput').value || "DefaultLastName"; // Replace with actual last name input
+                const password = document.getElementById('editUserPasswordInput').value || "defaultPassword123"; // Replace with actual password input if updating
+
+                const updatedUser = {
+                    id,
+                    name,
+                    email,
+                    role,
+                    userCode,    // Required field
+                    firstName,   // Required field
+                    lastName,    // Required field
+                    password     // Required field
+                };
+
+                try {
+                    const response = await fetch(`/UpdateUser`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(updatedUser)
+                    });
+
+                    if (response.ok) {
+                        await fetchUsers(); // Refresh user list
+                        alert("User updated successfully.");
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+                        modal.hide();
+                    } else {
+                        const errorText = await response.text();
+                        console.error("Failed to update user:", errorText);
+                        alert("Error updating user: " + errorText);
+                    }
+                } catch (error) {
+                    console.error("Error updating user:", error);
+                }
+            }
+
+            async function deleteUser() {
+                const id = document.getElementById('deleteUserIdInput').value;
+
+                try {
+                    const response = await fetch(`/DeleteUser/${id}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (response.ok) {
+                        await fetchUsers(); // Refresh user list after deletion
+                        alert("User deleted successfully.");
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('deleteUserModal'));
+                        modal.hide();
+                    } else {
+                        const errorText = await response.text();
+                        console.error("Failed to delete user:", errorText);
+                        alert("Error deleting user: " + errorText);
+                    }
+                } catch (error) {
+                    console.error("Error deleting user:", error);
+                }
+            }
+        </script>
+
     </main>
-
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script>
-        // Dummy data for Users
-        const usersData = [
-            { id: 1, name: "John Doe", email: "dummy@gmail.com", role: "Admin", date_created: "01/23/2024" },
-            { id: 2, name: "Jane Smith", email: "dummy@gmail.com", role: "Staff", date_created: "02/06/2024" },
-            { id: 3, name: "Alice Johnson", email: "dummy@gmail.com", role: "User", date_created: "05/18/2024" },
-            { id: 4, name: "Bob Brown", email: "dummy@gmail.com", role: "User", date_created: "06/01/2024" },
-            { id: 5, name: "Chris Lee", email: "dummy@gmail.com", role: "Staff", date_created: "07/10/2024" },
-            { id: 6, name: "Jessica Davis", email: "dummy@gmail.com", role: "User", date_created: "08/15/2024" },
-            { id: 7, name: "Michael Martinez", email: "dummy@gmail.com", role: "User", date_created: "08/25/2024" },
-            { id: 8, name: "David Wilson", email: "dummy@gmail.com", role: "Staff", date_created: "10/09/2024" },
-            { id: 9, name: "Emily Clark", email: "dummy@gmail.com", role: "Staff", date_created: "10/12/2024" },
-            { id: 10, name: "Daniel Anderson", email: "dummy@gmail.com", role: "User", date_created: "11/09/2024" }
-        ];
-
-        // Function to render users table
-        function renderUsers(users) {
-            const tbody = document.querySelector('#adminUserTable tbody');
-            tbody.innerHTML = ''; // Clear previous rows
-
-            users.forEach((user, index) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${user.id}</td>
-                    <td>${user.name}</td>
-                    <td>${user.email}</td>
-                    <td>${user.role}</td>
-                    <td>${user.date_created}</td>
-                    <td class="actionBtnUsers">
-                        <i class="bi bi-pencil-square editIconBtn"></i>
-                        <i class="bi bi-trash3 ms-2 deleteIconBtn"></i>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        // Filter function to search by name, role, or email
-        function applyFilter() {
-            const filterValue = document.getElementById('filterInput').value.toLowerCase();
-            const rows = document.querySelectorAll('#adminUserTable tbody tr');
-
-            rows.forEach(row => {
-                const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-                const email = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
-                const role = row.querySelector('td:nth-child(4)').textContent.toLowerCase();
-
-                const matchesFilter = name.includes(filterValue) || email.includes(filterValue) || role.includes(filterValue);
-
-                row.style.display = matchesFilter ? '' : 'none';
-            });
-        }
-
-        // Render the users table with dummy data
-        renderUsers(usersData);
-    </script>
 </body>
+
 </html>
