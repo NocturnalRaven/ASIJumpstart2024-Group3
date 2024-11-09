@@ -18,7 +18,6 @@ namespace ASI.Basecode.Data
         }
 
         public virtual DbSet<Booking> Bookings { get; set; }
-        public virtual DbSet<MRole> MRoles { get; set; }
         public virtual DbSet<MUser> MUsers { get; set; }
         public virtual DbSet<PendingBooking> PendingBookings { get; set; }
         public virtual DbSet<Room> Rooms { get; set; }

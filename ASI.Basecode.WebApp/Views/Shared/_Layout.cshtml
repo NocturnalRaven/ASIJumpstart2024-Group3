@@ -1,9 +1,12 @@
 ﻿@using static ASI.Basecode.Resources.Views.Screen
 
-﻿@{
-    // Simulate the user role for now
-    var userRole = "Admin"; // Change this to "SuperAdmin" to simulate a Super Admin
+@{
+    // Retrieve the user's role and name from the claims
+    var userName = User.Identity.Name ?? User.Claims.FirstOrDefault(c => c.Type == "name")?.Value ?? "Guest";
+    var userRole = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Role)?.Value ?? "User";
+    //Super Admin = 9, User = 3, Admin = 1
 }
+
 @section styles {
     <style>
         .settings-icon {
@@ -64,7 +67,18 @@
         {
             <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
                 <div class="container">
-                    <a class="navbar-brand" asp-controller="Home" asp-action="Index">MeetingRoomBookingSystem</a>
+                    @if (userRole == "1")
+                    {
+                        <a class="navbar-brand" asp-controller="AdminDashboard" asp-action="Admindashboard">MeetingRoomBookingSystem</a>
+                    }
+                    else if (userRole == "9")
+                    {
+                        <a class="navbar-brand" asp-controller="SuperAdmin" asp-action="Rooms">MeetingRoomBookingSystem</a>
+                    }
+                    else if (userRole == "3")
+                    {
+                        <a class="navbar-brand" asp-controller="Users" asp-action="UserDashboard">MeetingRoomBookingSystem</a>
+                    }
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                             aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
@@ -72,7 +86,7 @@
                     <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between align-items-center">
                         <ul class="navbar-nav flex-grow-1 align-items-center">
                             <!-- Role-specific navigation items -->
-                            @if (userRole == "Admin")
+                            @if (userRole == "1")
                             {
                                 <li class="nav-item">
                                     <a class="nav-link navItemA" asp-controller="AdminDashboard" asp-action="Admindashboard">Dashboard</a>
@@ -87,7 +101,7 @@
                                     <a class="nav-link navItemA" asp-controller="AdminDashboard" asp-action="AdminAnalytics">Analytics</a>
                                 </li>
                             }
-                            else if (userRole == "SuperAdmin")
+                            else if (userRole == "9")
                             {
                                 <li class="nav-item">
                                     <a class="nav-link navItemA" asp-controller="SuperAdmin" asp-action="Rooms">Rooms</a>
@@ -99,7 +113,7 @@
                                     <a class="nav-link navItemA" asp-controller="SuperAdmin" asp-action="Accounts">Accounts</a>
                                 </li>
                             }
-                            else if (userRole == "User")
+                            else if (userRole == "3")
                             {
                                 <li class="nav-item">
                                     <a class="nav-link navItemA" asp-controller="Users" asp-action="UserDashboard">Dashboard</a>
@@ -112,7 +126,6 @@
                                 </li>
                             }
                         </ul>
-
                         <!-- Settings icon and dropdown -->
                         <div class="nav-item">
                             <span class="nav-link settings-icon" data-bs-toggle="modal" data-bs-target="#settingsModal">Settings</span>
@@ -122,7 +135,7 @@
                         <div class="nav-item position-relative">
                             <i class="bi bi-person-circle profile-icon" id="profileIcon"></i>
                             <div class="profile-dropdown" id="profileDropdown">
-                                <p id="userName">John Doe</p>
+                                <p id="userName">@userName</p> <!-- Dynamically display the logged-in user's name -->
                                 <button class="btn btn-primary mb-2" id="editProfileBtn" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
                                 <form asp-controller="Account" asp-action="SignOutUser" method="post" style="display:inline;">
                                     <button type="submit" id="logoutBtn" class="btn btn-danger">Logout</button>
@@ -152,7 +165,7 @@
                     <form id="editProfileForm">
                         <div class="mb-3">
                             <label for="userNameInput" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="userNameInput" value="John Doe">
+                            <input type="text" class="form-control" id="userNameInput" value="@userName">
                         </div>
                         <div class="mb-3">
                             <label for="userEmailInput" class="form-label">Email</label>
@@ -160,7 +173,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="userRoleInput" class="form-label">Role</label>
-                            <input type="text" class="form-control" id="userRoleInput" value="Admin" readonly>
+                            <input type="text" class="form-control" id="userRoleInput" value="@userRole" readonly>
                         </div>
                         <div class="mb-3">
                             <label for="resetPasswordInput" class="form-label">Reset Password</label>
@@ -216,19 +229,12 @@
 
             // Save profile changes
             document.getElementById("saveProfileBtn").addEventListener("click", function () {
-                // Handle saving logic (e.g., send data to the server via AJAX)
                 const name = document.getElementById("userNameInput").value;
                 const email = document.getElementById("userEmailInput").value;
                 const resetPassword = document.getElementById("resetPasswordInput").value;
 
-                // Simulate an AJAX request (replace with actual AJAX call)
                 alert(`Profile updated: \nName: ${name}\nEmail: ${email}\nPassword: ${resetPassword}`);
                 $('#editProfileModal').modal('hide'); // Close modal
-            });
-
-            // Logout functionality
-            document.getElementById("logoutBtn").addEventListener("click", function () {
-               SignOutUser()
             });
 
             // Save settings changes
@@ -236,7 +242,6 @@
                 const setting1 = document.getElementById("setting1").value;
                 const setting2 = document.getElementById("setting2").value;
 
-                // Simulate an AJAX request (replace with actual AJAX call)
                 alert(`Settings saved: \nSetting 1: ${setting1}\nSetting 2: ${setting2}`);
                 $('#settingsModal').modal('hide'); // Close modal
             });

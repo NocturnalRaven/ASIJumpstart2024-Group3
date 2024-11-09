@@ -2,56 +2,65 @@
 using ASI.Basecode.Data.Models;
 using Basecode.Data.Repositories;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ASI.Basecode.Data.Repositories
 {
     public class UserRepository : BaseRepository, IUserRepository
     {
-        public UserRepository(IUnitOfWork unitOfWork) : base(unitOfWork)
-        {
+        public UserRepository(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
-        }
-
+        /// <summary>
+        /// Retrieves all users.
+        /// </summary>
         public IQueryable<MUser> GetUsers()
         {
-            return this.GetDbSet<MUser>();
+            return GetDbSet<MUser>().Where(u => !u.Deleted);
         }
 
+        /// <summary>
+        /// Checks if a user exists by ID.
+        /// </summary>
         public bool UserExists(int userId)
         {
-            return this.GetDbSet<MUser>().Any(x => x.UserId == userId);
+            return GetDbSet<MUser>().Any(x => x.UserId == userId && !x.Deleted);
         }
 
+        /// <summary>
+        /// Adds a new user.
+        /// </summary>
         public void AddUser(MUser user)
         {
-            var maxId = this.GetDbSet<MUser>().Max(x => x.UserId) + 1;
-            user.UserId = maxId;
+            user.UserId = GetDbSet<MUser>().Max(x => (int?)x.UserId) + 1 ?? 1; // Handles case where DB is empty
             user.InsDt = DateTime.Now;
             user.UpdDt = DateTime.Now;
-            this.GetDbSet<MUser>().Add(user);
+            GetDbSet<MUser>().Add(user);
             UnitOfWork.SaveChanges();
         }
 
+        /// <summary>
+        /// Updates an existing user.
+        /// </summary>
         public void UpdateUser(MUser user)
         {
-            this.GetDbSet<MUser>().Update(user);
+            if (user == null) throw new ArgumentNullException(nameof(user));
             user.UpdDt = DateTime.Now;
+            GetDbSet<MUser>().Update(user);
             UnitOfWork.SaveChanges();
         }
 
+        /// <summary>
+        /// Marks a user as deleted.
+        /// </summary>
         public void DeleteUser(int userId)
         {
-            var userToDelete = this.GetDbSet<MUser>().FirstOrDefault(x => x.Deleted != true && x.UserId == userId);
+            var userToDelete = GetDbSet<MUser>().FirstOrDefault(x => x.UserId == userId && !x.Deleted);
             if (userToDelete != null)
             {
                 userToDelete.Deleted = true;
                 userToDelete.UpdDt = DateTime.Now;
+                UnitOfWork.SaveChanges();
             }
-            UnitOfWork.SaveChanges();
         }
     }
 }

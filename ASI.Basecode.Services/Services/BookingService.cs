@@ -1,15 +1,13 @@
 ﻿using ASI.Basecode.Data.Interfaces;
 using ASI.Basecode.Data.Models;
-using ASI.Basecode.Data.Repositories;
 using ASI.Basecode.Services.Interfaces;
-using ASI.Basecode.Services.Manager;
 using ASI.Basecode.Services.ServiceModels;
 using AutoMapper;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using static ASI.Basecode.Resources.Constants.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace ASI.Basecode.Services.Services
 {
@@ -17,6 +15,7 @@ namespace ASI.Basecode.Services.Services
     {
         private readonly IBookingRepository _bookingRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger<BookingService> _logger;
 
         public BookingService(IBookingRepository repository, IMapper mapper)
         {
@@ -32,87 +31,80 @@ namespace ASI.Basecode.Services.Services
                         && (!userId.HasValue || x.UserId == userId)
                         && (!startDate.HasValue || x.StartDate == startDate)
                         && (string.IsNullOrEmpty(status) || x.Status.Contains(status)))
-                .Select(s => new BookingViewModel
+                .Select(s => _mapper.Map<BookingViewModel>(s));
+
+            return data;
+        }
+
+        public BookingViewModel RetrieveBooking(int id)
+        {
+            var booking = _bookingRepository.GetBooking().FirstOrDefault(x => !x.Deleted && x.Id == id);
+            return booking != null ? _mapper.Map<BookingViewModel>(booking) : null;
+        }
+
+        public void Add(BookingViewModel model)
+        {
+            var newBooking = _mapper.Map<Booking>(model);
+            newBooking.CreatedAt = DateTime.Now;
+            newBooking.UpdatedAt = DateTime.Now;
+
+            _bookingRepository.AddBooking(newBooking);
+        }
+
+        public void Update(BookingViewModel model)
+        {
+            var existingBooking = _bookingRepository.GetBooking().FirstOrDefault(s => !s.Deleted && s.Id == model.BookingId);
+
+            if (existingBooking != null)
+            {
+                existingBooking.UserId = model.UserId;
+                existingBooking.RoomId = model.RoomId;
+                existingBooking.StartDate = model.StartDate;
+                existingBooking.EndDate = model.EndDate;
+                existingBooking.NoOfPeople = model.NoOfPeople;
+                existingBooking.Status = model.Status;
+                existingBooking.IsRecurring = model.IsRecurring;
+                existingBooking.Frequency = model.Frequency;
+                existingBooking.UpdatedAt = DateTime.Now;
+
+                _bookingRepository.UpdateBooking(existingBooking);
+            }
+            else
+            {
+                throw new InvalidOperationException("Booking not found.");
+            }
+        }
+
+        public void Delete(int id)
+        {
+            _bookingRepository.DeleteBooking(id);
+        }
+
+        /// <summary>
+        /// Retrieves all booked rooms with additional details.
+        /// </summary>
+        public IEnumerable<BookedRoomViewModel> RetrieveBookedRooms()
+        {
+            var data = _bookingRepository.GetBooking()
+                .Where(x => !x.Deleted && x.Room.Status == "Booked") // Check Room status instead of Booking status
+                .Include(b => b.Room)    // Load Room details
+                .Include(b => b.User)    // Load User details
+                .Select(s => new BookedRoomViewModel
                 {
-                    BookingId = s.Id,
-                    UserId = s.UserId,
                     RoomId = s.RoomId,
-                    StartDate = s.StartDate ?? DateTime.MinValue, 
-                    EndDate = s.EndDate ?? DateTime.MinValue,     
-                    NoOfPeople = s.NoOfPeople ?? 0,              
-                    Status = s.Status,
-                    IsRecurring = s.IsRecurring ?? false,       
-                    Frequency = s.Frequency
-                });
+                    RoomName = s.Room.Name ?? "Unknown Room",
+                    UserId = s.UserId,
+                    UserName = s.User.LastName ?? "Unknown User",
+                    StartDate = s.StartDate ?? DateTime.MinValue,
+                    EndDate = s.EndDate ?? DateTime.MinValue,
+                    NoOfPeople = s.NoOfPeople ?? 0,
+                    Status = s.Room.Status ?? "Unknown Status" // Display Room's Status
+                })
+                .ToList(); // Materialize the results to ensure query execution
 
             return data;
         }
 
 
-        public BookingViewModel RetrieveBooking(int id)
-        {
-            var data = _bookingRepository.GetBooking().FirstOrDefault(x => x.Deleted != true && x.UserId == id);
-            var model = new BookingViewModel
-            {
-                BookingId = data.Id,
-                UserId = data.UserId,
-                RoomId = data.RoomId,
-                StartDate = data.StartDate ?? DateTime.MinValue, 
-                EndDate = data.EndDate ?? DateTime.MinValue,    
-                NoOfPeople = data.NoOfPeople ?? 0,             
-                Status = data.Status,
-                IsRecurring = data.IsRecurring ?? false,       
-                Frequency = data.Frequency
-            };
-            return model;
-        }
-
-        /// <summary>
-        /// Adds the specified model.
-        /// </summary>
-        /// <param name="model">The model.</param>
-        public void Add(BookingViewModel model)
-        {
-            var newModel = new Booking();
-            newModel.Id = model.BookingId;
-            newModel.UserId = model.UserId;
-            newModel.RoomId = model.RoomId;
-            newModel.StartDate = model.StartDate;
-            newModel.EndDate = model.EndDate;
-            newModel.NoOfPeople = model.NoOfPeople;
-            newModel.Status = model.Status;
-            newModel.IsRecurring = model.IsRecurring;
-            newModel.Frequency = model.Frequency;
-            _bookingRepository.AddBooking(newModel);
-        }
-
-        /// <summary>
-        /// Updates the specified model.
-        /// </summary>
-        /// <param name="model">The model.</param>
-        public void Update(BookingViewModel model)
-        {
-            var existingData = _bookingRepository.GetBooking().Where(s => s.Deleted != true && s.UserId == model.BookingId).FirstOrDefault();
-            existingData.Id = model.BookingId;
-            existingData.UserId = model.UserId;
-            existingData.RoomId = model.RoomId;
-            existingData.StartDate = model.StartDate;
-            existingData.EndDate = model.EndDate;
-            existingData.NoOfPeople = model.NoOfPeople;
-            existingData.Status = model.Status;
-            existingData.IsRecurring = model.IsRecurring;
-            existingData.Frequency = model.Frequency;
-
-            _bookingRepository.UpdateBooking(existingData);
-        }
-
-        /// <summary>
-        /// Deletes the specified identifier.
-        /// </summary>
-        /// <param name="id">The identifier.</param>
-        public void Delete(int id)
-        {
-            _bookingRepository.DeleteBooking(id);
-        }
     }
 }

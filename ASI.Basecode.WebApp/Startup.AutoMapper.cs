@@ -10,7 +10,7 @@ namespace ASI.Basecode.WebApp
     internal partial class StartupConfigurer
     {
         /// <summary>
-        /// Configure auto mapper
+        /// Configures AutoMapper and adds it to the service container.
         /// </summary>
         private void ConfigureAutoMapper()
         {
@@ -19,15 +19,40 @@ namespace ASI.Basecode.WebApp
                 config.AddProfile(new AutoMapperProfileConfiguration());
             });
 
-            this._services.AddSingleton<IMapper>(sp => mapperConfiguration.CreateMapper());
+            _services.AddSingleton<IMapper>(sp => mapperConfiguration.CreateMapper());
         }
 
+        /// <summary>
+        /// AutoMapper profile configuration for mapping entities and view models.
+        /// </summary>
         private class AutoMapperProfileConfiguration : Profile
         {
             public AutoMapperProfileConfiguration()
             {
-                CreateMap<Services.ServiceModels.LoginViewModel, MUser>();
-                CreateMap<UserViewModel, SampleCrud>();
+                // Mapping for LoginViewModel to MUser
+                CreateMap<Services.ServiceModels.LoginViewModel, MUser>()
+                    .ForMember(dest => dest.UserCode, opt => opt.MapFrom(src => src.UserId))
+                    .ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.Password))
+                    .ReverseMap();
+
+                // Mapping for UserViewModel to MUser
+                CreateMap<UserViewModel, MUser>()
+                    .ForMember(dest => dest.UserCode, opt => opt.MapFrom(src => src.UserCode))
+                    .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
+                    .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
+                    .ForMember(dest => dest.Mail, opt => opt.MapFrom(src => src.Email))
+                    .ForMember(dest => dest.UserRole, opt => opt.MapFrom(src => src.Role))
+                    .ReverseMap();
+
+                // Mapping for Room to RoomViewModel
+                CreateMap<Room, RoomViewModel>()
+                    .ForMember(dest => dest.RoomId, opt => opt.MapFrom(src => src.Id)) // Mapping Id to RoomId
+                    .ReverseMap();
+
+                // Mapping for Booking to BookingViewModel
+                CreateMap<Booking, BookingViewModel>()
+                    .ForMember(dest => dest.BookingId, opt => opt.MapFrom(src => src.Id)) // Mapping Id to BookingId
+                    .ReverseMap();
             }
         }
     }

@@ -18,8 +18,11 @@ namespace ASI.Basecode.Data.Repositories
 
         public IQueryable<Booking> GetBooking()
         {
-            return this.GetDbSet<Booking>();
+            var bookings = this.GetDbSet<Booking>();
+            Console.WriteLine($"Total Bookings Retrieved: {bookings.Count()}"); // Log the count for debugging
+            return bookings;
         }
+
 
         public bool BookingExists(int bookingId)
         {
@@ -28,12 +31,11 @@ namespace ASI.Basecode.Data.Repositories
 
         public void AddBooking(Booking booking)
         {
-            var maxId = this.GetDbSet<Booking>().Max(x => x.Id) + 1;
-            booking.Id = maxId;
             booking.CreatedAt = DateTime.Now;
             this.GetDbSet<Booking>().Add(booking);
-            UnitOfWork.SaveChanges();
+            UnitOfWork.SaveChanges(); // The database will handle ID assignment
         }
+
 
         public void UpdateBooking(Booking booking)
         {
