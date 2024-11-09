@@ -4,7 +4,7 @@
     // Retrieve the user's role and name from the claims
     var userName = User.Identity.Name ?? User.Claims.FirstOrDefault(c => c.Type == "name")?.Value ?? "Guest";
     var userRole = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Role)?.Value ?? "User";
-    //Super Admin = 9, User = 3, Admin = 1
+    //Super Admin = 9, User = 3, Admin = 1, Staff = 2
 }
 
 @section styles {
@@ -75,7 +75,7 @@
                     {
                         <a class="navbar-brand" asp-controller="SuperAdmin" asp-action="Rooms">MeetingRoomBookingSystem</a>
                     }
-                    else if (userRole == "3")
+                    else if (userRole == "3" || userRole == "2")
                     {
                         <a class="navbar-brand" asp-controller="Users" asp-action="UserDashboard">MeetingRoomBookingSystem</a>
                     }
@@ -113,7 +113,7 @@
                                     <a class="nav-link navItemA" asp-controller="SuperAdmin" asp-action="Accounts">Accounts</a>
                                 </li>
                             }
-                            else if (userRole == "3")
+                            else if (userRole == "3" || userRole == "2")
                             {
                                 <li class="nav-item">
                                     <a class="nav-link navItemA" asp-controller="Users" asp-action="UserDashboard">Dashboard</a>

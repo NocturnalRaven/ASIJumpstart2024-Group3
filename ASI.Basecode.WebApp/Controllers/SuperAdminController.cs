@@ -64,5 +64,71 @@ namespace ASI.Basecode.WebApp.Controllers
                 return View(null);
             }
         }
+        [HttpPost]
+        public IActionResult PostCreate(UserViewModel model)
+        {
+            _logger.LogInformation("Start user creation.");
+
+            try
+            {
+                if (_userService.RetrieveAll().Any(data => data.UserCode == model.UserCode))
+                {
+                    TempData["DuplicateErr"] = $"Duplicate UserCode: {model.UserCode}";
+                    _logger.LogWarning("Attempted to create a duplicate UserCode: {UserCode}", model.UserCode);
+                    return RedirectToAction("Accounts");
+                }
+
+                _userService.Add(model);
+                TempData["CreateMessage"] = "User added successfully!";
+                _logger.LogInformation("User created successfully.");
+                return RedirectToAction("Accounts");
+            }
+            catch (ArgumentException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                _logger.LogError("User creation failed due to invalid input: {Message}", ex.Message);
+                return RedirectToAction("Accounts");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error occurred while adding user: {Message}", ex.Message);
+                TempData["ErrorMessage"] = "An error occurred while adding the user.";
+                return RedirectToAction("Accounts");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult PostUpdate(UserViewModel model)
+        {
+            try
+            {
+                _userService.Update(model);
+                TempData["UpdateMessage"] = "User updated successfully!";
+                _logger.LogInformation("User with Id {Id} updated successfully.", model.Id);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error updating user.";
+                _logger.LogError("Error updating user with Id {Id}: {Message}", model.Id, ex.Message);
+            }
+            return RedirectToAction("Accounts");
+        }
+
+        [HttpPost]
+        public IActionResult PostDelete(int id)
+        {
+            try
+            {
+                _userService.Delete(id);
+                TempData["DeleteMessage"] = $"User with Id {id} deleted successfully.";
+                _logger.LogInformation("User with Id {Id} deleted successfully.", id);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error deleting user with Id {id}.";
+                _logger.LogError("Error deleting user with Id {Id}: {Message}", id, ex.Message);
+            }
+            return RedirectToAction("Accounts");
+        }
     }
 }
