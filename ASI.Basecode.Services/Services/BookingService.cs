@@ -17,10 +17,11 @@ namespace ASI.Basecode.Services.Services
         private readonly IMapper _mapper;
         private readonly ILogger<BookingService> _logger;
 
-        public BookingService(IBookingRepository repository, IMapper mapper)
+        public BookingService(IBookingRepository repository, IMapper mapper, ILogger<BookingService> logger)
         {
             _mapper = mapper;
             _bookingRepository = repository;
+            _logger = logger;
         }
 
         public IEnumerable<BookingViewModel> RetrieveAll(int? bookingId = null, int? userId = null, DateTime? startDate = null, string status = null)
@@ -80,15 +81,12 @@ namespace ASI.Basecode.Services.Services
             _bookingRepository.DeleteBooking(id);
         }
 
-        /// <summary>
-        /// Retrieves all booked rooms with additional details.
-        /// </summary>
         public IEnumerable<BookedRoomViewModel> RetrieveBookedRooms()
         {
             var data = _bookingRepository.GetBooking()
-                .Where(x => !x.Deleted && x.Room.Status == "Booked") // Check Room status instead of Booking status
-                .Include(b => b.Room)    // Load Room details
-                .Include(b => b.User)    // Load User details
+                .Where(x => !x.Deleted && x.Room.Status == "Booked")
+                .Include(b => b.Room)
+                .Include(b => b.User)
                 .Select(s => new BookedRoomViewModel
                 {
                     RoomId = s.RoomId,
@@ -98,13 +96,68 @@ namespace ASI.Basecode.Services.Services
                     StartDate = s.StartDate ?? DateTime.MinValue,
                     EndDate = s.EndDate ?? DateTime.MinValue,
                     NoOfPeople = s.NoOfPeople ?? 0,
-                    Status = s.Room.Status ?? "Unknown Status" // Display Room's Status
+                    Status = s.Room.Status ?? "Unknown Status"
                 })
-                .ToList(); // Materialize the results to ensure query execution
+                .ToList();
 
             return data;
         }
 
+        public int ArchiveExpiredBookings()
+        {
+            int archivedCount = _bookingRepository.ArchiveExpiredBookings();
+            _logger.LogInformation("{Count} expired bookings archived.", archivedCount);
+            return archivedCount;
+        }
+        public IEnumerable<BookingViewModel> GenerateRecurringBookings(BookingViewModel model)
+        {
+            var recurringBookings = new List<BookingViewModel>();
+
+            // Since model.StartDate and model.EndDate are non-nullable, use them directly
+            DateTime nextStartDate = model.StartDate;
+            DateTime nextEndDate = model.EndDate;
+
+            // Define an end date for recurrence (e.g., one year from the start date)
+            DateTime recurrenceEndDate = model.StartDate.AddYears(1);
+
+            while (nextStartDate <= recurrenceEndDate)
+            {
+                var newBooking = new BookingViewModel
+                {
+                    UserId = model.UserId,
+                    RoomId = model.RoomId,
+                    StartDate = nextStartDate,
+                    EndDate = nextEndDate,
+                    NoOfPeople = model.NoOfPeople,
+                    Status = model.Status,
+                    IsRecurring = true,
+                    Frequency = model.Frequency
+                };
+
+                recurringBookings.Add(newBooking);
+
+                // Move to the next recurrence based on frequency
+                switch (model.Frequency.ToLower())
+                {
+                    case "daily":
+                        nextStartDate = nextStartDate.AddDays(1);
+                        nextEndDate = nextEndDate.AddDays(1);
+                        break;
+                    case "weekly":
+                        nextStartDate = nextStartDate.AddDays(7);
+                        nextEndDate = nextEndDate.AddDays(7);
+                        break;
+                    case "monthly":
+                        nextStartDate = nextStartDate.AddMonths(1);
+                        nextEndDate = nextEndDate.AddMonths(1);
+                        break;
+                    default:
+                        throw new ArgumentException("Invalid frequency specified.");
+                }
+            }
+
+            return recurringBookings;
+        }
 
     }
 }
