@@ -107,6 +107,7 @@
 
                         <!-- Profile icon and dropdown -->
                         <div class="nav-item position-relative">
+                            <i class="bi bi-gear settings-icon navItemA" data-bs-toggle="modal" data-bs-target="#settingsModal" style="font-size: 1.5rem; margin-right: 10px;"></i>
                             <i class="bi bi-person-circle profile-icon" id="profileIcon"></i>
                             <div class="profile-dropdown" id="profileDropdown">
                                 <p>@userName</p>
@@ -203,6 +204,33 @@
             </div>
 
     <!-- Modals here for Edit Profile and Settings -->
+            <!-- Edit Profile Modal -->
+            <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="editProfileForm">
+                                <div class="mb-3">
+                                    <label for="editUserName" class="form-label">User Name</label>
+                                    <input type="text" class="form-control" id="editUserName" placeholder="Enter your name" />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editUserEmail" class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" id="editUserEmail" placeholder="Enter your email" />
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
     <!-- Optional Scripts Section -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -240,7 +268,6 @@
             });
         });
     </script>
-
     @RenderSection("scripts", required: false)
 </body>
 </html>
