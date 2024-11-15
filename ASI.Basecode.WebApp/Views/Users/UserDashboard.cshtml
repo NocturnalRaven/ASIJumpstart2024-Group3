@@ -81,7 +81,8 @@
                 </div>
             </aside>
 
-            <div class="mainContent">
+            <!-- Room Section -->
+            <section class="roomsSection mb-5">
                 <div class="userDashboardRoomsCardViewParent">
                     <div class="usersRoomDashboard mb-2">
                         <h4>Rooms</h4>
@@ -89,97 +90,14 @@
                             <i class="bi bi-plus-square me-2"></i>Book
                         </button>
                     </div>
-                    <div class="userDashboardRoomsCardView">
-
-                        <div class="userDashboardRoomsCard">
-                            <img src="~/img/classroomStyle.jpg" class="userDashboardRoomsCardImg">
-                            <div class="userDashboardRoomsCardDetails">
-                                <p class="userDashboardRoomsCardDetailsName">Meeting Room 1</p>
-                                <div class="userDashboardRoomsCardDetailsInner mb-1">
-                                    <i class="bi bi-house-fill"></i>
-                                    <p>Classroom Style</p>
-                                </div>
-                                <div class="userDashboardRoomsCardDetailsInner mb-3">
-                                    <i class="bi bi-people-fill"></i>
-                                    <p>35 pax</p>
-                                </div>
-                                <button class="btn adminAddBookingBtn btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
-                                    @TriggerBook
-                                </button>
-                            </div>
-                        </div>
-                        <div class="userDashboardRoomsCard">
-                            <img src="~/img/ushape.jpeg" class="userDashboardRoomsCardImg">
-                            <div class="userDashboardRoomsCardDetails">
-                                <p class="userDashboardRoomsCardDetailsName">Meeting Room 3</p>
-                                <div class="userDashboardRoomsCardDetailsInner mb-1">
-                                    <i class="bi bi-house-fill"></i>
-                                    <p>U-Shape Style</p>
-                                </div>
-                                <div class="userDashboardRoomsCardDetailsInner mb-3">
-                                    <i class="bi bi-people-fill"></i>
-                                    <p>20 pax</p>
-                                </div>
-                                <button class="btn adminAddBookingBtn btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
-                                    @TriggerBook
-                                </button>
-                            </div>
-                        </div>
-                        <div class="userDashboardRoomsCard">
-                            <img src="~/img/auditorium.jpg" class="userDashboardRoomsCardImg">
-                            <div class="userDashboardRoomsCardDetails">
-                                <p class="userDashboardRoomsCardDetailsName">Meeting Room 4</p>
-                                <div class="userDashboardRoomsCardDetailsInner mb-1">
-                                    <i class="bi bi-house-fill"></i>
-                                    <p>Auditorium Style</p>
-                                </div>
-                                <div class="userDashboardRoomsCardDetailsInner mb-3">
-                                    <i class="bi bi-people-fill"></i>
-                                    <p>80 pax</p>
-                                </div>
-                                <button class="btn adminAddBookingBtn btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
-                                    @TriggerBook
-                                </button>
-                            </div>
-                        </div>
-                        <div class="userDashboardRoomsCard">
-                            <img src="~/img/auditorium.jpg" class="userDashboardRoomsCardImg">
-                            <div class="userDashboardRoomsCardDetails">
-                                <p class="userDashboardRoomsCardDetailsName">Meeting Room 5</p>
-                                <div class="userDashboardRoomsCardDetailsInner mb-1">
-                                    <i class="bi bi-house-fill"></i>
-                                    <p>Auditorium Style</p>
-                                </div>
-                                <div class="userDashboardRoomsCardDetailsInner mb-3">
-                                    <i class="bi bi-people-fill"></i>
-                                    <p>80 pax</p>
-                                </div>
-                                <button class="btn adminAddBookingBtn btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
-                                    @TriggerBook
-                                </button>
-                            </div>
-                        </div>
-                        <div class="userDashboardRoomsCard">
-                            <img src="~/img/auditorium.jpg" class="userDashboardRoomsCardImg">
-                            <div class="userDashboardRoomsCardDetails">
-                                <p class="userDashboardRoomsCardDetailsName">Meeting Room 9</p>
-                                <div class="userDashboardRoomsCardDetailsInner mb-1">
-                                    <i class="bi bi-house-fill"></i>
-                                    <p>Banquet Style</p>
-                                </div>
-                                <div class="userDashboardRoomsCardDetailsInner mb-3">
-                                    <i class="bi bi-people-fill"></i>
-                                    <p>40 pax</p>
-                                </div>
-                                <button class="btn adminAddBookingBtn btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
-                                    @TriggerBook
-                                </button>
-                            </div>
-                        </div>                  
+                    <div class="userDashboardRoomsCardView scrollable-rooms" id="roomsContainer">
+                        <!-- Room cards will be dynamically rendered here -->
                     </div>
                 </div>
+            </section>
 
-                <!-- Dahboard Booked Meeting Rooms Table -->
+            <!-- Booking Table Section -->
+            <section class="bookingsSection">
                 <div class="userBookingsDashboard">
                     <div class="userBookingsDashboardHeader">
                         <p class="userBookingsDashboardTitle">Bookings</p>
@@ -202,8 +120,9 @@
                         </table>
                     </div>
                 </div>
-            </div>
+            </section>
         </div>
+
         <!-- off canvas -->
         <div class="offcanvas offcanvas-end" data-bs-backdrop="static" tabindex="-1" id="staticBackdrop" aria-labelledby="staticBackdropLabel">
             <div class="offcanvas-header">
@@ -259,7 +178,7 @@
                         </div>
                     </div>
                     <div class="buttonsOffCanvas">
-                        <button type="button " class="btn btn-outline-secondary">@CancelBookingInput</button>
+                        <button type="button" class="btn btn-outline-secondary">@CancelBookingInput</button>
                         <button class="btn adminAddBookingBtn" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
                             <i class="bi bi-plus-square me-2"></i>@Book
                         </button>
@@ -271,6 +190,57 @@
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchAndRenderRooms();
+        });
+
+        async function fetchAndRenderRooms() {
+            try {
+                // API call to fetch rooms
+                const response = await fetch('/api/rooms');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch rooms from the database');
+                }
+
+                const rooms = await response.json();
+                renderRooms(rooms);
+            } catch (error) {
+                console.error('Error fetching rooms:', error);
+            }
+        }
+
+        function renderRooms(rooms) {
+            const roomsContainer = document.getElementById('roomsContainer');
+            roomsContainer.innerHTML = ''; // Clear any existing content
+
+            rooms.forEach(room => {
+                const roomImage = room.image ? room.image : '/img/classroomStyle.jpg'; // Fallback to default image
+
+                const roomCard = document.createElement('div');
+                roomCard.classList.add('userDashboardRoomsCard');
+
+                roomCard.innerHTML = `
+                    <img src="${roomImage}" class="userDashboardRoomsCardImg" alt="${room.name || 'Room'}">
+                    <div class="userDashboardRoomsCardDetails">
+                        <p class="userDashboardRoomsCardDetailsName">${room.name || 'Unnamed Room'}</p>
+                        <div class="userDashboardRoomsCardDetailsInner mb-1">
+                            <i class="bi bi-house-fill"></i>
+                            <p>${room.style || 'Unknown Style'}</p>
+                        </div>
+                        <div class="userDashboardRoomsCardDetailsInner mb-3">
+                            <i class="bi bi-people-fill"></i>
+                            <p>${room.capacity || 'N/A'} pax</p>
+                        </div>
+                        <button class="btn adminAddBookingBtn btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
+                            Book
+                        </button>
+                    </div>
+                `;
+
+                roomsContainer.appendChild(roomCard);
+            });
+        }
+
         // JSON Data for Bookings
         const bookingsData = [
             {

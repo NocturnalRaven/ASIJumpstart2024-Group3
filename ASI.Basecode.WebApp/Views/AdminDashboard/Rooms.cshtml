@@ -91,7 +91,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="roomStyle" class="form-label">Style</label>
-                        <select class="form-select" id="roomStyle" required>
+                        <select class="form-select" id="roomStyle" required onchange="updateRoomImage()">
                             <option value="Classroom">Classroom</option>
                             <option value="Banquet">Banquet</option>
                             <option value="U-Shape">U-Shape</option>
@@ -100,6 +100,13 @@
                             <option value="Boardroom">Boardroom</option>
                         </select>
                     </div>
+                    <div class="mb-3">
+                        <label for="roomImagePreview" class="form-label">Room Image</label>
+                        <div id="roomImagePreview">
+                            <img src="" alt="Room Preview" id="roomImage" class="img-thumbnail" style="max-height: 200px; display: none;">
+                        </div>
+                    </div>
+
                     <div class="mb-3">
                         <label for="roomCapacity" class="form-label">Capacity</label>
                         <input type="number" class="form-control" id="roomCapacity" required>
@@ -313,6 +320,32 @@
                 console.error('Error:', error);
             }
         }
+
+        function updateRoomImage() {
+            const roomStyle = document.getElementById('roomStyle').value;
+            const roomImage = document.getElementById('roomImage');
+            const roomImagePreview = document.getElementById('roomImagePreview');
+
+            // Map room styles to their corresponding image paths
+            const styleToImageMap = {
+                "Classroom": "/img/classroomStyle.jpg",
+                "Banquet": "/img/banquet.jpg",
+                "U-Shape": "/img/ushape.jpeg",
+                "Conference": "/img/conferenceStyle.png",
+                "Auditorium": "/img/auditorium.jpg",
+                "Boardroom": "/img/boardroomStyle.jpeg",
+            };
+
+            // Assign the image based on the selected style
+            const imagePath = styleToImageMap[roomStyle] || ""; // Default to an empty path if not found
+            if (imagePath) {
+                roomImage.src = imagePath;
+                roomImage.style.display = "block"; // Show the image
+            } else {
+                roomImage.style.display = "none"; // Hide the image if no style is selected
+            }
+        }
+
     </script>
 </body>
 </html>
