@@ -172,6 +172,21 @@ namespace ASI.Basecode.WebApp.Controllers
 
             return imagePath;
         }
+        
+        [HttpGet("available")]
+        public IActionResult GetAvailableRooms()
+        {
+            try
+            {
+                var availableRooms = _roomService.GetAllRooms().Where(room => room.Status == "Available");
+                return Ok(availableRooms);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching available rooms: {ex.Message}");
+                return StatusCode(500, "Internal server error while fetching available rooms.");
+            }
+        }
 
     }
 }
