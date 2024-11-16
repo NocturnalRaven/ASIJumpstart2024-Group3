@@ -61,7 +61,7 @@
 </head>
 <body>
     <header>
-        @if (ViewBag.HideNav != true)
+        @if (ViewData["HideNav"] == null || !(bool)ViewData["HideNav"])
         {
             <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
                 <div class="container">
