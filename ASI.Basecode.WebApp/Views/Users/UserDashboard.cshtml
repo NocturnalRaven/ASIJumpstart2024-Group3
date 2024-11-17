@@ -74,9 +74,6 @@
                 <div class="userDashboardRoomsCardViewParent">
                     <div class="usersRoomDashboard mb-2">
                         <h4>Rooms</h4>
-                        <button class="btn adminAddBookingBtn btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
-                            <i class="bi bi-plus-square me-2"></i>Book
-                        </button>
                     </div>
                     <div class="userDashboardRoomsCardView scrollable-rooms" id="roomsContainer">
                         <!-- Room cards will be dynamically rendered here -->
@@ -84,7 +81,7 @@
                 </div>
             </section>
 
-            <!-- Booking Table Section -->
+            <<!-- Booking Table Section -->
             <section class="bookingsSection">
                 <div class="userBookingsDashboard">
                     <div class="userBookingsDashboardHeader">
@@ -94,12 +91,11 @@
                         <table class="table table-striped align-middle" id="userBookingsTable">
                             <thead>
                                 <tr>
-                                    <th scope="col">User</th>
-                                    <th scope="col">Room</th>
-                                    <th scope="col">Date</th>
-                                    <th scope="col">No. of People</th>
-                                    <th scope="col">Price</th>
-                                    <th scope="col">Actions</th>
+                                    <th scope="col">Room Name</th>
+                                    <th scope="col">Booking Date</th>
+                                    <th scope="col">Start Time</th>
+                                    <th scope="col">End Time</th>
+                                    <th scope="col">Booking Duration</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -200,6 +196,7 @@
             document.getElementById('bookingForm').addEventListener('submit', handleBookingSubmit);
         });
 
+
         function populateUserDetails() {
             const userName = '@(User.Identity.Name ?? User.Claims.FirstOrDefault(c => c.Type == "name")?.Value ?? "Guest")';
             const userEmail = '@(HttpContextAccessor.HttpContext.User.FindFirst("Email")?.Value ?? "unknown@example.com")';
@@ -212,16 +209,18 @@
             try {
                 const response = await fetch('/api/bookings/GetAllRooms');
                 if (!response.ok) throw new Error('Failed to fetch available rooms.');
+
                 const rooms = await response.json();
                 renderRooms(rooms);
             } catch (error) {
                 console.error('Error fetching rooms:', error.message);
+                alert('Could not fetch available rooms. Please try again later.');
             }
         }
 
         function renderRooms(rooms) {
             const roomsContainer = document.getElementById('roomsContainer');
-            roomsContainer.innerHTML = '';
+            roomsContainer.innerHTML = ''; // Clear any existing content
 
             rooms.forEach(room => {
                 const isAvailable = room.status === "Available";
@@ -241,8 +240,9 @@
                         </div>
                         <button class="btn adminAddBookingBtn btn-sm" type="button"
                             data-room-id="${room.roomId}"
-                            data-room-name="${room.name}"
-                            data-room-style="${room.style}"
+                            data-room-name="${room.name || 'Unnamed Room'}"
+                            data-room-style="${room.style || 'Unknown Style'}"
+                            data-room-capacity="${room.capacity || 'N/A'}"
                             data-bs-toggle="offcanvas"
                             data-bs-target="#staticBackdrop"
                             ${!isAvailable ? 'disabled' : ''}>
@@ -251,39 +251,63 @@
                     </div>
                 `;
 
-                roomCard.querySelector('button').addEventListener('click', event => {
-                    handleBookButtonClick(event.target.dataset);
+                // Attach click listener to the button
+                const bookButton = roomCard.querySelector('button');
+                bookButton.addEventListener('click', () => {
+                    const roomId = bookButton.getAttribute('data-room-id');
+                    const roomName = bookButton.getAttribute('data-room-name');
+                    const roomStyle = bookButton.getAttribute('data-room-style');
+                    const roomCapacity = bookButton.getAttribute('data-room-capacity');
+
+                    if (!roomId) {
+                        console.error("Room ID is missing. Unable to proceed with booking.");
+                        alert("An error occurred. Please try again.");
+                        return;
+                    }
+
+                    handleBookButtonClick({ roomId, roomName, roomStyle, roomCapacity });
                 });
 
                 roomsContainer.appendChild(roomCard);
             });
         }
 
+
         function handleBookButtonClick(roomData) {
+            // Validate and assign room data
+            if (!roomData || !roomData.roomId) {
+                console.error("Invalid room data provided:", roomData);
+                alert("Unable to retrieve room details. Please try again.");
+                return;
+            }
+
             selectedRoomId = roomData.roomId;
-            document.getElementById('roomName').value = roomData.roomName;
-            document.getElementById('roomStyle').value = roomData.roomStyle;
+
+            // Populate room details in the booking modal
+            document.getElementById('roomName').value = roomData.roomName || "Unknown Room";
+            document.getElementById('roomStyle').value = roomData.roomStyle || "Unknown Style";
+
+            console.log(`Room selected: ID=${roomData.roomId}, Name=${roomData.roomName}, Style=${roomData.roomStyle}, Capacity=${roomData.roomCapacity}`);
         }
 
         async function handleBookingSubmit(event) {
             event.preventDefault();
 
+            // Prepare booking data
             const bookingData = {
-                userId: '@(User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value)',
-                userName: '@(User.Identity.Name ?? User.Claims.FirstOrDefault(c => c.Type == "name")?.Value)',
-                roomId: selectedRoomId,
-                startDate: document.getElementById('bookingDate').value,
-                startTime: document.getElementById('startTime').value,
-                endTime: document.getElementById('endTime').value,
+                userId: '@(HttpContextAccessor.HttpContext.User.FindFirst("UserId")?.Value ?? "0")',
+                roomId: selectedRoomId, // Use selectedRoomId to link the booking to a specific room
+                startDate: document.getElementById('bookingDate').value + 'T' + document.getElementById('startTime').value,
+                endDate: document.getElementById('bookingDate').value + 'T' + document.getElementById('endTime').value,
                 isRecurring: document.getElementById('isRecurring').value === 'Yes',
-                frequency: document.getElementById('recurringFrequency').value || null,
+                frequency: document.getElementById('isRecurring').value === 'Yes' ? document.getElementById('recurringFrequency').value : null,
             };
 
             try {
                 const response = await fetch('/api/bookings/AddBooking', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(bookingData)
+                    body: JSON.stringify(bookingData),
                 });
 
                 if (response.ok) {
@@ -297,31 +321,61 @@
                 }
             } catch (error) {
                 console.error('Error booking room:', error.message);
+                alert('Error occurred while booking. Please try again later.');
             }
         }
 
         async function fetchUserBookings() {
             try {
+                // Fetch user bookings from the API
                 const response = await fetch('/api/bookings/UserBookings');
-                if (!response.ok) throw new Error('Failed to fetch user bookings.');
+                if (!response.ok) throw new Error("Failed to load user bookings");
 
+                const usersResponse = await fetch('/api/bookings/GetAllUsers');
+                const roomsResponse = await fetch('/api/bookings/GetAllRooms');
+
+                const users = await usersResponse.json();
+                const rooms = await roomsResponse.json();
                 const bookings = await response.json();
-                bookingsData = bookings.map(booking => {
-                    const bookingDate = new Date(booking.startDate).toISOString().split('T')[0];
-                    if (!bookingDates.includes(bookingDate)) bookingDates.push(bookingDate);
 
-                    return {
-                        ...booking,
-                        bookingDate,
-                    };
-                });
+                const userId = '@(HttpContextAccessor.HttpContext.User.FindFirst("UserId")?.Value ?? "0")'; // Replace this with the correct way to get userId in your app
 
-                initializeCalendar();
-                renderBookingsForSelectedDate(); // Update the selected date bookings display
+                bookingsData = bookings
+                    .filter(booking => booking.userId == userId) // Limit bookings to the logged-in user
+                    .map(booking => {
+                        const user = users.find(user => user.id === booking.userId);
+                        const room = rooms.find(room => room.roomId === booking.roomId);
+
+                        if (!room) console.warn(`Room with ID ${booking.roomId} not found`);
+
+                        // Add booking date to bookingDates array if not already present
+                        const bookingDate = new Date(booking.startDate).toISOString().split("T")[0];
+                        if (!bookingDates.includes(bookingDate)) {
+                            bookingDates.push(bookingDate);
+                        }
+
+                        return {
+                            ...booking,
+                            bookingDate,
+                            userName: user ? user.name : 'Unknown User', // Assign user name
+                            roomName: room ? room.name : 'Unknown Room', // Assign room name
+                        };
+                    });
+
+                // Render updated data
+                renderBookingsTable(bookingsData);
+                displayBookingsForDate(bookingDate);
+
+                // Display today's bookings by default
+                const today = new Date().toISOString().split('T')[0];
+                displayBookingsForDate(today);
             } catch (error) {
                 console.error('Error fetching user bookings:', error.message);
+                alert('Could not fetch your bookings. Please try again later.');
             }
         }
+
+
 
         function initializeCalendar() {
             flatpickr('#calendar', {
@@ -329,19 +383,33 @@
                 mode: 'single',
                 dateFormat: 'Y-m-d',
                 onDayCreate: (dObj, dStr, fp, dayElem) => {
-                    const dateStr = dayElem.dateObj.toISOString().split('T')[0];
+                    const dateStr = dayElem.dateObj.toLocaleDateString('en-CA'); // Format as YYYY-MM-DD in local time
+
+                    // Highlight days with bookings
                     if (bookingDates.includes(dateStr)) {
-                        dayElem.classList.add('has-booking');
+                        dayElem.classList.add('has-booking'); // Add custom class to style these days
                     }
                 },
                 onChange: (selectedDates) => {
                     if (selectedDates.length > 0) {
-                        const selectedDate = selectedDates[0].toISOString().split('T')[0];
-                        displayBookingsForDate(selectedDate);
+                        const selectedDate = selectedDates[0].toLocaleDateString('en-CA'); // Format as YYYY-MM-DD in local time
+
+                        // Display bookings for the selected date
+                        const bookingsForDate = bookingsData.filter(
+                            booking => new Date(booking.startDate).toLocaleDateString('en-CA') === selectedDate
+                        );
+
+                        if (bookingsForDate.length > 0) {
+                            displayBookingsForDate(selectedDate); // Update the view with the selected date's bookings
+                        } else {
+                            displayBookingsForDate(selectedDate); // Ensures UI updates even if no bookings exist
+                        }
                     }
                 },
             });
         }
+
+
 
         function displayBookingsForDate(date) {
             const container = document.getElementById('selectedDateBookings');
@@ -352,10 +420,15 @@
                 container.innerHTML = `<p class="text-muted text-center">No bookings for this date.</p>`;
             } else {
                 bookingsForDate.forEach(booking => {
+                    const startTime = new Date(booking.startDate);
+                    const endTime = new Date(booking.endDate);
+                    const duration = ((endTime - startTime) / 60000).toFixed(2); // Duration in minutes
+                    const hours = Math.floor(duration / 60);
+                    const minutes = duration % 60;
+                    const formattedDuration = `${hours}h ${minutes}m`;
+
                     const bookingHTML = `
                         <div class="recentBookings">
-                            <p class="userRecentBookings">${booking.userName || 'Unknown User'}</p>
-                            <hr>
                             <div class="recentBookingsDetailsDiv">
                                 <div class="recentBookingsDetails">
                                     <i class="bi bi-house-door-fill"></i>
@@ -363,11 +436,15 @@
                                 </div>
                                 <div class="recentBookingsDetails">
                                     <i class="bi bi-calendar2-week"></i>
-                                    <p>${new Date(booking.startDate).toLocaleDateString()}</p>
+                                    <p>${startTime.toLocaleDateString()}</p>
                                 </div>
                                 <div class="recentBookingsDetails">
                                     <i class="bi bi-clock"></i>
-                                    <p>${new Date(booking.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(booking.endDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                    <p>${startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                </div>
+                                <div class="recentBookingsDetails">
+                                    <i class="bi bi-hourglass-split"></i>
+                                    <p>${formattedDuration}</p>
                                 </div>
                             </div>
                         </div>
@@ -376,26 +453,71 @@
                 });
             }
         }
+
         function renderBookingsTable(bookings) {
             const tableBody = document.getElementById('userBookingsTable').querySelector('tbody');
             tableBody.innerHTML = '';
 
             bookings.forEach(booking => {
+                const bookingDate = new Date(booking.startDate).toLocaleDateString();
+                const startTime = new Date(booking.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const endTime = new Date(booking.endDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                const startDate = new Date(booking.startDate);
+                const endDate = new Date(booking.endDate);
+                const duration = Math.abs(endDate - startDate) / (1000 * 60); // Duration in minutes
+                const hours = Math.floor(duration / 60);
+                const minutes = duration % 60;
+                const formattedDuration = `${hours}h ${minutes}m`;
+
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                        <td>${booking.userName || 'Unknown User'}</td>
-                        <td>${booking.roomName || 'Unknown Room'}</td>
-                        <td>${new Date(booking.startDate).toLocaleDateString()}</td>
-                        <td>${booking.noOfPeople || 'N/A'}</td>
-                        <td>${booking.price || 'N/A'}</td>
-                        <td>
-                            <button class="btn btn-primary btn-sm" onclick="viewBooking(${booking.bookingId})">View</button>
-                            <button class="btn btn-info btn-sm" onclick="editBooking(${booking.bookingId})">Edit</button>
-                            <button class="btn btn-danger btn-sm" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
-                        </td>
-                    `;
+                            <td>${booking.roomName || 'Unknown Room'}</td>
+                            <td>${bookingDate}</td>
+                            <td>${startTime}</td>
+                            <td>${endTime}</td>
+                            <td>${formattedDuration}</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" onclick="viewBooking(${booking.bookingId})">View</button>
+                                <button class="btn btn-info btn-sm" onclick="editBooking(${booking.bookingId})">Edit</button>
+                                <button class="btn btn-danger btn-sm" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
+                            </td>
+                        `;
+
                 tableBody.appendChild(row);
             });
+        }
+        function viewBooking(bookingId) {
+            alert(`View booking with ID: ${bookingId}`);
+            // Implement view logic here
+            // Example: Fetch booking details from API and show them in a modal
+        }
+
+        function editBooking(bookingId) {
+            alert(`Edit booking with ID: ${bookingId}`);
+            // Implement edit logic here
+            // Example: Fetch booking details from API, populate a form, and allow updates
+        }
+
+        function cancelBooking(bookingId) {
+            if (confirm('Are you sure you want to cancel this booking?')) {
+                fetch(`/api/bookings/DeleteBooking/${bookingId}`, {
+                    method: 'DELETE',
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('Booking canceled successfully.');
+                            fetchUserBookings(); // Refresh the table
+                        } else {
+                            response.text().then(errorText => {
+                                alert(`Failed to cancel booking: ${errorText}`);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error canceling booking:', error);
+                    });
+            }
         }
     </script>
 </body>
