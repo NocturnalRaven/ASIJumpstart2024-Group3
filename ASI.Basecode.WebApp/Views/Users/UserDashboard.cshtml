@@ -145,14 +145,13 @@
                     <div class="mb-3 timeDiv">
                         <div>
                             <label for="startTime" class="form-label">Start Time</label>
-                            <input type="time" class="form-control" id="startTime" required>
+                            <select class="form-control" id="startTime" required></select>
                         </div>
                         <div>
                             <label for="endTime" class="form-label">End Time</label>
-                            <input type="time" class="form-control" id="endTime" required>
+                            <select class="form-control" id="endTime" required></select>
                         </div>
                     </div>
-
                     <!-- Recurring Booking Section -->
                     <div class="mb-3">
                         <label for="isRecurring" class="form-label">Is this booking recurring?</label>
@@ -193,6 +192,7 @@
             fetchAndRenderRooms();
             populateUserDetails();
             initializeCalendar(); // Initialize calendar once bookings are fetched
+            populateTimeDropdowns();
             document.getElementById('bookingForm').addEventListener('submit', handleBookingSubmit);
         });
 
@@ -519,6 +519,45 @@
                     });
             }
         }
+        function populateTimeDropdowns() {
+            const timeIntervals = generateTimeIntervals(30, 8, 20); // 30-minute intervals from 8 AM to 8 PM
+            const startTimeSelect = document.getElementById('startTime');
+            const endTimeSelect = document.getElementById('endTime');
+
+            // Populate dropdowns with time intervals
+            timeIntervals.forEach(time => {
+                const startOption = document.createElement('option');
+                startOption.value = time;
+                startOption.textContent = time;
+                startTimeSelect.appendChild(startOption);
+
+                const endOption = document.createElement('option');
+                endOption.value = time;
+                endOption.textContent = time;
+                endTimeSelect.appendChild(endOption);
+            });
+        }
+
+        function generateTimeIntervals(intervalMinutes, startHour, endHour) {
+            const times = [];
+            const currentTime = new Date();
+            currentTime.setHours(startHour, 0, 0, 0); // Start at the specified hour
+
+            const endTime = new Date();
+            endTime.setHours(endHour, 0, 0, 0); // End at the specified hour
+
+            while (currentTime <= endTime) {
+                const hours = String(currentTime.getHours()).padStart(2, '0');
+                const minutes = String(currentTime.getMinutes()).padStart(2, '0');
+                times.push(`${hours}:${minutes}`);
+
+                // Add interval
+                currentTime.setMinutes(currentTime.getMinutes() + intervalMinutes);
+            }
+
+            return times;
+        }
+    
     </script>
 </body>
 </html>
