@@ -145,14 +145,13 @@
                     <div class="mb-3 timeDiv">
                         <div>
                             <label for="startTime" class="form-label">Start Time</label>
-                            <input type="time" class="form-control" id="startTime" required>
+                            <select class="form-control" id="startTime" required></select>
                         </div>
                         <div>
                             <label for="endTime" class="form-label">End Time</label>
-                            <input type="time" class="form-control" id="endTime" required>
+                            <select class="form-control" id="endTime" required></select>
                         </div>
                     </div>
-
                     <!-- Recurring Booking Section -->
                     <div class="mb-3">
                         <label for="isRecurring" class="form-label">Is this booking recurring?</label>
@@ -193,6 +192,8 @@
             fetchAndRenderRooms();
             populateUserDetails();
             initializeCalendar(); // Initialize calendar once bookings are fetched
+            populateTimeDropdowns();
+            initializeBookingDateInput(); // Restrict the booking date input
             document.getElementById('bookingForm').addEventListener('submit', handleBookingSubmit);
         });
 
@@ -293,12 +294,17 @@
         async function handleBookingSubmit(event) {
             event.preventDefault();
 
-            // Prepare booking data
+            const bookingDateInput = document.getElementById('bookingDate');
+            if (!bookingDateInput.value) {
+                alert('Please select a valid booking date.');
+                return;
+            }
+
             const bookingData = {
                 userId: '@(HttpContextAccessor.HttpContext.User.FindFirst("UserId")?.Value ?? "0")',
-                roomId: selectedRoomId, // Use selectedRoomId to link the booking to a specific room
-                startDate: document.getElementById('bookingDate').value + 'T' + document.getElementById('startTime').value,
-                endDate: document.getElementById('bookingDate').value + 'T' + document.getElementById('endTime').value,
+                roomId: selectedRoomId,
+                startDate: `${bookingDateInput.value}T${document.getElementById('startTime').value}`,
+                endDate: `${bookingDateInput.value}T${document.getElementById('endTime').value}`,
                 isRecurring: document.getElementById('isRecurring').value === 'Yes',
                 frequency: document.getElementById('isRecurring').value === 'Yes' ? document.getElementById('recurringFrequency').value : null,
             };
@@ -313,8 +319,7 @@
                 if (response.ok) {
                     alert('Booking successful!');
                     document.getElementById('bookingForm').reset();
-                    document.querySelector('.btn-close').click();
-                    fetchUserBookings(); // Refresh bookings and calendar
+                    fetchUserBookings(); // Refresh bookings
                 } else {
                     const errorText = await response.text();
                     alert(`Booking failed: ${errorText}`);
@@ -517,6 +522,133 @@
                     .catch(error => {
                         console.error('Error canceling booking:', error);
                     });
+            }
+        }
+        
+        function populateTimeDropdowns() {
+            const timeIntervals = generateTimeIntervals(30, 8, 20); // 30-minute intervals from 8 AM to 8 PM
+            const startTimeSelect = document.getElementById('startTime');
+            const endTimeSelect = document.getElementById('endTime');
+            let selectedStartTime = null;
+
+            // Helper function to populate a dropdown with optional disabled intervals
+            function populateDropdown(selectElement, disabledIntervals = [], currentValue = null) {
+                selectElement.innerHTML = ''; // Clear existing options
+
+                timeIntervals.forEach(time => {
+                    const option = document.createElement('option');
+                    option.value = time;
+                    option.textContent = time;
+
+                    // Disable option if it's in the disabledIntervals array
+                    if (disabledIntervals.includes(time)) {
+                        option.disabled = true;
+                        option.style.color = 'gray'; // Optional styling for disabled options
+                    }
+
+                    selectElement.appendChild(option);
+                });
+
+                // Restore the previously selected value if valid
+                if (currentValue && timeIntervals.includes(currentValue)) {
+                    selectElement.value = currentValue;
+                } else {
+                    selectElement.value = ''; // Reset the value if invalid
+                }
+            }
+
+            // Populate the start time dropdown without restrictions initially
+            populateDropdown(startTimeSelect);
+
+            // Adjust end time options based on the selected start time
+            startTimeSelect.addEventListener('change', () => {
+                selectedStartTime = startTimeSelect.value;
+                const disabledIntervals = timeIntervals.filter(time => time <= selectedStartTime);
+                populateDropdown(endTimeSelect, disabledIntervals, endTimeSelect.value);
+            });
+
+            // Validate time dropdowns based on overlapping bookings and real-time
+            function validateTimeDropdowns() {
+                const selectedDate = document.getElementById('bookingDate').value;
+                const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+                const now = new Date(); // Current date and time
+                const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`; // Current time in HH:mm format
+
+                if (!selectedDate) return;
+
+                const bookingsForDate = bookingsData.filter(booking => {
+                    const bookingDate = new Date(booking.startDate).toISOString().split('T')[0];
+                    return bookingDate === selectedDate;
+                });
+
+                const disabledStartTimes = new Set();
+                const disabledEndTimes = new Set();
+
+                // Add real-time validation for today
+                if (selectedDate === today) {
+                    timeIntervals.forEach(time => {
+                        if (time <= currentTime) {
+                            disabledStartTimes.add(time);
+                            disabledEndTimes.add(time);
+                        }
+                    });
+                }
+
+                // Add validation for overlapping bookings
+                bookingsForDate.forEach(booking => {
+                    const bookingStart = new Date(booking.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const bookingEnd = new Date(booking.endDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                    timeIntervals.forEach(time => {
+                        if (time >= bookingStart && time < bookingEnd) {
+                            disabledStartTimes.add(time);
+                        }
+                        if (time > bookingStart && time <= bookingEnd) {
+                            disabledEndTimes.add(time);
+                        }
+                    });
+                });
+
+                // Update dropdowns with the disabled times
+                populateDropdown(startTimeSelect, Array.from(disabledStartTimes), startTimeSelect.value);
+                populateDropdown(endTimeSelect, Array.from(disabledEndTimes), endTimeSelect.value);
+            }
+
+            // Attach event listeners for dynamic validation
+            document.getElementById('bookingDate').addEventListener('change', validateTimeDropdowns);
+            startTimeSelect.addEventListener('change', validateTimeDropdowns);
+            endTimeSelect.addEventListener('change', validateTimeDropdowns);
+
+            // Initial validation
+            validateTimeDropdowns();
+        }
+
+
+        function generateTimeIntervals(intervalMinutes, startHour, endHour) {
+            const times = [];
+            const currentTime = new Date();
+            currentTime.setHours(startHour, 0, 0, 0); // Start at the specified hour
+
+            const endTime = new Date();
+            endTime.setHours(endHour, 0, 0, 0); // End at the specified hour
+
+            while (currentTime <= endTime) {
+                const hours = String(currentTime.getHours()).padStart(2, '0');
+                const minutes = String(currentTime.getMinutes()).padStart(2, '0');
+                times.push(`${hours}:${minutes}`);
+
+                // Add interval
+                currentTime.setMinutes(currentTime.getMinutes() + intervalMinutes);
+            }
+
+            return times;
+        }
+        
+        function initializeBookingDateInput() {
+            const bookingDateInput = document.getElementById('bookingDate');
+            if (bookingDateInput) {
+                const today = new Date().toISOString().split('T')[0]; // Format today as YYYY-MM-DD
+                bookingDateInput.setAttribute('min', today); // Set the minimum selectable date
             }
         }
     </script>

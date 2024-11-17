@@ -37,7 +37,7 @@
                             <i class="bi bi-filter ms-3"></i>
                         </div>
                     </div>
-                    <div class="table-wrapper">
+                    <<div class="table-wrapper">
                         <table class="table table-striped align-middle" id="bookingsTable">
                             <thead>
                                 <tr>
@@ -45,8 +45,10 @@
                                     <th scope="col">User Name</th>
                                     <th scope="col">Room ID</th>
                                     <th scope="col">Room Name</th>
-                                    <th scope="col">Date</th>
-                                    <th scope="col">No. of People</th>
+                                    <th scope="col">Booking Date</th>
+                                    <th scope="col">Start Time</th>
+                                    <th scope="col">End Time</th>
+                                    <th scope="col">Duration</th>
                                     <th scope="col">Actions</th>
                                 </tr>
                             </thead>
@@ -57,33 +59,6 @@
                     </div>
                 </div>
 
-                <!-- Pending Bookings Table -->
-                <div class="bookingsDashboardLower">
-                    <div class="dashboardPending">
-                        <div class="bookingsDashboardHeader">
-                            <p class="bookingsDashboardTitle">Pending Bookings</p>
-                            <i class="bi bi-filter"></i>
-                        </div>
-                        <div class="table-wrapper">
-                            <table class="table table-striped align-middle" id="pendingsTable">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">User ID</th>
-                                        <th scope="col">User Name</th>
-                                        <th scope="col">Room ID</th>
-                                        <th scope="col">Room Name</th>
-                                        <th scope="col">Date</th>
-                                        <th scope="col">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Pending Bookings will be rendered here -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <!-- Analytics Section -->
             <div class="dashboardAnalytics">
@@ -139,17 +114,17 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="addBookingDate" class="form-label">Date</label>
-                                    <input type="date" class="form-control" id="addBookingDate" required min="<?= date('Y-m-d') ?>">
+                                    <input type="date" class="form-control" id="addBookingDate" required>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="addBookingStartTime" class="form-label">Start Time</label>
-                                    <input type="time" class="form-control" id="addBookingStartTime" required>
+                                <div>
+                                    <label for="AddBookingStartTime" class="form-label">Start Time</label>
+                                    <select class="form-control" id="AddBookingStartTime" required></select>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="addBookingEndTime" class="form-label">End Time</label>
-                                    <input type="time" class="form-control" id="addBookingEndTime" required>
+                                <div>
+                                    <label for="AddBookingEndTime" class="form-label">End Time</label>
+                                    <select class="form-control" id="AddBookingEndTime" required></select>
                                 </div>
-                                <div class="mb-3">
+                                <div class="mb-3"> 
                                     <label for="addBookingPeople" class="form-label">No. of People</label>
                                     <input type="number" class="form-control" id="addBookingPeople" min="1" required>
                                 </div>
@@ -182,7 +157,7 @@
                     </div>
                 </div>
             </div>
-
+                
             <!-- Edit Booking Modal -->
             <div class="modal fade" id="editBookingModal" tabindex="-1" aria-labelledby="editBookingModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -207,19 +182,21 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="bookingDateInput" class="form-label">Date</label>
-                                    <input type="date" class="form-control" id="addBookingDate" required min="<?= date('Y-m-d') ?>">
+                                    <input type="date" class="form-control" id="bookingDateInput" required>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="bookingStartTimeInput" class="form-label">Start Time</label>
-                                    <input type="time" class="form-control" id="bookingStartTimeInput" required>
+                                <div>
+                                    <label for="startTime" class="form-label">Start Time</label>
+                                    <select class="form-control" id="startTime" required></select>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="bookingEndTimeInput" class="form-label">End Time</label>
-                                    <input type="time" class="form-control" id="bookingEndTimeInput" required>
+                                <div>
+                                    <label for="endTime" class="form-label">End Time</label>
+                                    <select class="form-control" id="endTime" required></select>
                                 </div>
                                 <div class="mb-3">
                                     <label for="bookingPeopleInput" class="form-label">No. of People</label>
-                                    <input type="number" class="form-control" id="bookingPeopleInput" min="1" required>
+                                    <input type="number"
+                                           class="form-control"
+                                           id="bookingPeopleInput">
                                 </div>
                                 <div class="mb-3">
                                     <label for="bookingStatusInput" class="form-label">Status</label>
@@ -227,6 +204,18 @@
                                         <option value="Confirmed">Confirmed</option>
                                         <option value="Pending">Pending</option>
                                         <option value="Canceled">Canceled</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editBookingRecurring" class="form-label">Recurring</label>
+                                    <input type="checkbox" id="editBookingRecurring">
+                                </div>
+                                <div class="mb-3" id="editFrequencySection" style="display: none;">
+                                    <label for="editBookingFrequency" class="form-label">Frequency</label>
+                                    <select class="form-select" id="editBookingFrequency">
+                                        <option value="Daily">Daily</option>
+                                        <option value="Weekly">Weekly</option>
+                                        <option value="Monthly">Monthly</option>
                                     </select>
                                 </div>
                             </form>
@@ -238,6 +227,7 @@
                     </div>
                 </div>
             </div>
+
 
             <!-- JS Libraries -->
             <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -283,7 +273,6 @@
 
                         renderBookings(bookingsData);
                         renderRecentBookings(bookingsData);
-                        renderPendings(bookingsData);
                         populateUserAndRoomSelect(users, rooms);
                         updateAnalyticsChart();
                         updateCalendarWithBookings();
@@ -368,30 +357,46 @@
                     addBookingRoomSelect.addEventListener('change', updateRoomCapacityDisplay);
                 }
 
-                function renderBookings(bookings) {
-                    const tbody = document.querySelector('#bookingsTable tbody');
-                    tbody.innerHTML = '';
+                    function renderBookings(bookings) {
+                        const tbody = document.querySelector('#bookingsTable tbody');
+                        tbody.innerHTML = '';
 
-                    // Filter out archived bookings to exclude them from the bookings table
-                    const activeBookings = bookings.filter(booking => booking.status !== 'Archived');
+                        // Filter bookings to exclude those that have elapsed
+                        const upcomingBookings = bookings.filter(booking => new Date(booking.endDate) > new Date());
 
-                    activeBookings.forEach(booking => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                                            <td>${booking.userId}</td>
-                                            <td>${booking.userName}</td>
-                                            <td>${booking.roomId}</td>
-                                            <td>${booking.roomName}</td>
-                                            <td>${new Date(booking.startDate).toLocaleDateString()}</td>
-                                            <td>${booking.noOfPeople}</td>
-                                            <td>
-                                                <button class="btn btn-primary btn-sm" onclick="viewBooking(${booking.bookingId})">View</button>
-                                                <button class="btn btn-info btn-sm" onclick="editBooking(${booking.bookingId}, ${booking.userId}, ${booking.roomId}, '${booking.startDate}', '${booking.endDate}', ${booking.noOfPeople}, '${booking.status}')">Edit</button>
-                                                <button class="btn btn-danger btn-sm" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
-                                            </td>`;
-                        tbody.appendChild(row);
-                    });
-                }
+                        if (upcomingBookings.length === 0) {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `<td class="text-center text-muted">No upcoming bookings</td>`;
+                            tbody.appendChild(row);
+                            return;
+                        }
+
+                        upcomingBookings.forEach(booking => {
+                            const bookingDate = new Date(booking.startDate).toLocaleDateString();
+                            const startTime = new Date(booking.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            const endTime = new Date(booking.endDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            const duration = calculateBookingDuration(booking.startDate, booking.endDate);
+
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${booking.userId}</td>
+                                <td>${booking.userName}</td>
+                                <td>${booking.roomId}</td>
+                                <td>${booking.roomName}</td>
+                                <td>${bookingDate}</td>
+                                <td>${startTime}</td>
+                                <td>${endTime}</td>
+                                <td>${duration}</td>
+                                <td>
+                                    <button class="btn btn-primary btn-sm" onclick="viewBooking(${booking.bookingId})">View</button>
+                                    <button class="btn btn-info btn-sm" onclick="editBooking(${booking.bookingId})">Edit</button>
+                                    <button class="btn btn-danger btn-sm" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
+                                </td>
+                            `;
+                            tbody.appendChild(row);
+                        });
+                    }
+
 
 
                 function renderRecentBookings(bookings) {
@@ -418,116 +423,61 @@
                     });
                 }
 
-                function renderPendings(bookings) {
-                    const tbody = document.querySelector('#pendingsTable tbody');
-                    tbody.innerHTML = '';
+                    async function addBooking() {
+                        try {
+                            const formId = 'addBookingForm'; // ID of the form to validate
+                            const isValid = validateBookingForm(formId); // Validate the form
 
-                    const pendingBookings = bookings.filter(booking => booking.status === "Pending");
-                    pendingBookings.forEach(booking => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                                                                        <td>${booking.userName}</td>
-                                                                        <td>${booking.roomName}</td>
-                                                                        <td>${new Date(booking.startDate).toLocaleDateString()}</td>
-                                                                        <td>
-                                                                        <button class="btn btn-primary btn-sm" onclick="viewBooking(${booking.bookingId})">View</button>
-                                                                        <button class="btn btn-info btn-sm" onclick="editBooking(${booking.bookingId}, ${booking.userId}, ${booking.roomId}, '${booking.startDate}', '${booking.endDate}', ${booking.noOfPeople}, '${booking.status}')">Edit</button>
-                                                                        <button class="btn btn-danger btn-sm" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
-                                                                        </td>`;
-                        tbody.appendChild(row);
-                    });
-                }
+                            if (!isValid) {
+                                // Stop execution if the form is invalid
+                                return;
+                            }
 
-                async function addBooking() {
-                    // Only proceed if the form is valid
-                    if (!validateBookingForm('addBookingForm')) {
-                        return;
-                    }
+                            const isRecurring = document.getElementById('addBookingRecurring')?.checked || false;
+                            const frequency = isRecurring ? document.getElementById('addBookingFrequency')?.value : null;
 
-                    const isRecurring = document.getElementById('addBookingRecurring').checked;
-                    const frequency = isRecurring ? document.getElementById('addBookingFrequency').value : null;
+                            // Collect booking details
+                            const userIdElement = document.getElementById('addBookingUser');
+                            const roomIdElement = document.getElementById('addBookingRoom');
+                            const dateElement = document.getElementById('addBookingDate');
+                            const startTimeElement = document.getElementById('AddBookingStartTime');
+                            const endTimeElement = document.getElementById('AddBookingEndTime');
+                            const peopleElement = document.getElementById('addBookingPeople');
+                            const statusElement = document.getElementById('addBookingStatus');
 
-                    const newBooking = {
-                        userId: parseInt(document.getElementById('addBookingUser').value, 10),
-                        roomId: parseInt(document.getElementById('addBookingRoom').value, 10),
-                        startDate: document.getElementById('addBookingDate').value + "T" + document.getElementById('addBookingStartTime').value,
-                        endDate: document.getElementById('addBookingDate').value + "T" + document.getElementById('addBookingEndTime').value,
-                        noOfPeople: parseInt(document.getElementById('addBookingPeople').value, 10),
-                        status: document.getElementById('addBookingStatus').value,
-                        isRecurring,
-                        frequency
-                    };
+                            const newBooking = {
+                                userId: parseInt(userIdElement.value, 10),
+                                roomId: parseInt(roomIdElement.value, 10),
+                                startDate: `${dateElement.value}T${startTimeElement.value}`,
+                                endDate: `${dateElement.value}T${endTimeElement.value}`,
+                                noOfPeople: parseInt(peopleElement.value, 10),
+                                status: statusElement.value,
+                                isRecurring,
+                                frequency,
+                            };
 
+                            // API call to add booking
+                            const response = await fetch('/api/bookings/AddBooking', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(newBooking),
+                            });
 
-                    try {
-                        const response = await fetch('/api/bookings/AddBooking', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(newBooking)
-                        });
-
-                        if (response.ok) {
-                            const roomId = newBooking.roomId;
-                            await updateRoomStatus(roomId, "Booked");
-                            $('#addBookingModal').modal('hide');
-                            location.reload(); // Refresh the page after the booking is added
-                        } else {
-                            const errorText = await response.text();
-                            alert("Error adding booking: " + errorText);
+                            if (response.ok) {
+                                $('#addBookingModal').modal('hide');
+                                location.reload(); // Refresh the page after the booking is added
+                            } else {
+                                const errorText = await response.text();
+                                console.error("Error adding booking:", errorText);
+                                alert("Error adding booking: " + errorText);
+                            }
+                        } catch (error) {
+                            console.error("Unexpected error while adding booking:", error);
+                            alert("An unexpected error occurred while adding the booking.");
                         }
-                    } catch (error) {
-                        console.error("Network error:", error);
-                        alert("Unexpected error adding booking.");
                     }
-                }
 
 
-                function editBooking(bookingId, userId, roomId, startDate, endDate, noOfPeople, status) {
-                    document.getElementById('bookingUserInput').value = userId;
-                    document.getElementById('bookingRoomInput').value = roomId;
-                    document.getElementById('bookingDateInput').value = new Date(startDate).toISOString().split("T")[0];
-                    document.getElementById('bookingStartTimeInput').value = new Date(startDate).toISOString().split("T")[1].slice(0, 5);
-                    document.getElementById('bookingEndTimeInput').value = new Date(endDate).toISOString().split("T")[1].slice(0, 5);
-                    document.getElementById('bookingPeopleInput').value = noOfPeople;
-                    document.getElementById('bookingStatusInput').value = status;
-
-                    document.getElementById('saveChangesBtn').onclick = async function () {
-                        const updatedBooking = {
-                            bookingId,
-                            userId: parseInt(document.getElementById('bookingUserInput').value, 10),
-                            roomId: parseInt(document.getElementById('bookingRoomInput').value, 10),
-                            startDate: `${document.getElementById('bookingDateInput').value}T${document.getElementById('bookingStartTimeInput').value}`,
-                            endDate: `${document.getElementById('bookingDateInput').value}T${document.getElementById('bookingEndTimeInput').value}`,
-                            noOfPeople: parseInt(document.getElementById('bookingPeopleInput').value, 10),
-                            status: document.getElementById('bookingStatusInput').value
-                        };
-
-                        await saveUpdatedBooking(updatedBooking);
-                        $('#editBookingModal').modal('hide');
-                    };
-
-                    $('#editBookingModal').modal('show');
-                }
-
-                async function saveUpdatedBooking(updatedBooking) {
-                    try {
-                        const response = await fetch('/api/bookings/UpdateBooking', {
-                            method: 'PUT',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(updatedBooking)
-                        });
-
-                        if (response.ok) {
-                            await fetchBookings();
-                            alert("Booking updated successfully.");
-                        } else {
-                            const errorText = await response.text();
-                            alert("Error updating booking: " + errorText);
-                        }
-                    } catch (error) {
-                        console.error("Error updating booking:", error);
-                    }
-                }
 
                 async function cancelBooking(bookingId) {
                     if (confirm("Are you sure you want to cancel this booking?")) {
@@ -577,65 +527,108 @@
                     }
                 }
 
+                    async function editBooking(bookingId) {
+                        try {
+                            // Fetch booking data
+                            const response = await fetch(`/api/bookings/GetBookedRoomById/${bookingId}`);
+                            if (!response.ok) throw new Error("Booking not found");
 
-                async function editBooking(bookingId) {
-                    try {
-                        const response = await fetch(`/api/bookings/GetBookedRoomById/${bookingId}`);
-                        if (!response.ok) throw new Error("Booking not found");
+                            const booking = await response.json();
 
-                        const booking = await response.json();
+                            // Populate the edit modal fields
+                            document.getElementById('bookingUserInput').value = booking.userId;
+                            document.getElementById('bookingRoomInput').value = booking.roomId;
+                            document.getElementById('bookingDateInput').value = booking.startDate.split("T")[0];
+                            document.getElementById('startTime').value = booking.startDate.split("T")[1].slice(0, 5);
+                            document.getElementById('endTime').value = booking.endDate.split("T")[1].slice(0, 5);
+                            document.getElementById('bookingPeopleInput').value = booking.noOfPeople;
+                            document.getElementById('bookingStatusInput').value = booking.status;
 
-                        // Populate edit form with booking details
-                        document.getElementById('bookingUserInput').value = booking.userId;
-                        document.getElementById('bookingRoomInput').value = booking.roomId;
-                        document.getElementById('bookingDateInput').value = new Date(booking.startDate).toISOString().split("T")[0];
-                        document.getElementById('bookingStartTimeInput').value = new Date(booking.startDate).toISOString().split("T")[1].slice(0, 5);
-                        document.getElementById('bookingEndTimeInput').value = new Date(booking.endDate).toISOString().split("T")[1].slice(0, 5);
-                        document.getElementById('bookingPeopleInput').value = booking.noOfPeople;
-                        document.getElementById('bookingStatusInput').value = booking.status;
+                            // Set the minimum date to today for the booking date input
+                            const today = new Date().toISOString().split('T')[0]; // Format as YYYY-MM-DD
+                            document.getElementById('bookingDateInput').setAttribute('min', today);
 
-                        document.getElementById('saveChangesBtn').onclick = async function () {
-                            const updatedBooking = {
-                                bookingId,
-                                userId: parseInt(document.getElementById('bookingUserInput').value, 10),
-                                roomId: parseInt(document.getElementById('bookingRoomInput').value, 10),
-                                startDate: `${document.getElementById('bookingDateInput').value}T${document.getElementById('bookingStartTimeInput').value}`,
-                                endDate: `${document.getElementById('bookingDateInput').value}T${document.getElementById('bookingEndTimeInput').value}`,
-                                noOfPeople: parseInt(document.getElementById('bookingPeopleInput').value, 10),
-                                status: document.getElementById('bookingStatusInput').value
+                            // Populate time dropdowns for the edit modal and handle exclusions
+                            populateTimeDropdownsForEditModal();
+                            openEditModal(bookingId); // Adjust dropdowns based on the current booking
+
+                            // Attach event to save changes
+                            document.getElementById('saveChangesBtn').onclick = async function () {
+                                try {
+                                    // Validate updated booking details
+                                    const formId = 'editBookingForm';
+                                    const isValid = validateEditBookingForm(formId, bookingId);
+
+                                    if (!isValid) {
+                                        // Stop execution if the form is invalid
+                                        return;
+                                    }
+
+                                    const updatedBooking = {
+                                        bookingId,
+                                        userId: parseInt(document.getElementById('bookingUserInput').value, 10),
+                                        roomId: parseInt(document.getElementById('bookingRoomInput').value, 10),
+                                        startDate: `${document.getElementById('bookingDateInput').value}T${document.getElementById('startTime').value}`,
+                                        endDate: `${document.getElementById('bookingDateInput').value}T${document.getElementById('endTime').value}`,
+                                        noOfPeople: parseInt(document.getElementById('bookingPeopleInput').value, 10),
+                                        status: document.getElementById('bookingStatusInput').value,
+                                    };
+
+                                    // Check for overlapping bookings
+                                    const overlapping = bookingsData.some(existingBooking => {
+                                        const existingStart = new Date(existingBooking.startDate).getTime();
+                                        const existingEnd = new Date(existingBooking.endDate).getTime();
+                                        const updatedStart = new Date(updatedBooking.startDate).getTime();
+                                        const updatedEnd = new Date(updatedBooking.endDate).getTime();
+
+                                        return (
+                                            existingBooking.roomId === updatedBooking.roomId &&
+                                            existingBooking.bookingId !== bookingId && // Exclude current booking from overlap check
+                                            (
+                                                (updatedStart >= existingStart && updatedStart < existingEnd) || // Overlaps with start
+                                                (updatedEnd > existingStart && updatedEnd <= existingEnd) ||    // Overlaps with end
+                                                (updatedStart <= existingStart && updatedEnd >= existingEnd)    // Encloses existing booking
+                                            )
+                                        );
+                                    });
+
+                                    if (overlapping) {
+                                        alert("Updated booking conflicts with an existing booking. Please choose another time slot.");
+                                        return;
+                                    }
+
+                                    // Save changes
+                                    const response = await fetch(`/api/bookings/UpdateBooking/${updatedBooking.bookingId}`, {
+                                        method: 'PUT',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify(updatedBooking),
+                                    });
+
+                                    if (response.ok) {
+                                        alert("Booking updated successfully.");
+                                        await fetchBookings(); // Refresh bookings after update
+                                    } else {
+                                        const errorText = await response.text();
+                                        console.error("Error response from server:", errorText);
+                                        alert("Error updating booking: " + errorText);
+                                    }
+
+                                    // Close modal after saving
+                                    $('#editBookingModal').modal('hide');
+                                } catch (error) {
+                                    console.error("Error updating booking:", error);
+                                    alert("An unexpected error occurred while updating the booking.");
+                                }
                             };
 
-                            await saveUpdatedBooking(updatedBooking);
-                            $('#editBookingModal').modal('hide');
-                        };
-
-                        $('#editBookingModal').modal('show');
-                    } catch (error) {
-                        console.error("Error fetching booking for editing:", error);
-                        alert("An error occurred while editing the booking.");
-                    }
-                }
-
-                async function saveUpdatedBooking(updatedBooking) {
-                    try {
-                        const response = await fetch(`/api/bookings/UpdateBookedRoom/${updatedBooking.bookingId}`, {
-                            method: 'PUT',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(updatedBooking)
-                        });
-
-                        if (response.ok) {
-                            await fetchBookings();
-                            alert("Booking updated successfully.");
-                        } else {
-                            const errorText = await response.text();
-                            console.error("Failed to update booking:", errorText);
-                            alert("Error updating booking: " + errorText);
+                            // Show the modal
+                            $('#editBookingModal').modal('show');
+                        } catch (error) {
+                            console.error("Error fetching booking for editing:", error);
+                            alert("An error occurred while editing the booking.");
                         }
-                    } catch (error) {
-                        console.error("Error updating booking:", error);
                     }
-                }
+
 
 
                 function updateCalendarWithBookings() {
@@ -662,7 +655,6 @@
                         }
                     });
                 }
-
 
                 // Helper function to update the room status to "Booked" without affecting other fields
                 async function updateRoomStatus(roomId, status) {
@@ -704,109 +696,170 @@
                     }
                 }
 
-                function validateBookingForm(formId) {
-                    const form = document.getElementById(formId);
-                    let isValid = true;
-                    let errorMessage = '';
+                    function validateBookingForm(formId) {
+                        const form = document.getElementById(formId);
+                        let isValid = true;
+                        let errorMessage = '';
 
-                    // Validate user selection
-                    const user = form.querySelector('#addBookingUser').value;
-                    if (!user) {
-                        errorMessage += 'User must be selected.\n';
-                        isValid = false;
+                        // Retrieve booking details
+                        const date = form.querySelector('input[type="date"]').value;
+                        const today = new Date().toISOString().split('T')[0];
+                        const startTime = form.querySelector('select[id*="StartTime"]').value;
+                        const endTime = form.querySelector('select[id*="EndTime"]').value;
+                        const roomId = parseInt(form.querySelector('select[id*="Room"]').value, 10);
+                        const noOfPeople = parseInt(form.querySelector('input[id*="People"]').value, 10);
+                        const status = form.querySelector('select[id*="Status"]').value;
+
+                        // Validate Date
+                        if (!date) {
+                            errorMessage += 'Booking date is required.\n';
+                            isValid = false;
+                        } else if (date < today) {
+                            errorMessage += 'Booking date cannot be in the past.\n';
+                            isValid = false;
+                        }
+
+                        // Validate Start Time and End Time
+                        if (!startTime || !endTime) {
+                            errorMessage += 'Both start time and end time are required.\n';
+                            isValid = false;
+                        } else if (endTime <= startTime) {
+                            errorMessage += 'End time must be after the start time.\n';
+                            isValid = false;
+                        }
+
+                        // Check for overlapping bookings
+                        const startDateTime = new Date(`${date}T${startTime}`).getTime();
+                        const endDateTime = new Date(`${date}T${endTime}`).getTime();
+
+                        const hasOverlap = bookingsData.some(existingBooking => {
+                            const existingRoomId = existingBooking.roomId;
+                            const existingDate = new Date(existingBooking.startDate).toISOString().split('T')[0];
+                            const existingStart = new Date(existingBooking.startDate).getTime();
+                            const existingEnd = new Date(existingBooking.endDate).getTime();
+
+                            return (
+                                existingRoomId === roomId &&
+                                existingDate === date &&
+                                (
+                                    (startDateTime >= existingStart && startDateTime < existingEnd) || // Overlaps with existing start
+                                    (endDateTime > existingStart && endDateTime <= existingEnd) ||     // Overlaps with existing end
+                                    (startDateTime <= existingStart && endDateTime >= existingEnd)     // Encloses existing booking
+                                )
+                            );
+                        });
+
+                        if (hasOverlap) {
+                            errorMessage += 'A booking already exists for this room with overlapping date and time.\n';
+                            isValid = false;
+                        }
+
+                        // Validate status selection
+                        if (!status) {
+                            errorMessage += 'Booking status is required.\n';
+                            isValid = false;
+                        }
+
+                        if (!isValid) {
+                            alert(errorMessage);
+                        }
+
+                        return isValid;
                     }
 
-                    // Validate room selection and get updated room capacity
-                    const roomSelect = form.querySelector('#addBookingRoom');
-                    const room = roomSelect.value;
-                    if (!room) {
-                        errorMessage += 'Room must be selected.\n';
-                        isValid = false;
-                    } else {
-                        // Retrieve the updated room capacity from the selected option's data attribute
-                        selectedRoomCapacity = parseInt(roomSelect.options[roomSelect.selectedIndex].dataset.capacity, 10) || 0;
-                    }
+                    function validateEditBookingForm(formId, bookingId) {
+                        const form = document.getElementById(formId);
+                        let isValid = true;
+                        let errorMessage = '';
 
-                    // Validate booking date and time
-                    const date = form.querySelector('#addBookingDate').value;
-                    const today = new Date().toISOString().split('T')[0];
-                    const startTime = form.querySelector('#addBookingStartTime').value;
-                    const endTime = form.querySelector('#addBookingEndTime').value;
+                        // Validate booking date and time
+                        const date = form.querySelector('#bookingDateInput').value;
+                        const today = new Date().toISOString().split('T')[0];
+                        const startTime = form.querySelector('#startTime').value;
+                        const endTime = form.querySelector('#endTime').value;
 
-                    // Get current date and time
-                    const currentDateTime = new Date();
-                    const currentDate = currentDateTime.toISOString().split('T')[0];
-                    const currentTime = currentDateTime.toTimeString().slice(0, 5);
+                        // Get current date and time
+                        const currentDateTime = new Date();
+                        const currentDate = currentDateTime.toISOString().split('T')[0];
+                        const currentTime = currentDateTime.toTimeString().slice(0, 5);
 
-                    // Check if date is valid
-                    if (!date) {
-                        errorMessage += 'Booking date is required.\n';
-                        isValid = false;
-                    } else if (date === currentDate && startTime < currentTime) {
-                        // If booking date is today, validate start time against current time
-                        errorMessage += 'Start time cannot be in the past.\n';
-                        isValid = false;
-                    }
+                        // Check if date is valid
+                        if (!date) {
+                            errorMessage += 'Booking date is required.\n';
+                            isValid = false;
+                        } else if (date === currentDate && startTime < currentTime) {
+                            // If booking date is today, validate start time against current time
+                            errorMessage += 'Start time cannot be in the past.\n';
+                            isValid = false;
+                        }
 
-                    // Validate start and end time
-                    if (!startTime) {
-                        errorMessage += 'Start time is required.\n';
-                        isValid = false;
-                    } else if (!endTime) {
-                        errorMessage += 'End time is required.\n';
-                        isValid = false;
-                    } else if (endTime <= startTime) {
-                        errorMessage += 'End time must be after the start time.\n';
-                        isValid = false;
-                    }
+                        // Validate start and end time
+                        if (!startTime) {
+                            errorMessage += 'Start time is required.\n';
+                            isValid = false;
+                        } else if (!endTime) {
+                            errorMessage += 'End time is required.\n';
+                            isValid = false;
+                        } else if (endTime <= startTime) {
+                            errorMessage += 'End time must be after the start time.\n';
+                            isValid = false;
+                        }
 
-                    // Validate number of people against updated room capacity
-                    const noOfPeople = parseInt(form.querySelector('#addBookingPeople').value, 10);
-                    if (isNaN(noOfPeople) || noOfPeople < 1) {
-                        errorMessage += 'The number of people must be a valid number and at least 1.\n';
-                        isValid = false;
-                    } else if (noOfPeople > selectedRoomCapacity) {
-                        errorMessage += `The number of people cannot exceed the room capacity of ${selectedRoomCapacity}.\n`;
-                        isValid = false;
-                    }
-
-                    // Validate status selection
-                    const status = form.querySelector('#addBookingStatus').value;
-                    if (!status) {
-                        errorMessage += 'Status is required.\n';
-                        isValid = false;
-                    }
-
-                    // Check for duplicate booking in the same room, date, and overlapping time
-                    const startDateTime = new Date(`${date}T${startTime}`).getTime();
-                    const endDateTime = new Date(`${date}T${endTime}`).getTime();
-
-                    const hasDuplicate = bookingsData.some(existingBooking => {
-                        const existingRoomId = existingBooking.roomId;
-                        const existingDate = new Date(existingBooking.startDate).toISOString().split("T")[0];
-                        const existingStart = new Date(existingBooking.startDate).getTime();
-                        const existingEnd = new Date(existingBooking.endDate).getTime();
-
-                        return (
-                            existingRoomId == room &&
-                            existingDate === date &&
-                            ((startDateTime >= existingStart && startDateTime < existingEnd) || // Overlaps with existing booking start
-                                (endDateTime > existingStart && endDateTime <= existingEnd) ||     // Overlaps with existing booking end
-                                (startDateTime <= existingStart && endDateTime >= existingEnd))    // Encloses existing booking
+                        // Validate number of people
+                        const noOfPeople = parseInt(form.querySelector('#bookingPeopleInput').value, 10);
+                        const selectedRoomCapacity = parseInt(
+                            form.querySelector('#bookingRoomInput').options[form.querySelector('#bookingRoomInput').selectedIndex].dataset.capacity,
+                            10
                         );
-                    });
+                        if (isNaN(noOfPeople) || noOfPeople < 1) {
+                            errorMessage += 'The number of people must be a valid number and at least 1.\n';
+                            isValid = false;
+                        } else if (noOfPeople > selectedRoomCapacity) {
+                            errorMessage += `The number of people cannot exceed the room capacity of ${selectedRoomCapacity}.\n`;
+                            isValid = false;
+                        }
 
-                    if (hasDuplicate) {
-                        errorMessage += 'A booking already exists for this room with overlapping date and time.\n';
-                        isValid = false;
+                        // Validate status selection
+                        const status = form.querySelector('#bookingStatusInput').value;
+                        if (!status) {
+                            errorMessage += 'Status is required.\n';
+                            isValid = false;
+                        }
+
+                        // Check for overlapping bookings
+                        const startDateTime = new Date(`${date}T${startTime}`).getTime();
+                        const endDateTime = new Date(`${date}T${endTime}`).getTime();
+
+                        const hasDuplicate = bookingsData.some(existingBooking => {
+                            const existingRoomId = existingBooking.roomId;
+                            const existingDate = new Date(existingBooking.startDate).toISOString().split('T')[0];
+                            const existingStart = new Date(existingBooking.startDate).getTime();
+                            const existingEnd = new Date(existingBooking.endDate).getTime();
+
+                            return (
+                                existingBooking.bookingId !== bookingId && // Exclude the current booking being edited
+                                existingRoomId === parseInt(form.querySelector('#bookingRoomInput').value, 10) &&
+                                existingDate === date &&
+                                (
+                                    (startDateTime >= existingStart && startDateTime < existingEnd) || // Overlaps with existing start
+                                    (endDateTime > existingStart && endDateTime <= existingEnd) ||     // Overlaps with existing end
+                                    (startDateTime <= existingStart && endDateTime >= existingEnd)    // Encloses existing booking
+                                )
+                            );
+                        });
+
+                        if (hasDuplicate) {
+                            errorMessage += 'A booking already exists for this room with overlapping date and time.\n';
+                            isValid = false;
+                        }
+
+                        // Show error messages if validation fails
+                        if (!isValid) {
+                            alert(errorMessage);
+                        }
+
+                        return isValid;
                     }
-
-                    if (!isValid) {
-                        alert(errorMessage);
-                    }
-
-                    return isValid;
-                }
 
                 function updateRoomCapacityDisplay() {
                     const roomSelect = document.getElementById('addBookingRoom');
@@ -897,6 +950,236 @@
                         }
                     }
                 }
+                    // Helper function to format time as "HH:mm"
+                    function formatTime(dateObj) {
+                        const hours = String(dateObj.getHours()).padStart(2, '0');
+                        const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+                        return `${hours}:${minutes}`;
+                    }
+
+                    function populateTimeDropdowns() {
+                        const timeIntervals = generateTimeIntervals(30, 8, 20); // 30-minute intervals from 8 AM to 8 PM
+
+                        const addStartTimeSelect = document.getElementById('AddBookingStartTime');
+                        const addEndTimeSelect = document.getElementById('AddBookingEndTime');
+
+                        const addDateInput = document.getElementById('addBookingDate');
+                        const addRoomSelect = document.getElementById('addBookingRoom');
+
+                        // Helper function to populate a dropdown with optional disabled intervals
+                        function populateDropdown(selectElement, disabledIntervals = []) {
+                            const currentValue = selectElement.value;
+                            selectElement.innerHTML = '';
+
+                            timeIntervals.forEach(time => {
+                                const option = document.createElement('option');
+                                option.value = time;
+                                option.textContent = time;
+
+                                if (disabledIntervals.includes(time)) {
+                                    option.disabled = true;
+                                    option.style.color = 'gray';
+                                }
+
+                                selectElement.appendChild(option);
+                            });
+
+                            if (currentValue && timeIntervals.includes(currentValue)) {
+                                selectElement.value = currentValue;
+                            }
+                        }
+
+                        function updateDisabledTimes(startSelect, endSelect, dateInput, roomSelect) {
+                            const selectedDate = dateInput.value;
+                            const selectedRoomId = parseInt(roomSelect.value, 10);
+                            const today = new Date().toISOString().split('T')[0];
+                            const now = new Date();
+                            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+                            if (!selectedDate || isNaN(selectedRoomId)) return;
+
+                            const disabledIntervals = new Set();
+
+                            if (selectedDate === today) {
+                                timeIntervals.forEach(time => {
+                                    if (time <= currentTime) {
+                                        disabledIntervals.add(time);
+                                    }
+                                });
+                            }
+
+                            const overlappingBookings = bookingsData.filter(booking => {
+                                const bookingDate = new Date(booking.startDate).toISOString().split('T')[0];
+                                return booking.roomId === selectedRoomId && bookingDate === selectedDate;
+                            });
+
+                            overlappingBookings.forEach(booking => {
+                                const bookingStartDate = new Date(booking.startDate);
+                                const bookingEndDate = new Date(booking.endDate);
+
+                                const startTime = formatTime(bookingStartDate);
+                                const endTime = formatTime(bookingEndDate);
+
+                                const startIndex = timeIntervals.indexOf(startTime);
+                                const endIndex = timeIntervals.indexOf(endTime);
+
+                                if (startIndex !== -1 && endIndex !== -1) {
+                                    for (let i = startIndex; i < endIndex; i++) {
+                                        disabledIntervals.add(timeIntervals[i]);
+                                    }
+                                }
+                            });
+
+                            const disabledArray = Array.from(disabledIntervals);
+                            populateDropdown(startSelect, disabledArray);
+                            populateDropdown(endSelect, disabledArray);
+                        }
+
+                        if (addDateInput && addRoomSelect) {
+                            addDateInput.addEventListener('change', () => updateDisabledTimes(addStartTimeSelect, addEndTimeSelect, addDateInput, addRoomSelect));
+                            addRoomSelect.addEventListener('change', () => updateDisabledTimes(addStartTimeSelect, addEndTimeSelect, addDateInput, addRoomSelect));
+                        }
+                    }
+
+                    function populateTimeDropdownsForEditModal() {
+                        const timeIntervals = generateTimeIntervals(30, 8, 20); // 30-minute intervals from 8 AM to 8 PM
+
+                        const editStartTimeSelect = document.getElementById('startTime');
+                        const editEndTimeSelect = document.getElementById('endTime');
+
+                        const editDateInput = document.getElementById('bookingDateInput');
+                        const editRoomSelect = document.getElementById('bookingRoomInput');
+
+                        let currentEditingBookingId = null;
+
+                        function populateDropdown(selectElement, disabledIntervals = []) {
+                            const currentValue = selectElement.value;
+                            selectElement.innerHTML = '';
+
+                            timeIntervals.forEach(time => {
+                                const option = document.createElement('option');
+                                option.value = time;
+                                option.textContent = time;
+
+                                if (disabledIntervals.includes(time)) {
+                                    option.disabled = true;
+                                    option.style.color = 'gray';
+                                }
+
+                                selectElement.appendChild(option);
+                            });
+
+                            if (currentValue && timeIntervals.includes(currentValue)) {
+                                selectElement.value = currentValue;
+                            }
+                        }
+
+                        function updateDisabledTimes(startSelect, endSelect, dateInput, roomSelect, excludeBookingId = null) {
+                            const selectedDate = dateInput.value;
+                            const selectedRoomId = parseInt(roomSelect.value, 10);
+                            const today = new Date().toISOString().split('T')[0];
+                            const now = new Date();
+                            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+                            if (!selectedDate || isNaN(selectedRoomId)) return;
+
+                            const disabledIntervals = new Set();
+
+                            if (selectedDate === today) {
+                                timeIntervals.forEach(time => {
+                                    if (time <= currentTime) {
+                                        disabledIntervals.add(time);
+                                    }
+                                });
+                            }
+
+                            const overlappingBookings = bookingsData.filter(booking => {
+                                const bookingDate = new Date(booking.startDate).toISOString().split('T')[0];
+                                return booking.roomId === selectedRoomId &&
+                                    bookingDate === selectedDate &&
+                                    booking.bookingId !== excludeBookingId;
+                            });
+
+                            overlappingBookings.forEach(booking => {
+                                const bookingStartDate = new Date(booking.startDate);
+                                const bookingEndDate = new Date(booking.endDate);
+
+                                const startTime = formatTime(bookingStartDate);
+                                const endTime = formatTime(bookingEndDate);
+
+                                const startIndex = timeIntervals.indexOf(startTime);
+                                const endIndex = timeIntervals.indexOf(endTime);
+
+                                if (startIndex !== -1 && endIndex !== -1) {
+                                    for (let i = startIndex; i < endIndex; i++) {
+                                        disabledIntervals.add(timeIntervals[i]);
+                                    }
+                                }
+                            });
+
+                            const disabledArray = Array.from(disabledIntervals);
+                            populateDropdown(startSelect, disabledArray);
+                            populateDropdown(endSelect, disabledArray);
+                        }
+
+                        if (editDateInput && editRoomSelect) {
+                            editDateInput.addEventListener('change', () => updateDisabledTimes(editStartTimeSelect, editEndTimeSelect, editDateInput, editRoomSelect, currentEditingBookingId));
+                            editRoomSelect.addEventListener('change', () => updateDisabledTimes(editStartTimeSelect, editEndTimeSelect, editDateInput, editRoomSelect, currentEditingBookingId));
+                        }
+
+                        $('#editBookingModal').on('hidden.bs.modal', function () {
+                            currentEditingBookingId = null;
+                        });
+
+                        window.openEditModal = function handleEditModalOpen(bookingId) {
+                            currentEditingBookingId = bookingId;
+                            updateDisabledTimes(editStartTimeSelect, editEndTimeSelect, editDateInput, editRoomSelect, currentEditingBookingId);
+                        };
+                    }
+
+                    // Function to generate time intervals
+                    function generateTimeIntervals(intervalMinutes, startHour, endHour) {
+                        const times = [];
+                        const currentTime = new Date();
+                        currentTime.setHours(startHour, 0, 0, 0); // Start at the specified hour
+
+                        const endTime = new Date();
+                        endTime.setHours(endHour, 0, 0, 0); // End at the specified hour
+
+                        while (currentTime <= endTime) {
+                            const hours = String(currentTime.getHours()).padStart(2, '0');
+                            const minutes = String(currentTime.getMinutes()).padStart(2, '0');
+                            times.push(`${hours}:${minutes}`);
+
+                            // Add interval
+                            currentTime.setMinutes(currentTime.getMinutes() + intervalMinutes);
+                        }
+
+                        return times;
+                    }
+
+
+                // Restrict date picker to current date and future dates only
+                function restrictBookingDate() {
+                    const bookingDateInput = document.getElementById('addBookingDate');
+                    const today = new Date();
+
+                    // Format today's date as YYYY-MM-DD
+                    const formattedDate = today.toISOString().split('T')[0];
+
+                    // Set the min attribute to today's date
+                    bookingDateInput.setAttribute('min', formattedDate);
+                }
+                function calculateBookingDuration(startDate, endDate) {
+                    const start = new Date(startDate);
+                    const end = new Date(endDate);
+                    const diffInMinutes = Math.abs((end - start) / (1000 * 60)); // Difference in minutes
+
+                    const hours = Math.floor(diffInMinutes / 60);
+                    const minutes = diffInMinutes % 60;
+
+                    return `${hours}h ${minutes}m`; // Format as "Xh Ym"
+                }
 
                 // Call this function periodically
                 setInterval(archiveExpiredBookings, 10 * 60 * 1000); // Every 10 minutes
@@ -907,9 +1190,12 @@
 
                 document.addEventListener("DOMContentLoaded", () => {
                     document.getElementById('addBookingDate').setAttribute('min', new Date().toISOString().split('T')[0]);
-                    fetchBookings();
-                    archiveExpiredBookings(); // Initial call to archive any expired bookings at load time
+                    restrictBookingDate(); // Ensure no past dates are selectable
+                    populateTimeDropdowns(); // Populate time dropdowns for bookings
+                    populateTimeDropdownsForEditModal();
+                    fetchBookings(); // Fetch and render bookings
+                    archiveExpiredBookings(); // Archive expired bookings initially
                 });
-            </script>
-</body>
+           </script>
+    </body>
 </html>
