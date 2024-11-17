@@ -321,7 +321,7 @@ namespace ASI.Basecode.WebApp.Controllers
             try
             {
                 var bookings = _bookingService.RetrieveAll(userId: userId) ?? new List<BookingViewModel>();
-                return View(bookings);
+                return Ok(bookings); // Return as JSON
             }
             catch (Exception ex)
             {
@@ -329,6 +329,7 @@ namespace ASI.Basecode.WebApp.Controllers
                 return StatusCode(500, "Failed to retrieve user bookings");
             }
         }
+
 
         [HttpGet("GetAllUsers")]
         public IActionResult GetAllUsers()
