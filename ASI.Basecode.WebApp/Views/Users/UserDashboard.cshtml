@@ -81,220 +81,243 @@
                 </div>
             </aside>
 
-            <div class="mainContent">
-                <div class="userDashboardRoomsCardViewParent">
-                    <div class="usersRoomDashboard mb-2">
-                        <h4>Rooms</h4>
-                        <button class="btn adminAddBookingBtn btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
-                            <i class="bi bi-plus-square me-2"></i>Book
-                        </button>
+            <div class="userDashboardLayout">
+                <!-- Room Section -->
+                <section class="roomsSection mb-5">
+                    <div class="userDashboardRoomsCardViewParent">
+                        <div class="usersRoomDashboard mb-2">
+                            <h4>Rooms</h4>
+                            <button class="btn adminAddBookingBtn btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
+                                <i class="bi bi-plus-square me-2"></i>Book
+                            </button>
+                        </div>
+                        <div class="userDashboardRoomsCardView scrollable-rooms" id="roomsContainer">
+                            <!-- Room cards will be dynamically rendered here -->
+                        </div>
                     </div>
-                    <div class="userDashboardRoomsCardView">
+                </section>
 
-                        <div class="userDashboardRoomsCard">
-                            <img src="~/img/classroomStyle.jpg" class="userDashboardRoomsCardImg">
-                            <div class="userDashboardRoomsCardDetails">
-                                <p class="userDashboardRoomsCardDetailsName">Meeting Room 1</p>
-                                <div class="userDashboardRoomsCardDetailsInner mb-1">
-                                    <i class="bi bi-house-fill"></i>
-                                    <p>Classroom Style</p>
-                                </div>
-                                <div class="userDashboardRoomsCardDetailsInner mb-3">
-                                    <i class="bi bi-people-fill"></i>
-                                    <p>35 pax</p>
-                                </div>
-                                <button class="btn adminAddBookingBtn btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
-                                    @TriggerBook
-                                </button>
-                            </div>
+                <!-- Booking Table Section -->
+                <section class="bookingsSection">
+                    <div class="userBookingsDashboard">
+                        <div class="userBookingsDashboardHeader">
+                            <p class="userBookingsDashboardTitle">Bookings</p>
                         </div>
-                        <div class="userDashboardRoomsCard">
-                            <img src="~/img/ushape.jpeg" class="userDashboardRoomsCardImg">
-                            <div class="userDashboardRoomsCardDetails">
-                                <p class="userDashboardRoomsCardDetailsName">Meeting Room 3</p>
-                                <div class="userDashboardRoomsCardDetailsInner mb-1">
-                                    <i class="bi bi-house-fill"></i>
-                                    <p>U-Shape Style</p>
-                                </div>
-                                <div class="userDashboardRoomsCardDetailsInner mb-3">
-                                    <i class="bi bi-people-fill"></i>
-                                    <p>20 pax</p>
-                                </div>
-                                <button class="btn adminAddBookingBtn btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
-                                    @TriggerBook
-                                </button>
-                            </div>
+                        <div class="table-wrapper">
+                            <table class="table table-striped align-middle" id="userBookingsTable">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">User</th>
+                                        <th scope="col">Room</th>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">No. of People</th>
+                                        <th scope="col">Price</th>
+                                        <th scope="col">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Rows will be dynamically rendered here -->
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="userDashboardRoomsCard">
-                            <img src="~/img/auditorium.jpg" class="userDashboardRoomsCardImg">
-                            <div class="userDashboardRoomsCardDetails">
-                                <p class="userDashboardRoomsCardDetailsName">Meeting Room 4</p>
-                                <div class="userDashboardRoomsCardDetailsInner mb-1">
-                                    <i class="bi bi-house-fill"></i>
-                                    <p>Auditorium Style</p>
-                                </div>
-                                <div class="userDashboardRoomsCardDetailsInner mb-3">
-                                    <i class="bi bi-people-fill"></i>
-                                    <p>80 pax</p>
-                                </div>
-                                <button class="btn adminAddBookingBtn btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
-                                    @TriggerBook
-                                </button>
-                            </div>
-                        </div>
-                        <div class="userDashboardRoomsCard">
-                            <img src="~/img/auditorium.jpg" class="userDashboardRoomsCardImg">
-                            <div class="userDashboardRoomsCardDetails">
-                                <p class="userDashboardRoomsCardDetailsName">Meeting Room 5</p>
-                                <div class="userDashboardRoomsCardDetailsInner mb-1">
-                                    <i class="bi bi-house-fill"></i>
-                                    <p>Auditorium Style</p>
-                                </div>
-                                <div class="userDashboardRoomsCardDetailsInner mb-3">
-                                    <i class="bi bi-people-fill"></i>
-                                    <p>80 pax</p>
-                                </div>
-                                <button class="btn adminAddBookingBtn btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
-                                    @TriggerBook
-                                </button>
-                            </div>
-                        </div>
-                        <div class="userDashboardRoomsCard">
-                            <img src="~/img/auditorium.jpg" class="userDashboardRoomsCardImg">
-                            <div class="userDashboardRoomsCardDetails">
-                                <p class="userDashboardRoomsCardDetailsName">Meeting Room 9</p>
-                                <div class="userDashboardRoomsCardDetailsInner mb-1">
-                                    <i class="bi bi-house-fill"></i>
-                                    <p>Banquet Style</p>
-                                </div>
-                                <div class="userDashboardRoomsCardDetailsInner mb-3">
-                                    <i class="bi bi-people-fill"></i>
-                                    <p>40 pax</p>
-                                </div>
-                                <button class="btn adminAddBookingBtn btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
-                                    @TriggerBook
-                                </button>
-                            </div>
-                        </div>                  
                     </div>
-                </div>
-
-                <!-- Dahboard Booked Meeting Rooms Table -->
-                <div class="userBookingsDashboard">
-                    <div class="userBookingsDashboardHeader">
-                        <p class="userBookingsDashboardTitle">Bookings</p>
-                    </div>
-                    <div class="table-wrapper">
-                        <table class="table table-striped align-middle" id="userBookingsTable">
-                            <thead>
-                                <tr>
-                                    <th scope="col">User</th>
-                                    <th scope="col">Room</th>
-                                    <th scope="col">Date</th>
-                                    <th scope="col">No. of People</th>
-                                    <th scope="col">Price</th>
-                                    <th scope="col">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Rows will be dynamically rendered here -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                </section>
             </div>
+
+            
         </div>
-        <!-- off canvas -->
+
         <div class="offcanvas offcanvas-end" data-bs-backdrop="static" tabindex="-1" id="staticBackdrop" aria-labelledby="staticBackdropLabel">
             <div class="offcanvas-header">
-                <h5 class="offcanvas-title" id="staticBackdropLabel">@AddBookings</h5>
+                <h5 class="offcanvas-title" id="staticBackdropLabel">Book a Room</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
             <div class="offcanvas-body">
-                <div class="offcanvas-body-inner">
-                    <div>
-                        <div class="mb-3">
-                            <label for="exampleFormControlInput1" class="form-label">@NameModal</label>
-                            <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="">
+                <form id="bookingForm">
+                    <!-- User Details Section -->
+                    <div class="mb-3">
+                        <label for="bookerName" class="form-label">Your Name</label>
+                        <input type="text" class="form-control" id="bookerName" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="bookerEmail" class="form-label">Your Email</label>
+                        <input type="email" class="form-control" id="bookerEmail" readonly>
+                    </div>
+
+                    <!-- Room Details Section -->
+                    <div class="mb-3">
+                        <label for="roomName" class="form-label">Room Name</label>
+                        <input type="text" class="form-control" id="roomName" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="roomStyle" class="form-label">Meeting Room Style</label>
+                        <input type="text" class="form-control" id="roomStyle" readonly>
+                    </div>
+
+                    <!-- Booking Details Section -->
+                    <div class="mb-3">
+                        <label for="bookingDate" class="form-label">Date</label>
+                        <input type="date" class="form-control" id="bookingDate" required>
+                    </div>
+                    <div class="mb-3 timeDiv">
+                        <div>
+                            <label for="startTime" class="form-label">Start Time</label>
+                            <input type="time" class="form-control" id="startTime" required>
                         </div>
-                        <div class="mb-3">
-                            <label for="exampleFormControlInput1" class="form-label">@EmailModal</label>
-                            <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
-                        </div>
-                        <div class="mb-3">
-                            <label for="userRoleAdd" class="form-label">Meeting Room Style</label>
-                            <select class="form-select" aria-label="Default select example" id="userRoleAdd">
-                                <option selected>Classroom</option>
-                                <option value="1">Banquet</option>
-                                <option value="2">U-Shape</option>
-                                <option value="3">Conferece</option>
-                                <option value="4">Audiotorium</option>
-                                <option value="5">Boardroom</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="userRoleAdd" class="form-label">Available Meeting Room</label>
-                            <select class="form-select" aria-label="Default select example" id="userRoleAdd">
-                                <option selected>1</option>
-                                <option value="1">2</option>
-                                <option value="2">3</option>
-                                <option value="3">4</option>
-                                <option value="4">5</option>
-                                <option value="5">6</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="exampleFormControlInput1" class="form-label">Date</label>
-                            <input type="date" class="form-control" id="exampleFormControlInput1" placeholder="">
-                        </div>
-                        <div class="mb-3 timeDiv">
-                            <div>
-                                <label for="exampleFormControlInput1" class="form-label">Start Time</label>
-                                <input type="time" class="form-control" id="exampleFormControlInput1" placeholder="">
-                            </div>
-                            <div>
-                                <label for="exampleFormControlInput1" class="form-label">End Time</label>
-                                <input type="time" class="form-control" id="exampleFormControlInput1" placeholder="">
-                            </div>
+                        <div>
+                            <label for="endTime" class="form-label">End Time</label>
+                            <input type="time" class="form-control" id="endTime" required>
                         </div>
                     </div>
+
+                    <!-- Recurring Booking Section -->
+                    <div class="mb-3">
+                        <label for="isRecurring" class="form-label">Is this booking recurring?</label>
+                        <select class="form-select" id="isRecurring" onchange="toggleFrequencyInput()">
+                            <option value="No" selected>No</option>
+                            <option value="Yes">Yes</option>
+                        </select>
+                    </div>
+                    <div class="mb-3" id="recurringFrequencyContainer" style="display: none;">
+                        <label for="recurringFrequency" class="form-label">Frequency</label>
+                        <select class="form-select" id="recurringFrequency">
+                            <option value="Daily">Daily</option>
+                            <option value="Weekly">Weekly</option>
+                            <option value="Monthly">Monthly</option>
+                        </select>
+                    </div>
+
+                    <!-- Actions -->
                     <div class="buttonsOffCanvas">
-                        <button type="button " class="btn btn-outline-secondary">@CancelBookingInput</button>
-                        <button class="btn adminAddBookingBtn" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
-                            <i class="bi bi-plus-square me-2"></i>@Book
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-plus-square me-2"></i>Book Room
                         </button>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
-    </main>
+
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
-        // JSON Data for Bookings
-        const bookingsData = [
-            {
-                "user": "Dean Lourence Barquio",
-                "room": "867",
-                "date": "10 Sept 2:00 - 15 Sept 7:30",
-                "no_of_people": "7",
-                "price": "$2,800"
-            },
-            {
-                "user": "Dean Lourence Barquio",
-                "room": "867",
-                "date": "10 Sept 2:00 - 15 Sept 7:30",
-                "no_of_people": "7",
-                "price": "$2,800"
-            },
-            {
-                "user": "Dean Lourence Barquio",
-                "room": "867",
-                "date": "10 Sept 2:00 - 15 Sept 7:30",
-                "no_of_people": "7",
-                "price": "$2,800"
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchAndRenderRooms();
+            // Prepopulate user details
+            populateUserDetails();
+
+            // Attach booking form submission handler
+            document.getElementById('bookingForm').addEventListener('submit', handleBookingSubmit);
+        });
+            async function populateUserDetails() {
+                try {
+                    const userName = '@(User.Identity.Name ?? User.Claims.FirstOrDefault(c => c.Type == "name")?.Value ?? "Guest")';
+                    const userEmail = '@(User.Claims.FirstOrDefault(c => c.Type == "email")?.Value ?? "unknown@example.com")';
+
+                    document.getElementById('bookerName').value = userName;
+                    document.getElementById('bookerEmail').value = userEmail;
+                } catch (error) {
+                    console.error('Error populating user details:', error);
+                }
             }
-        ];
+        async function fetchAndRenderRooms() {
+            try {
+                // Fetch only available rooms
+                const response = await fetch('/api/rooms/available');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch available rooms from the database');
+                }
+
+                const rooms = await response.json();
+                renderRooms(rooms);
+            } catch (error) {
+                console.error('Error fetching available rooms:', error);
+            }
+        }
+
+            function renderRooms(rooms) {
+                const roomsContainer = document.getElementById('roomsContainer');
+                roomsContainer.innerHTML = '';
+
+                rooms.forEach(room => {
+                    const roomCard = document.createElement('div');
+                    roomCard.classList.add('userDashboardRoomsCard');
+                    const isAvailable = room.status === "Available";
+
+                    roomCard.innerHTML = `
+                            <img src="${room.image || '/img/classroomStyle.jpg'}" class="userDashboardRoomsCardImg" alt="${room.name || 'Room'}">
+                            <div class="userDashboardRoomsCardDetails">
+                                <p class="userDashboardRoomsCardDetailsName">${room.name || 'Unnamed Room'}</p>
+                                <div class="userDashboardRoomsCardDetailsInner mb-1">
+                                    <i class="bi bi-house-fill"></i>
+                                    <p>${room.style || 'Unknown Style'}</p>
+                                </div>
+                                <div class="userDashboardRoomsCardDetailsInner mb-3">
+                                    <i class="bi bi-people-fill"></i>
+                                    <p>${room.capacity || 'N/A'} pax</p>
+                                </div>
+                                <button class="btn adminAddBookingBtn btn-sm" type="button"
+                                    data-room-id="${room.roomId}"
+                                    data-room-name="${room.name}"
+                                    data-room-style="${room.style}"
+                                    data-bs-toggle="offcanvas"
+                                    data-bs-target="#staticBackdrop"
+                                    ${!isAvailable ? 'disabled' : ''}>
+                                    ${isAvailable ? 'Book' : 'Unavailable'}
+                                </button>
+                            </div>
+                        `;
+                    roomCard.querySelector('button').addEventListener('click', event => {
+                        handleBookButtonClick(event.target.dataset);
+                    });
+
+                    roomsContainer.appendChild(roomCard);
+                });
+            }
+            function handleBookButtonClick(roomData) {
+                selectedRoomId = roomData.roomId;
+                document.getElementById('roomName').value = roomData.roomName;
+                document.getElementById('roomStyle').value = roomData.roomStyle;
+            }
+
+            async function handleBookingSubmit(event) {
+                event.preventDefault();
+
+                const bookingData = {
+                    userId: '@(User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value)',
+                    userName: '@(User.Identity.Name ?? User.Claims.FirstOrDefault(c => c.Type == "name")?.Value)',
+                    roomId: selectedRoomId,
+                    startDate: document.getElementById("bookingDate").value,
+                    startTime: document.getElementById("startTime").value,
+                    endTime: document.getElementById("endTime").value,
+                    isRecurring: document.getElementById("isRecurring").value === "Yes",
+                    frequency: document.getElementById("recurringFrequency").value || null,
+                };
+
+                try {
+                    const response = await fetch('/api/bookings', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(bookingData)
+                    });
+
+                    if (response.ok) {
+                        alert('Booking successful!');
+                        document.getElementById('bookingForm').reset();
+                        document.querySelector('.btn-close').click();
+                    } else {
+                        const errorText = await response.text();
+                        alert(`Booking failed: ${errorText}`);
+                    }
+                } catch (error) {
+                    console.error('Error booking room:', error);
+                }
+            }
+
+            function toggleFrequencyInput() {
+                const isRecurring = document.getElementById('isRecurring').value === 'Yes';
+                document.getElementById('recurringFrequencyContainer').style.display = isRecurring ? 'block' : 'none';
+            }
 
         // Function to Render the Bookings Table
         function renderBookingsTable(bookings) {

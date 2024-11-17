@@ -139,7 +139,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="addBookingDate" class="form-label">Date</label>
-                                    <input type="date" class="form-control" id="addBookingDate" required>
+                                    <input type="date" class="form-control" id="addBookingDate" required min="<?= date('Y-m-d') ?>">
                                 </div>
                                 <div class="mb-3">
                                     <label for="addBookingStartTime" class="form-label">Start Time</label>
@@ -159,6 +159,18 @@
                                         <option value="Confirmed">Confirmed</option>
                                         <option value="Pending">Pending</option>
                                         <option value="Canceled">Canceled</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="addBookingRecurring" class="form-label">Recurring</label>
+                                    <input type="checkbox" id="addBookingRecurring">
+                                </div>
+                                <div class="mb-3" id="frequencySection" style="display: none;">
+                                    <label for="addBookingFrequency" class="form-label">Frequency</label>
+                                    <select class="form-select" id="addBookingFrequency">
+                                        <option value="Daily">Daily</option>
+                                        <option value="Weekly">Weekly</option>
+                                        <option value="Monthly">Monthly</option>
                                     </select>
                                 </div>
                             </form>
@@ -195,7 +207,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="bookingDateInput" class="form-label">Date</label>
-                                    <input type="date" class="form-control" id="bookingDateInput" required>
+                                    <input type="date" class="form-control" id="addBookingDate" required min="<?= date('Y-m-d') ?>">
                                 </div>
                                 <div class="mb-3">
                                     <label for="bookingStartTimeInput" class="form-label">Start Time</label>
@@ -235,6 +247,7 @@
                 let bookingsData = []; // Global variable to store fetched bookings
                 let analyticsChart;
                 let bookingDates = []; // Array to store unique booking dates
+                let selectedRoomCapacity = 0;
 
                 async function fetchBookings() {
                     try {
@@ -328,6 +341,7 @@
                     const addBookingRoomSelect = document.getElementById('addBookingRoom');
                     const bookingRoomInputSelect = document.getElementById('bookingRoomInput');
 
+                    // Populate user options
                     users.forEach(user => {
                         const optionText = `${user.id} - ${user.name}`;
                         const option = new Option(optionText, user.id);
@@ -335,34 +349,50 @@
                         bookingUserInputSelect.add(option.cloneNode(true));
                     });
 
+                    // Populate room options and add data attributes
                     rooms.forEach(room => {
                         const optionText = `${room.roomId} - ${room.name}`;
                         const option = new Option(optionText, room.roomId);
+
+                        // Assign capacity with a fallback if undefined
+                        const capacity = room.capacity || 0;
+                        option.dataset.capacity = capacity;
+
+                        console.log(`Setting capacity for room ${room.roomId} as ${capacity}`); // Debug log
+
                         addBookingRoomSelect.add(option);
                         bookingRoomInputSelect.add(option.cloneNode(true));
                     });
+
+                    // Add event listener to update capacity display on room selection change
+                    addBookingRoomSelect.addEventListener('change', updateRoomCapacityDisplay);
                 }
 
                 function renderBookings(bookings) {
                     const tbody = document.querySelector('#bookingsTable tbody');
                     tbody.innerHTML = '';
-                    bookings.forEach(booking => {
+
+                    // Filter out archived bookings to exclude them from the bookings table
+                    const activeBookings = bookings.filter(booking => booking.status !== 'Archived');
+
+                    activeBookings.forEach(booking => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                                                            <td>${booking.userId}</td>
-                                                            <td>${booking.userName}</td>
-                                                            <td>${booking.roomId}</td>
-                                                            <td>${booking.roomName}</td>
-                                                            <td>${new Date(booking.startDate).toLocaleDateString()}</td>
-                                                            <td>${booking.noOfPeople}</td>
-                                                            <td>
-                                                                <button class="btn btn-primary btn-sm" onclick="viewBooking(${booking.bookingId})">View</button>
-                                                                <button class="btn btn-info btn-sm" onclick="editBooking(${booking.bookingId}, ${booking.userId}, ${booking.roomId}, '${booking.startDate}', '${booking.endDate}', ${booking.noOfPeople}, '${booking.status}')">Edit</button>
-                                                                <button class="btn btn-danger btn-sm" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
-                                                            </td>`;
+                            <td>${booking.userId}</td>
+                            <td>${booking.userName}</td>
+                            <td>${booking.roomId}</td>
+                            <td>${booking.roomName}</td>
+                            <td>${new Date(booking.startDate).toLocaleDateString()}</td>
+                            <td>${booking.noOfPeople}</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" onclick="viewBooking(${booking.bookingId})">View</button>
+                                <button class="btn btn-info btn-sm" onclick="editBooking(${booking.bookingId}, ${booking.userId}, ${booking.roomId}, '${booking.startDate}', '${booking.endDate}', ${booking.noOfPeople}, '${booking.status}')">Edit</button>
+                                <button class="btn btn-danger btn-sm" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
+                            </td>`;
                         tbody.appendChild(row);
                     });
                 }
+
 
                 function renderRecentBookings(bookings) {
                     const container = document.querySelector('#recentBookingsContainer');
@@ -371,8 +401,8 @@
                     bookings.slice(0, 3).forEach(booking => {
                         const bookingHTML = `
                                                             <div class="recentBookings">
-                                                                <p class="userRecentBookings">${booking.userName}</p>
-                                                                <hr>
+                                                            <p class="userRecentBookings">${booking.userName}</p>
+                                                            <hr>
                                                                 <div class="recentBookingsDetailsDiv">
                                                                     <div class="recentBookingsDetails">
                                                                         <i class="bi bi-house-door-fill"></i>
@@ -383,7 +413,7 @@
                                                                         <p>${new Date(booking.startDate).toLocaleDateString()}</p>
                                                                     </div>
                                                                 </div>
-                                                            </div>`;
+                                                           </div>`;
                         container.innerHTML += bookingHTML;
                     });
                 }
@@ -396,27 +426,38 @@
                     pendingBookings.forEach(booking => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                                                            <td>${booking.userName}</td>
-                                                            <td>${booking.roomName}</td>
-                                                            <td>${new Date(booking.startDate).toLocaleDateString()}</td>
-                                                            <td>
-                                                                <button class="btn btn-primary btn-sm" onclick="viewBooking(${booking.bookingId})">View</button>
-                                                                <button class="btn btn-info btn-sm" onclick="editBooking(${booking.bookingId}, ${booking.userId}, ${booking.roomId}, '${booking.startDate}', '${booking.endDate}', ${booking.noOfPeople}, '${booking.status}')">Edit</button>
-                                                                <button class="btn btn-danger btn-sm" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
-                                                            </td>`;
+                                                        <td>${booking.userName}</td>
+                                                        <td>${booking.roomName}</td>
+                                                        <td>${new Date(booking.startDate).toLocaleDateString()}</td>
+                                                        <td>
+                                                        <button class="btn btn-primary btn-sm" onclick="viewBooking(${booking.bookingId})">View</button>
+                                                        <button class="btn btn-info btn-sm" onclick="editBooking(${booking.bookingId}, ${booking.userId}, ${booking.roomId}, '${booking.startDate}', '${booking.endDate}', ${booking.noOfPeople}, '${booking.status}')">Edit</button>
+                                                        <button class="btn btn-danger btn-sm" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
+                                                        </td>`;
                         tbody.appendChild(row);
                     });
                 }
 
                 async function addBooking() {
+                    // Only proceed if the form is valid
+                    if (!validateBookingForm('addBookingForm')) {
+                        return;
+                    }
+
+                    const isRecurring = document.getElementById('addBookingRecurring').checked;
+                    const frequency = isRecurring ? document.getElementById('addBookingFrequency').value : null;
+
                     const newBooking = {
                         userId: parseInt(document.getElementById('addBookingUser').value, 10),
                         roomId: parseInt(document.getElementById('addBookingRoom').value, 10),
                         startDate: document.getElementById('addBookingDate').value + "T" + document.getElementById('addBookingStartTime').value,
                         endDate: document.getElementById('addBookingDate').value + "T" + document.getElementById('addBookingEndTime').value,
                         noOfPeople: parseInt(document.getElementById('addBookingPeople').value, 10),
-                        status: document.getElementById('addBookingStatus').value
+                        status: document.getElementById('addBookingStatus').value,
+                        isRecurring,
+                        frequency
                     };
+
 
                     try {
                         const response = await fetch('/api/bookings/AddBooking', {
@@ -426,13 +467,10 @@
                         });
 
                         if (response.ok) {
-                            // Booking was added successfully; now update the room status
                             const roomId = newBooking.roomId;
                             await updateRoomStatus(roomId, "Booked");
-
-                            // Refresh bookings and close the modal
-                            await fetchBookings();
                             $('#addBookingModal').modal('hide');
+                            location.reload(); // Refresh the page after the booking is added
                         } else {
                             const errorText = await response.text();
                             alert("Error adding booking: " + errorText);
@@ -442,6 +480,7 @@
                         alert("Unexpected error adding booking.");
                     }
                 }
+
 
                 function editBooking(bookingId, userId, roomId, startDate, endDate, noOfPeople, status) {
                     document.getElementById('bookingUserInput').value = userId;
@@ -527,12 +566,17 @@
 
                         if (!booking) throw new Error("Booking not found in fetched data");
 
-                        alert(`Booking Details:\nUser: ${booking.userName}\nRoom: ${booking.roomName}\nDate: ${new Date(booking.startDate).toLocaleDateString()}`);
+                        const bookingDate = new Date(booking.startDate).toLocaleDateString();
+                        const startTime = new Date(booking.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        const endTime = new Date(booking.endDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                        alert(`Booking Details:\nUser: ${booking.userName}\nRoom: ${booking.roomName}\nDate: ${bookingDate}\nStart Time: ${startTime}\nEnd Time: ${endTime}`);
                     } catch (error) {
                         console.error("Error viewing booking:", error);
                         alert("An error occurred while viewing booking details.");
                     }
                 }
+
 
                 async function editBooking(bookingId) {
                     try {
@@ -597,17 +641,29 @@
                 function updateCalendarWithBookings() {
                     flatpickr("#calendar", {
                         inline: true,
-                        mode: "range",
+                        mode: "single",
                         dateFormat: "Y-m-d",
-                        defaultDate: bookingDates, // Highlighted dates with bookings
+                        defaultDate: bookingDates,
                         onDayCreate: function (dObj, dStr, fp, dayElem) {
-                            const dateStr = dayElem.dateObj.toISOString().split("T")[0];
+                            const dateStr = new Date(dayElem.dateObj.getTime() - dayElem.dateObj.getTimezoneOffset() * 60000)
+                                .toISOString()
+                                .split("T")[0];
                             if (bookingDates.includes(dateStr)) {
-                                dayElem.classList.add("has-booking"); // Add a CSS class for booked dates
+                                dayElem.classList.add("has-booking");
+                            }
+                        },
+                        onChange: function (selectedDates) {
+                            if (selectedDates.length > 0) {
+                                const selectedDate = new Date(selectedDates[0].getTime() - selectedDates[0].getTimezoneOffset() * 60000)
+                                    .toISOString()
+                                    .split("T")[0];
+                                showBookingsForDate(selectedDate);
                             }
                         }
                     });
                 }
+
+
                 // Helper function to update the room status to "Booked" without affecting other fields
                 async function updateRoomStatus(roomId, status) {
                     try {
@@ -647,7 +703,213 @@
                         alert("An unexpected error occurred while updating room status.");
                     }
                 }
-                document.addEventListener("DOMContentLoaded", fetchBookings);
+
+                function validateBookingForm(formId) {
+                    const form = document.getElementById(formId);
+                    let isValid = true;
+                    let errorMessage = '';
+
+                    // Validate user selection
+                    const user = form.querySelector('#addBookingUser').value;
+                    if (!user) {
+                        errorMessage += 'User must be selected.\n';
+                        isValid = false;
+                    }
+
+                    // Validate room selection and get updated room capacity
+                    const roomSelect = form.querySelector('#addBookingRoom');
+                    const room = roomSelect.value;
+                    if (!room) {
+                        errorMessage += 'Room must be selected.\n';
+                        isValid = false;
+                    } else {
+                        // Retrieve the updated room capacity from the selected option's data attribute
+                        selectedRoomCapacity = parseInt(roomSelect.options[roomSelect.selectedIndex].dataset.capacity, 10) || 0;
+                    }
+
+                    // Validate booking date and time
+                    const date = form.querySelector('#addBookingDate').value;
+                    const today = new Date().toISOString().split('T')[0];
+                    const startTime = form.querySelector('#addBookingStartTime').value;
+                    const endTime = form.querySelector('#addBookingEndTime').value;
+
+                    // Get current date and time
+                    const currentDateTime = new Date();
+                    const currentDate = currentDateTime.toISOString().split('T')[0];
+                    const currentTime = currentDateTime.toTimeString().slice(0, 5);
+
+                    // Check if date is valid
+                    if (!date) {
+                        errorMessage += 'Booking date is required.\n';
+                        isValid = false;
+                    } else if (date === currentDate && startTime < currentTime) {
+                        // If booking date is today, validate start time against current time
+                        errorMessage += 'Start time cannot be in the past.\n';
+                        isValid = false;
+                    }
+
+                    // Validate start and end time
+                    if (!startTime) {
+                        errorMessage += 'Start time is required.\n';
+                        isValid = false;
+                    } else if (!endTime) {
+                        errorMessage += 'End time is required.\n';
+                        isValid = false;
+                    } else if (endTime <= startTime) {
+                        errorMessage += 'End time must be after the start time.\n';
+                        isValid = false;
+                    }
+
+                    // Validate number of people against updated room capacity
+                    const noOfPeople = parseInt(form.querySelector('#addBookingPeople').value, 10);
+                    if (isNaN(noOfPeople) || noOfPeople < 1) {
+                        errorMessage += 'The number of people must be a valid number and at least 1.\n';
+                        isValid = false;
+                    } else if (noOfPeople > selectedRoomCapacity) {
+                        errorMessage += `The number of people cannot exceed the room capacity of ${selectedRoomCapacity}.\n`;
+                        isValid = false;
+                    }
+
+                    // Validate status selection
+                    const status = form.querySelector('#addBookingStatus').value;
+                    if (!status) {
+                        errorMessage += 'Status is required.\n';
+                        isValid = false;
+                    }
+
+                    // Check for duplicate booking in the same room, date, and overlapping time
+                    const startDateTime = new Date(`${date}T${startTime}`).getTime();
+                    const endDateTime = new Date(`${date}T${endTime}`).getTime();
+
+                    const hasDuplicate = bookingsData.some(existingBooking => {
+                        const existingRoomId = existingBooking.roomId;
+                        const existingDate = new Date(existingBooking.startDate).toISOString().split("T")[0];
+                        const existingStart = new Date(existingBooking.startDate).getTime();
+                        const existingEnd = new Date(existingBooking.endDate).getTime();
+
+                        return (
+                            existingRoomId == room &&
+                            existingDate === date &&
+                            ((startDateTime >= existingStart && startDateTime < existingEnd) || // Overlaps with existing booking start
+                                (endDateTime > existingStart && endDateTime <= existingEnd) ||     // Overlaps with existing booking end
+                                (startDateTime <= existingStart && endDateTime >= existingEnd))    // Encloses existing booking
+                        );
+                    });
+
+                    if (hasDuplicate) {
+                        errorMessage += 'A booking already exists for this room with overlapping date and time.\n';
+                        isValid = false;
+                    }
+
+                    if (!isValid) {
+                        alert(errorMessage);
+                    }
+
+                    return isValid;
+                }
+
+                function updateRoomCapacityDisplay() {
+                    const roomSelect = document.getElementById('addBookingRoom');
+                    const selectedOption = roomSelect.options[roomSelect.selectedIndex];
+
+                    // Parse the capacity value and log it
+                    selectedRoomCapacity = parseInt(selectedOption.dataset.capacity, 10);
+                    console.log(`Selected room capacity: ${selectedRoomCapacity}`); // Debug log
+
+                    // Display room capacity to the user
+                    let capacityDisplay = document.getElementById('capacityDisplay');
+                    if (!capacityDisplay) {
+                        capacityDisplay = document.createElement('div');
+                        capacityDisplay.id = 'capacityDisplay';
+                        capacityDisplay.className = 'text-muted';
+                        roomSelect.parentElement.appendChild(capacityDisplay);
+                    }
+                    capacityDisplay.textContent = `Room Capacity: ${selectedRoomCapacity}`;
+                }
+                function showBookingsForDate(date) {
+                    const selectedDate = new Date(date).toISOString().split("T")[0];
+
+                    const filteredBookings = bookingsData.filter(booking => {
+                        const bookingDate = new Date(new Date(booking.startDate).getTime() - new Date(booking.startDate).getTimezoneOffset() * 60000)
+                            .toISOString()
+                            .split("T")[0];
+                        return bookingDate === selectedDate;
+                    });
+
+                    const bookingsContainer = document.getElementById("recentBookingsContainer");
+                    bookingsContainer.innerHTML = '';
+
+                    if (filteredBookings.length > 0) {
+                        filteredBookings.forEach(booking => {
+                            const bookingHTML = `
+                                                                                <div class="recentBookings">
+                                                                                    <p class="userRecentBookings">${booking.userName}</p>
+                                                                                    <hr>
+                                                                                    <div class="recentBookingsDetailsDiv">
+                                                                                        <div class="recentBookingsDetails">
+                                                                                            <i class="bi bi-house-door-fill"></i>
+                                                                                            <p>${booking.roomName}</p>
+                                                                                        </div>
+                                                                                        <div class="recentBookingsDetails">
+                                                                                            <i class="bi bi-calendar2-week"></i>
+                                                                                            <p>${new Date(booking.startDate).toLocaleDateString()}</p>
+                                                                                        </div>
+                                                                                        <div class="recentBookingsDetails">
+                                                                                            <i class="bi bi-clock"></i>
+                                                                                            <p>${new Date(booking.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(booking.endDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>`;
+                            bookingsContainer.innerHTML += bookingHTML;
+                        });
+                    } else {
+                        bookingsContainer.innerHTML = `<p class="text-muted">No bookings for this date.</p>`;
+                    }
+                }
+                // Function to periodically check and archive expired bookings
+                async function archiveExpiredBookings() {
+                    const now = new Date();
+
+                    const expiredBookings = bookingsData.filter(booking =>
+                        new Date(booking.endDate) < now &&
+                        booking.status !== 'Archived' &&
+                        booking.isRecurring);
+
+                    for (const booking of expiredBookings) {
+                        try {
+                            const updatedBooking = { ...booking, status: 'Archived' };
+
+                            const response = await fetch(`/api/bookings/ArchiveBooking/${booking.bookingId}`, {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(updatedBooking)
+                            });
+
+                            if (response.ok) {
+                                console.log(`Booking ${booking.bookingId} archived successfully.`);
+                                bookingsData = bookingsData.filter(b => b.bookingId !== booking.bookingId);
+                                renderBookings(bookingsData);
+                            } else {
+                                console.error(`Failed to archive booking ${booking.bookingId}`);
+                            }
+                        } catch (error) {
+                            console.error(`Error archiving booking ${booking.bookingId}:`, error);
+                        }
+                    }
+                }
+
+                // Call this function periodically
+                setInterval(archiveExpiredBookings, 10 * 60 * 1000); // Every 10 minutes
+
+                document.getElementById('addBookingRecurring').addEventListener('change', function () {
+                    document.getElementById('frequencySection').style.display = this.checked ? 'block' : 'none';
+                });
+
+                document.addEventListener("DOMContentLoaded", () => {
+                    document.getElementById('addBookingDate').setAttribute('min', new Date().toISOString().split('T')[0]);
+                    fetchBookings();
+                    archiveExpiredBookings(); // Initial call to archive any expired bookings at load time
+                });
             </script>
 </body>
 </html>

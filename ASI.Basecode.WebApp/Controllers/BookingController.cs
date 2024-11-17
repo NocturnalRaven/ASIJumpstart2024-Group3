@@ -91,13 +91,107 @@ namespace ASI.Basecode.WebApp.Controllers
 
             try
             {
-                _bookingService.Add(model);
+                if (model.IsRecurring == true && !string.IsNullOrEmpty(model.Frequency))
+                {
+                    // Use the new service method to generate recurring bookings
+                    var recurringBookings = _bookingService.GenerateRecurringBookings(model);
+                    foreach (var recurringBooking in recurringBookings)
+                    {
+                        _bookingService.Add(recurringBooking);
+                    }
+                }
+                else
+                {
+                    _bookingService.Add(model);
+                }
+
                 return Ok(new { message = "Booking added successfully" });
             }
             catch (Exception ex)
             {
                 _logger.LogError("Error adding booking: {Message}", ex.Message);
                 return StatusCode(500, "Internal server error while adding booking");
+            }
+        }
+
+        private IEnumerable<BookingViewModel> GenerateRecurringBookings(BookingViewModel model)
+        {
+            var recurringBookings = new List<BookingViewModel>();
+
+            // Since model.StartDate and model.EndDate are non-nullable, use them directly
+            DateTime nextStartDate = model.StartDate;
+            DateTime nextEndDate = model.EndDate;
+
+            // Define an end date for recurrence (e.g., one year from the start date)
+            DateTime recurrenceEndDate = model.StartDate.AddYears(1);
+
+            while (nextStartDate <= recurrenceEndDate)
+            {
+                var newBooking = new BookingViewModel
+                {
+                    UserId = model.UserId,
+                    RoomId = model.RoomId,
+                    StartDate = nextStartDate,
+                    EndDate = nextEndDate,
+                    NoOfPeople = model.NoOfPeople,
+                    Status = model.Status,
+                    IsRecurring = true,
+                    Frequency = model.Frequency
+                };
+
+                recurringBookings.Add(newBooking);
+
+                // Move to the next recurrence based on frequency
+                switch (model.Frequency.ToLower())
+                {
+                    case "daily":
+                        nextStartDate = nextStartDate.AddDays(1);
+                        nextEndDate = nextEndDate.AddDays(1);
+                        break;
+                    case "weekly":
+                        nextStartDate = nextStartDate.AddDays(7);
+                        nextEndDate = nextEndDate.AddDays(7);
+                        break;
+                    case "monthly":
+                        nextStartDate = nextStartDate.AddMonths(1);
+                        nextEndDate = nextEndDate.AddMonths(1);
+                        break;
+                    default:
+                        throw new ArgumentException("Invalid frequency specified.");
+                }
+            }
+
+            return recurringBookings;
+        }
+
+
+        [HttpGet("RecurringBookings")]
+        public IActionResult RecurringBookings()
+        {
+            try
+            {
+                var recurringBookings = _bookingService.RetrieveAll(status: "Recurring");
+                return View(recurringBookings);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error fetching recurring bookings: {Message}", ex.Message);
+                return StatusCode(500, "Failed to retrieve recurring bookings");
+            }
+        }
+
+        [HttpPut("ArchiveExpiredBookings")]
+        public IActionResult ArchiveExpiredBookings()
+        {
+            try
+            {
+                var archivedCount = _bookingService.ArchiveExpiredBookings();
+                return Ok(new { message = $"{archivedCount} expired bookings archived successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error archiving expired bookings: {Message}", ex.Message);
+                return StatusCode(500, "Failed to archive expired bookings");
             }
         }
 
@@ -233,21 +327,6 @@ namespace ASI.Basecode.WebApp.Controllers
             {
                 _logger.LogError("Error fetching user bookings for User ID {UserId}: {Message}", userId, ex.Message);
                 return StatusCode(500, "Failed to retrieve user bookings");
-            }
-        }
-
-        [HttpGet("RecurringBookings")]
-        public IActionResult RecurringBookings()
-        {
-            try
-            {
-                var recurringBookings = _bookingService.RetrieveAll(status: "Recurring");
-                return View(recurringBookings);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Error fetching recurring bookings: {Message}", ex.Message);
-                return StatusCode(500, "Failed to retrieve recurring bookings");
             }
         }
 

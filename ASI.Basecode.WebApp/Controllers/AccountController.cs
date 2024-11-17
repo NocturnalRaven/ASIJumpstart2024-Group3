@@ -97,7 +97,20 @@ namespace ASI.Basecode.WebApp.Controllers
                 // 認証OK
                 await this._signInManager.SignInAsync(user);
                 this._session.SetString("UserName", string.Join(" ", user.FirstName, user.LastName));
-                return RedirectToAction("Admindashboard", "AdminDashboard");
+                if (user.UserRole == 1)
+                {
+                    return RedirectToAction("Admindashboard", "AdminDashboard");
+                }
+                else if (user.UserRole == 9)
+                {
+                    return RedirectToAction("Bookings", "SuperAdmin");
+                }
+                else if (user.UserRole == 3 || user.UserRole == 2)
+                {
+                    return RedirectToAction("UserDashboard", "Users");
+                }
+                else
+                    return RedirectToAction("Login", "Account");
             }
             else
             {

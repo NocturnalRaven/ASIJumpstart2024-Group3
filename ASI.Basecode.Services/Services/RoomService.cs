@@ -24,6 +24,7 @@ namespace ASI.Basecode.Services.Services
         {
             var rooms = _roomRepository.GetRooms()
                 .Where(r => !r.Deleted)
+                .AsEnumerable() // Switch to in-memory evaluation for projection
                 .Select(room => new RoomViewModel
                 {
                     RoomId = room.Id,
@@ -32,19 +33,22 @@ namespace ASI.Basecode.Services.Services
                     Capacity = room.Capacity,
                     Status = room.Status,
                     Floor = room.Floor,
-                    Image = room.Image,
                     CreatedAt = room.CreatedAt,
                     UpdatedAt = room.UpdatedAt,
                     Deleted = room.Deleted,
-                    DeletedAt = room.DeletedAt
+                    DeletedAt = room.DeletedAt,
+                    Image = GetImagePath(room.Style) // Call the static method here
                 });
 
             return rooms;
         }
 
+
         public RoomViewModel GetRoomById(int id)
         {
-            var room = _roomRepository.GetRooms().FirstOrDefault(r => r.Id == id && !r.Deleted);
+            var room = _roomRepository.GetRooms()
+                .FirstOrDefault(r => r.Id == id && !r.Deleted);
+
             if (room == null) return null;
 
             return new RoomViewModel
@@ -55,25 +59,24 @@ namespace ASI.Basecode.Services.Services
                 Capacity = room.Capacity,
                 Status = room.Status,
                 Floor = room.Floor,
-                Image = room.Image,
                 CreatedAt = room.CreatedAt,
                 UpdatedAt = room.UpdatedAt,
                 Deleted = room.Deleted,
-                DeletedAt = room.DeletedAt
+                DeletedAt = room.DeletedAt,
+                Image = GetImagePath(room.Style) // Call the static method here
             };
         }
+
 
         public void AddRoom(RoomViewModel roomViewModel)
         {
             var room = new Room
             {
-                Id = roomViewModel.RoomId,
                 Name = roomViewModel.Name,
                 Style = roomViewModel.Style,
                 Capacity = roomViewModel.Capacity,
                 Status = roomViewModel.Status,
                 Floor = roomViewModel.Floor,
-                Image = roomViewModel.Image,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 Deleted = false
@@ -92,7 +95,6 @@ namespace ASI.Basecode.Services.Services
                 room.Capacity = roomViewModel.Capacity;
                 room.Status = roomViewModel.Status;
                 room.Floor = roomViewModel.Floor;
-                room.Image = roomViewModel.Image;
                 room.UpdatedAt = DateTime.Now;
 
                 _roomRepository.UpdateRoom(room);
@@ -116,6 +118,30 @@ namespace ASI.Basecode.Services.Services
             {
                 throw new InvalidOperationException("Room not found.");
             }
+        }
+
+        /// <summary>
+        /// Returns the image path based on the room style.
+        /// </summary>
+        /// <param name="style">Room style</param>
+        /// <returns>Image path</returns>
+        private static string GetImagePath(string style)
+        {
+            if (string.IsNullOrEmpty(style))
+            {
+                return "/img/classroomStyle.jpg"; // Default image
+            }
+
+            return style.ToLower() switch
+            {
+                "classroom" => "/img/classroomStyle.jpg",
+                "banquet" => "/img/banquet.jpg",
+                "u-shape" => "/img/ushape.jpeg",
+                "conference" => "/img/conferenceStyle.png",
+                "auditorium" => "/img/auditorium.jpg",
+                "boardroom" => "/img/boardroomStyle.jpeg",
+                _ => "/img/classroomStyle.jpg" // Fallback to default image
+            };
         }
     }
 }

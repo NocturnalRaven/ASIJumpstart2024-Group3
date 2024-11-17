@@ -150,7 +150,8 @@ nav {
 
 .calendarSide {
 
-    flex: 1;
+/*    flex: 1;*/
+width: 300px;
     background-color: #ffffff;
     border-radius: 15px;
     display: flex;
@@ -215,6 +216,16 @@ nav {
 /* Reduce padding for month container to make it fit */
 .flatpickr-current-month {
     padding: 5px !important;
+}
+
+.flatpickr-innerContainer {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+.flatpickr-months {
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
 .recentBookingsAside {
@@ -841,4 +852,19 @@ table tbody tr td {
 
 .logoutBtn {
     background-color: #E5E4E2;
+}
+
+.scrollable-rooms {
+    max-height: 400px; /* Adjust height as needed */
+    overflow-y: auto; /* Enable vertical scrolling */
+    padding-right: 10px; /* Add space for scrollbar */
+    border: 1px solid #ddd; /* Optional: Add a border for visual distinction */
+    border-radius: 8px; /* Optional: Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for better appearance */
+}
+
+
+.userDashboardLayout {
+    display: flex;
+    flex-direction: column;
 }

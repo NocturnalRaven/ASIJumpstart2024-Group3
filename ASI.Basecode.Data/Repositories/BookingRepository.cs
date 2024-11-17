@@ -54,6 +54,27 @@ namespace ASI.Basecode.Data.Repositories
             }
             UnitOfWork.SaveChanges();
         }
+        /// <summary>
+        /// Archives expired bookings by setting their status to "Archived".
+        /// </summary>
+        /// <returns>The count of bookings archived.</returns>
+        public int ArchiveExpiredBookings()
+        {
+            var expiredBookings = this.GetDbSet<Booking>()
+                .Where(b => b.EndDate < DateTime.Now && b.Status != "Archived" && !b.Deleted);
 
+            int archivedCount = 0;
+            foreach (var booking in expiredBookings)
+            {
+                booking.Status = "Archived";
+                booking.UpdatedAt = DateTime.Now;
+                archivedCount++;
+            }
+
+            UnitOfWork.SaveChanges(); // Save changes after updating statuses
+            Console.WriteLine($"{archivedCount} expired bookings have been archived."); // Log the count for confirmation
+
+            return archivedCount;
+        }
     }
 }
