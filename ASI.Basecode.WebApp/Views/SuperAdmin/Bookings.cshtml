@@ -960,193 +960,145 @@
                     function populateTimeDropdowns() {
                         const timeIntervals = generateTimeIntervals(30, 8, 20); // 30-minute intervals from 8 AM to 8 PM
 
-                        // Add Booking Modal Time Dropdowns
                         const addStartTimeSelect = document.getElementById('AddBookingStartTime');
                         const addEndTimeSelect = document.getElementById('AddBookingEndTime');
 
-                        // Edit Booking Modal Time Dropdowns
-                        const editStartTimeSelect = document.getElementById('startTime');
-                        const editEndTimeSelect = document.getElementById('endTime');
-
-                        let currentEditingBookingId = null; // Track the booking being edited
+                        const addDateInput = document.getElementById('addBookingDate');
+                        const addRoomSelect = document.getElementById('addBookingRoom');
 
                         // Helper function to populate a dropdown with optional disabled intervals
                         function populateDropdown(selectElement, disabledIntervals = []) {
-                            const currentValue = selectElement.value; // Preserve the currently selected value
-                            selectElement.innerHTML = ''; // Clear existing options
+                            const currentValue = selectElement.value;
+                            selectElement.innerHTML = '';
+
                             timeIntervals.forEach(time => {
                                 const option = document.createElement('option');
                                 option.value = time;
                                 option.textContent = time;
 
-                                // Disable option if it's in the disabledIntervals array
                                 if (disabledIntervals.includes(time)) {
                                     option.disabled = true;
-                                    option.style.color = 'gray'; // Optional: Style disabled options
+                                    option.style.color = 'gray';
                                 }
 
                                 selectElement.appendChild(option);
                             });
 
-                            // Restore the previously selected value if it's valid
                             if (currentValue && timeIntervals.includes(currentValue)) {
                                 selectElement.value = currentValue;
                             }
                         }
 
-                        // Populate dropdowns without restrictions initially
-                        if (addStartTimeSelect && addEndTimeSelect) {
-                            populateDropdown(addStartTimeSelect);
-                            populateDropdown(addEndTimeSelect);
-                        }
-                        if (editStartTimeSelect && editEndTimeSelect) {
-                            populateDropdown(editStartTimeSelect);
-                            populateDropdown(editEndTimeSelect);
-                        }
+                        function updateDisabledTimes(startSelect, endSelect, dateInput, roomSelect) {
+                            const selectedDate = dateInput.value;
+                            const selectedRoomId = parseInt(roomSelect.value, 10);
+                            const today = new Date().toISOString().split('T')[0];
+                            const now = new Date();
+                            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
-                        // Add event listeners to disable overlapping times dynamically for Add Booking Modal
-                        const addDateInput = document.getElementById('addBookingDate');
-                        const addRoomSelect = document.getElementById('addBookingRoom');
+                            if (!selectedDate || isNaN(selectedRoomId)) return;
+
+                            const disabledIntervals = new Set();
+
+                            if (selectedDate === today) {
+                                timeIntervals.forEach(time => {
+                                    if (time <= currentTime) {
+                                        disabledIntervals.add(time);
+                                    }
+                                });
+                            }
+
+                            const overlappingBookings = bookingsData.filter(booking => {
+                                const bookingDate = new Date(booking.startDate).toISOString().split('T')[0];
+                                return booking.roomId === selectedRoomId && bookingDate === selectedDate;
+                            });
+
+                            overlappingBookings.forEach(booking => {
+                                const bookingStartDate = new Date(booking.startDate);
+                                const bookingEndDate = new Date(booking.endDate);
+
+                                const startTime = formatTime(bookingStartDate);
+                                const endTime = formatTime(bookingEndDate);
+
+                                const startIndex = timeIntervals.indexOf(startTime);
+                                const endIndex = timeIntervals.indexOf(endTime);
+
+                                if (startIndex !== -1 && endIndex !== -1) {
+                                    for (let i = startIndex; i < endIndex; i++) {
+                                        disabledIntervals.add(timeIntervals[i]);
+                                    }
+                                }
+                            });
+
+                            const disabledArray = Array.from(disabledIntervals);
+                            populateDropdown(startSelect, disabledArray);
+                            populateDropdown(endSelect, disabledArray);
+                        }
 
                         if (addDateInput && addRoomSelect) {
                             addDateInput.addEventListener('change', () => updateDisabledTimes(addStartTimeSelect, addEndTimeSelect, addDateInput, addRoomSelect));
                             addRoomSelect.addEventListener('change', () => updateDisabledTimes(addStartTimeSelect, addEndTimeSelect, addDateInput, addRoomSelect));
                         }
-
-                        // Add event listeners to disable overlapping times dynamically for Edit Booking Modal
-                        const editDateInput = document.getElementById('bookingDateInput');
-                        const editRoomSelect = document.getElementById('bookingRoomInput');
-
-                        if (editDateInput && editRoomSelect) {
-                            editDateInput.addEventListener('change', () => updateDisabledTimes(editStartTimeSelect, editEndTimeSelect, editDateInput, editRoomSelect, currentEditingBookingId));
-                            editRoomSelect.addEventListener('change', () => updateDisabledTimes(editStartTimeSelect, editEndTimeSelect, editDateInput, editRoomSelect, currentEditingBookingId));
-                        }
-
-                        // Function to update disabled times based on selected date, room, and excluded booking
-                        function updateDisabledTimes(startSelect, endSelect, dateInput, roomSelect, excludeBookingId = null) {
-                            const selectedDate = dateInput.value;
-                            const selectedRoomId = parseInt(roomSelect.value, 10);
-
-                            if (!selectedDate || isNaN(selectedRoomId)) return;
-
-                            // Get overlapping bookings for the selected room and date, excluding the current booking being edited
-                            const overlappingBookings = bookingsData.filter(booking => {
-                                const bookingDate = new Date(booking.startDate).toISOString().split('T')[0];
-                                return booking.roomId === selectedRoomId &&
-                                    bookingDate === selectedDate &&
-                                    booking.bookingId !== excludeBookingId; // Exclude the booking being edited
-                            });
-
-                            const disabledIntervals = new Set();
-
-                            overlappingBookings.forEach(booking => {
-                                const bookingStartDate = new Date(booking.startDate);
-                                const bookingEndDate = new Date(booking.endDate);
-
-                                const startTime = formatTime(bookingStartDate);
-                                const endTime = formatTime(bookingEndDate);
-
-                                const startIndex = timeIntervals.indexOf(startTime);
-                                const endIndex = timeIntervals.indexOf(endTime);
-
-                                if (startIndex !== -1 && endIndex !== -1) {
-                                    // Exclude the endIndex to prevent overlapping
-                                    for (let i = startIndex; i < endIndex; i++) {
-                                        const time = timeIntervals[i];
-                                        disabledIntervals.add(time);
-                                    }
-                                }
-                            });
-
-                            // Convert Set to Array
-                            const disabledIntervalsArray = Array.from(disabledIntervals);
-
-                            // Populate dropdowns with disabled options
-                            populateDropdown(startSelect, disabledIntervalsArray);
-                            populateDropdown(endSelect, disabledIntervalsArray);
-                        }
-
-                        // Call this function when opening the edit modal
-                        function handleEditModalOpen(bookingId) {
-                            currentEditingBookingId = bookingId; // Set the ID of the booking being edited
-                            const editDateInput = document.getElementById('bookingDateInput');
-                            const editRoomSelect = document.getElementById('bookingRoomInput');
-                            updateDisabledTimes(editStartTimeSelect, editEndTimeSelect, editDateInput, editRoomSelect, currentEditingBookingId);
-                        }
-
-                        // Attach event to reset `currentEditingBookingId` when modal is closed
-                        $('#editBookingModal').on('hidden.bs.modal', function () {
-                            currentEditingBookingId = null; // Reset the ID when the modal is closed
-                        });
-
-                        // Public API for triggering the Edit Modal's time population
-                        window.openEditModal = handleEditModalOpen;
                     }
 
                     function populateTimeDropdownsForEditModal() {
                         const timeIntervals = generateTimeIntervals(30, 8, 20); // 30-minute intervals from 8 AM to 8 PM
 
-                        // Edit Booking Modal Time Dropdowns
                         const editStartTimeSelect = document.getElementById('startTime');
                         const editEndTimeSelect = document.getElementById('endTime');
 
-                        let currentEditingBookingId = null; // Track the booking being edited
+                        const editDateInput = document.getElementById('bookingDateInput');
+                        const editRoomSelect = document.getElementById('bookingRoomInput');
 
-                        // Helper function to populate a dropdown with optional disabled intervals
+                        let currentEditingBookingId = null;
+
                         function populateDropdown(selectElement, disabledIntervals = []) {
-                            const currentValue = selectElement.value; // Preserve the currently selected value
-                            selectElement.innerHTML = ''; // Clear existing options
+                            const currentValue = selectElement.value;
+                            selectElement.innerHTML = '';
+
                             timeIntervals.forEach(time => {
                                 const option = document.createElement('option');
                                 option.value = time;
                                 option.textContent = time;
 
-                                // Disable option if it's in the disabledIntervals array
                                 if (disabledIntervals.includes(time)) {
                                     option.disabled = true;
-                                    option.style.color = 'gray'; // Optional: Style disabled options
+                                    option.style.color = 'gray';
                                 }
 
                                 selectElement.appendChild(option);
                             });
 
-                            // Restore the previously selected value if it's valid
                             if (currentValue && timeIntervals.includes(currentValue)) {
                                 selectElement.value = currentValue;
                             }
                         }
 
-                        // Populate dropdowns without restrictions initially
-                        if (editStartTimeSelect && editEndTimeSelect) {
-                            populateDropdown(editStartTimeSelect);
-                            populateDropdown(editEndTimeSelect);
-                        }
-
-                        // Add event listeners to disable overlapping times dynamically for Edit Booking Modal
-                        const editDateInput = document.getElementById('bookingDateInput');
-                        const editRoomSelect = document.getElementById('bookingRoomInput');
-
-                        if (editDateInput && editRoomSelect) {
-                            editDateInput.addEventListener('change', () => updateDisabledTimes(editStartTimeSelect, editEndTimeSelect, editDateInput, editRoomSelect, currentEditingBookingId));
-                            editRoomSelect.addEventListener('change', () => updateDisabledTimes(editStartTimeSelect, editEndTimeSelect, editDateInput, editRoomSelect, currentEditingBookingId));
-                        }
-
-                        // Function to update disabled times based on selected date, room, and excluded booking
                         function updateDisabledTimes(startSelect, endSelect, dateInput, roomSelect, excludeBookingId = null) {
                             const selectedDate = dateInput.value;
                             const selectedRoomId = parseInt(roomSelect.value, 10);
+                            const today = new Date().toISOString().split('T')[0];
+                            const now = new Date();
+                            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
                             if (!selectedDate || isNaN(selectedRoomId)) return;
 
-                            // Get overlapping bookings for the selected room and date, excluding the current booking being edited
+                            const disabledIntervals = new Set();
+
+                            if (selectedDate === today) {
+                                timeIntervals.forEach(time => {
+                                    if (time <= currentTime) {
+                                        disabledIntervals.add(time);
+                                    }
+                                });
+                            }
+
                             const overlappingBookings = bookingsData.filter(booking => {
                                 const bookingDate = new Date(booking.startDate).toISOString().split('T')[0];
                                 return booking.roomId === selectedRoomId &&
                                     bookingDate === selectedDate &&
-                                    booking.bookingId !== excludeBookingId; // Exclude the booking being edited
+                                    booking.bookingId !== excludeBookingId;
                             });
-
-                            const disabledIntervals = new Set();
 
                             overlappingBookings.forEach(booking => {
                                 const bookingStartDate = new Date(booking.startDate);
@@ -1159,37 +1111,30 @@
                                 const endIndex = timeIntervals.indexOf(endTime);
 
                                 if (startIndex !== -1 && endIndex !== -1) {
-                                    // Exclude the endIndex to prevent overlapping
                                     for (let i = startIndex; i < endIndex; i++) {
-                                        const time = timeIntervals[i];
-                                        disabledIntervals.add(time);
+                                        disabledIntervals.add(timeIntervals[i]);
                                     }
                                 }
                             });
 
-                            // Convert Set to Array
-                            const disabledIntervalsArray = Array.from(disabledIntervals);
-
-                            // Populate dropdowns with disabled options
-                            populateDropdown(startSelect, disabledIntervalsArray);
-                            populateDropdown(endSelect, disabledIntervalsArray);
+                            const disabledArray = Array.from(disabledIntervals);
+                            populateDropdown(startSelect, disabledArray);
+                            populateDropdown(endSelect, disabledArray);
                         }
 
-                        // Call this function when opening the edit modal
-                        function handleEditModalOpen(bookingId) {
-                            currentEditingBookingId = bookingId; // Set the ID of the booking being edited
-                            const editDateInput = document.getElementById('bookingDateInput');
-                            const editRoomSelect = document.getElementById('bookingRoomInput');
-                            updateDisabledTimes(editStartTimeSelect, editEndTimeSelect, editDateInput, editRoomSelect, currentEditingBookingId);
+                        if (editDateInput && editRoomSelect) {
+                            editDateInput.addEventListener('change', () => updateDisabledTimes(editStartTimeSelect, editEndTimeSelect, editDateInput, editRoomSelect, currentEditingBookingId));
+                            editRoomSelect.addEventListener('change', () => updateDisabledTimes(editStartTimeSelect, editEndTimeSelect, editDateInput, editRoomSelect, currentEditingBookingId));
                         }
 
-                        // Attach event to reset `currentEditingBookingId` when modal is closed
                         $('#editBookingModal').on('hidden.bs.modal', function () {
-                            currentEditingBookingId = null; // Reset the ID when the modal is closed
+                            currentEditingBookingId = null;
                         });
 
-                        // Public API for triggering the Edit Modal's time population
-                        window.openEditModal = handleEditModalOpen;
+                        window.openEditModal = function handleEditModalOpen(bookingId) {
+                            currentEditingBookingId = bookingId;
+                            updateDisabledTimes(editStartTimeSelect, editEndTimeSelect, editDateInput, editRoomSelect, currentEditingBookingId);
+                        };
                     }
 
                     // Function to generate time intervals
@@ -1251,6 +1196,6 @@
                         fetchBookings(); // Fetch and render bookings
                         archiveExpiredBookings(); // Archive expired bookings initially
                     });
-               </script>
-    </body>
+                </script>
+</body>
 </html>
