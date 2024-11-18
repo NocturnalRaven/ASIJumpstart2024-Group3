@@ -69,43 +69,47 @@
                 </div>
             </aside>
 
-            <!-- Room Section -->
-            <section class="roomsSection mb-5">
-                <div class="userDashboardRoomsCardViewParent">
-                    <div class="usersRoomDashboard mb-2">
-                        <h4>Rooms</h4>
+            <div class="userRoomNBookingSection">
+                <!-- Room Section -->
+                <section class="roomsSection">
+                    <div class="userDashboardRoomsCardViewParent">
+                        <div class="usersRoomDashboard mb-2">
+                            <h4>Rooms</h4>
+                        </div>
+                        <div class="userDashboardRoomsCardView scrollable-rooms" id="roomsContainer">
+                            <!-- Room cards will be dynamically rendered here -->
+                        </div>
                     </div>
-                    <div class="userDashboardRoomsCardView scrollable-rooms" id="roomsContainer">
-                        <!-- Room cards will be dynamically rendered here -->
-                    </div>
-                </div>
-            </section>
+                </section>
 
-            <!-- Booking Table Section -->
-            <section class="bookingsSection">
-                <div class="userBookingsDashboard">
-                    <div class="userBookingsDashboardHeader">
-                        <p class="userBookingsDashboardTitle">Bookings</p>
+                <!-- Booking Table Section -->
+                <section class="bookingsSection">
+                    <div class="userBookingsDashboard">
+                        <div class="userBookingsDashboardHeader">
+                            <p class="userBookingsDashboardTitle">Bookings</p>
+                        </div>
+                        <div class="table-wrapper">
+                            <table class="table table-striped align-middle" id="userBookingsTable">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">User</th>
+                                        <th scope="col">Room</th>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">No. of People</th>
+                                        <th scope="col">Price</th>
+                                        <th scope="col">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Rows will be dynamically rendered here -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="table-wrapper">
-                        <table class="table table-striped align-middle" id="userBookingsTable">
-                            <thead>
-                                <tr>
-                                    <th scope="col">User</th>
-                                    <th scope="col">Room</th>
-                                    <th scope="col">Date</th>
-                                    <th scope="col">No. of People</th>
-                                    <th scope="col">Price</th>
-                                    <th scope="col">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Rows will be dynamically rendered here -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
+                </section>
+            </div>
+
+           
         </div>
 
 
@@ -219,59 +223,71 @@
             }
         }
 
-        function renderRooms(rooms) {
-            const roomsContainer = document.getElementById('roomsContainer');
-            roomsContainer.innerHTML = ''; // Clear any existing content
+            function renderRooms(rooms) {
+                const roomsContainer = document.getElementById('roomsContainer');
+                roomsContainer.innerHTML = ''; // Clear any existing content
 
-            rooms.forEach(room => {
-                const isAvailable = room.status === "Available";
-                const roomCard = document.createElement('div');
-                roomCard.classList.add('userDashboardRoomsCard');
-                roomCard.innerHTML = `
-                    <img src="${room.image || '/img/classroomStyle.jpg'}" class="userDashboardRoomsCardImg" alt="${room.name || 'Room'}">
-                    <div class="userDashboardRoomsCardDetails">
-                        <p class="userDashboardRoomsCardDetailsName">${room.name || 'Unnamed Room'}</p>
-                        <div class="userDashboardRoomsCardDetailsInner mb-1">
-                            <i class="bi bi-house-fill"></i>
-                            <p>${room.style || 'Unknown Style'}</p>
+                if (rooms.length === 0) {
+                    // Display the "No rooms added yet" message if no rooms are available
+                    roomsContainer.innerHTML = `
+                        <div class="text-center text-muted noRoomsAddedYetGroup" style="padding: 20px;">
+                            <i class="bi bi-emoji-frown"></i>
+                            <p class="noRoomsAddedYetText">No rooms added yet</p>
                         </div>
-                        <div class="userDashboardRoomsCardDetailsInner mb-3">
-                            <i class="bi bi-people-fill"></i>
-                            <p>${room.capacity || 'N/A'} pax</p>
+                    `;
+                    return;
+                }
+
+                rooms.forEach(room => {
+                    const isAvailable = room.status === "Available";
+                    const roomCard = document.createElement('div');
+                    roomCard.classList.add('userDashboardRoomsCard');
+                    roomCard.innerHTML = `
+                        <img src="${room.image || '/img/classroomStyle.jpg'}" class="userDashboardRoomsCardImg" alt="${room.name || 'Room'}">
+                        <div class="userDashboardRoomsCardDetails">
+                            <p class="userDashboardRoomsCardDetailsName">${room.name || 'Unnamed Room'}</p>
+                            <div class="userDashboardRoomsCardDetailsInner mb-1">
+                                <i class="bi bi-house-fill"></i>
+                                <p>${room.style || 'Unknown Style'}</p>
+                            </div>
+                            <div class="userDashboardRoomsCardDetailsInner mb-3">
+                                <i class="bi bi-people-fill"></i>
+                                <p>${room.capacity || 'N/A'} pax</p>
+                            </div>
+                            <button class="btn adminAddBookingBtn btn-sm" type="button"
+                                data-room-id="${room.roomId}"
+                                data-room-name="${room.name || 'Unnamed Room'}"
+                                data-room-style="${room.style || 'Unknown Style'}"
+                                data-room-capacity="${room.capacity || 'N/A'}"
+                                data-bs-toggle="offcanvas"
+                                data-bs-target="#staticBackdrop"
+                                ${!isAvailable ? 'disabled' : ''}>
+                                ${isAvailable ? 'Book' : 'Unavailable'}
+                            </button>
                         </div>
-                        <button class="btn adminAddBookingBtn btn-sm" type="button"
-                            data-room-id="${room.roomId}"
-                            data-room-name="${room.name || 'Unnamed Room'}"
-                            data-room-style="${room.style || 'Unknown Style'}"
-                            data-room-capacity="${room.capacity || 'N/A'}"
-                            data-bs-toggle="offcanvas"
-                            data-bs-target="#staticBackdrop"
-                            ${!isAvailable ? 'disabled' : ''}>
-                            ${isAvailable ? 'Book' : 'Unavailable'}
-                        </button>
-                    </div>
-                `;
+                    `;
 
-                // Attach click listener to the button
-                const bookButton = roomCard.querySelector('button');
-                bookButton.addEventListener('click', () => {
-                    const roomId = bookButton.getAttribute('data-room-id');
-                    const roomName = bookButton.getAttribute('data-room-name');
-                    const roomStyle = bookButton.getAttribute('data-room-style');
-                    const roomCapacity = bookButton.getAttribute('data-room-capacity');
+                    // Attach click listener to the button
+                    const bookButton = roomCard.querySelector('button');
+                    bookButton.addEventListener('click', () => {
+                        const roomId = bookButton.getAttribute('data-room-id');
+                        const roomName = bookButton.getAttribute('data-room-name');
+                        const roomStyle = bookButton.getAttribute('data-room-style');
+                        const roomCapacity = bookButton.getAttribute('data-room-capacity');
 
-                    if (!roomId) {
-                        console.error("Room ID is missing. Unable to proceed with booking.");
-                        alert("An error occurred. Please try again.");
-                        return;
-                    }
+                        if (!roomId) {
+                            console.error("Room ID is missing. Unable to proceed with booking.");
+                            alert("An error occurred. Please try again.");
+                            return;
+                        }
 
-                    handleBookButtonClick({ roomId, roomName, roomStyle, roomCapacity });
+                        handleBookButtonClick({ roomId, roomName, roomStyle, roomCapacity });
+                    });
+
+                    roomsContainer.appendChild(roomCard);
                 });
+            }
 
-                roomsContainer.appendChild(roomCard);
-            });
-        }
 
 
         function handleBookButtonClick(roomData) {
