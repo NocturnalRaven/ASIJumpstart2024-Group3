@@ -301,6 +301,16 @@ nav {
     /*    overflow-y: auto;*/
     height: 100%;
 }
+.bookingsDashboard {
+    flex: 1;
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 15px 25px;
+    display: flex;
+    flex-direction: column;
+    /*    overflow-y: auto;*/
+    height: 50% !important;
+}
 
 .bookingsDashboard {
     flex: 1;

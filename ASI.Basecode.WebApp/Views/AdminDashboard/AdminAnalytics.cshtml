@@ -63,13 +63,13 @@
                     </div>
                     <div class="dashboardPending">
                         <div class="chart-container2">
-                            <canvas id="barChart" width="300" height="300"></canvas>
+                            <canvas id="barChart" height="300"></canvas>
                         </div>
                     </div>
                 </div>
                 <div class="bookingsDashboard">
                     <div class="chart-container2">
-                        <canvas id="lineChart" width="300" height="300"></canvas>
+                        <canvas id="lineChart" height="300"></canvas>
                     </div>
                 </div>
             </div>
@@ -216,6 +216,8 @@
                 type: 'pie',
                 data,
                 options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // Allow chart to resize freely
                     plugins: {
                         legend: {
                             display: true,
