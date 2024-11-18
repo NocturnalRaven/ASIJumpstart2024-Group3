@@ -60,35 +60,33 @@
                 </div>
 
 
-            <!-- Analytics Section -->
-            <div class="dashboardAnalytics">
-                <div class="analytics-card">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <p class="bookingsDashboardTitle">Analytics</p>
-                        <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle btn-sm analyticsDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                All Time
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item active" href="#">All Time</a></li>
-                                <li><a class="dropdown-item" href="#">Day</a></li>
-                                <li><a class="dropdown-item" href="#">Week</a></li>
-                                <li><a class="dropdown-item" href="#">Month</a></li>
-                                <li><a class="dropdown-item" href="#">Year</a></li>
-                            </ul>
+                <!-- Analytics Section -->
+                <div class="dashboardAnalytics">
+                    <div class="analytics-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <p class="bookingsDashboardTitle">Analytics</p>
+                            <div class="dropdown">
+                                <button id="analyticsFilterButton" class="btn btn-secondary dropdown-toggle btn-sm analyticsDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    All Time
+                                </button>
+                                <ul id="analyticsFilterOptions" class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#" data-filter="all">All Time</a></li>
+                                    <li><a class="dropdown-item" href="#" data-filter="day">Day</a></li>
+                                    <li><a class="dropdown-item" href="#" data-filter="week">Week</a></li>
+                                    <li><a class="dropdown-item" href="#" data-filter="month">Month</a></li>
+                                    <li><a class="dropdown-item" href="#" data-filter="year">Year</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="analyticsChart"></canvas>
+                        </div>
+                        <div class="legend-container">
+                            <!-- Legend dynamically generated through JavaScript -->
                         </div>
                     </div>
-                    <div class="chart-container">
-                        <canvas id="analyticsChart"></canvas>
-                    </div>
-                    <div class="legend-container">
-                        <div class="legend-item"><div class="legend-color meeting-room"></div><span>Meeting Room</span></div>
-                        <div class="legend-item"><div class="legend-color event-venue"></div><span>Event Venue</span></div>
-                        <div class="legend-item"><div class="legend-color unit"></div><span>Unit</span></div>
-                        <div class="legend-item"><div class="legend-color apartment"></div><span>Apartment</span></div>
-                    </div>
                 </div>
-            </div>
+
 
             <!-- Add Booking Modal -->
             <div class="modal fade" id="addBookingModal" tabindex="-1" aria-labelledby="addBookingModalLabel" aria-hidden="true">
@@ -233,97 +231,177 @@
             <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
-            <script>
-                let bookingsData = []; // Global variable to store fetched bookings
-                let analyticsChart;
-                let bookingDates = []; // Array to store unique booking dates
-                let selectedRoomCapacity = 0;
+                <script>
+                    let bookingsData = []; // Global variable to store fetched bookings
+                    let bookingDates = []; // Array to store unique booking dates
+                    let selectedRoomCapacity = 0;
+                    let rooms = []; // Make rooms a global variable
 
-                async function fetchBookings() {
-                    try {
-                        const response = await fetch('/api/bookings/GetAllBookings');
-                        if (!response.ok) throw new Error("Failed to load bookings");
+                    async function fetchBookings() {
+                        try {
+                            const response = await fetch('/api/bookings/GetAllBookings');
+                            if (!response.ok) throw new Error("Failed to load bookings");
 
-                        const usersResponse = await fetch('/api/bookings/GetAllUsers');
-                        const roomsResponse = await fetch('/api/bookings/GetAllRooms');
+                            const usersResponse = await fetch('/api/bookings/GetAllUsers');
+                            const roomsResponse = await fetch('/api/bookings/GetAllRooms');
 
-                        const users = await usersResponse.json();
-                        const rooms = await roomsResponse.json();
-                        const bookings = await response.json();
+                            const users = await usersResponse.json();
+                            rooms = await roomsResponse.json(); // Assign rooms to the global variable
+                            const bookings = await response.json();
 
-                        bookingsData = bookings.map(booking => {
-                            const user = users.find(user => user.id === booking.userId);
-                            const room = rooms.find(room => room.roomId === booking.roomId);
+                            bookingsData = bookings.map(booking => {
+                                const user = users.find(user => user.id === booking.userId);
+                                const room = rooms.find(room => room.roomId === booking.roomId);
 
-                            if (!user) console.warn(`User with ID ${booking.userId} not found`);
-                            if (!room) console.warn(`Room with ID ${booking.roomId} not found`);
+                                if (!user) console.warn(`User with ID ${booking.userId} not found`);
+                                if (!room) console.warn(`Room with ID ${booking.roomId} not found`);
 
-                            // Add booking date to bookingDates array if not already present
-                            const bookingDate = new Date(booking.startDate).toISOString().split("T")[0];
-                            if (!bookingDates.includes(bookingDate)) {
-                                bookingDates.push(bookingDate);
+                                // Add booking date to bookingDates array if not already present
+                                const bookingDate = new Date(booking.startDate).toISOString().split("T")[0];
+                                if (!bookingDates.includes(bookingDate)) {
+                                    bookingDates.push(bookingDate);
+                                }
+
+                                return {
+                                    ...booking,
+                                    userName: user ? user.name : 'Unknown User',
+                                    roomName: room ? room.name : 'Unknown Room'
+                                };
+                            });
+
+                            renderBookings(bookingsData);
+                            renderRecentBookings(bookingsData);
+                            populateUserAndRoomSelect(users, rooms);
+                            updateAnalyticsChart(bookingsData, rooms);
+                            updateCalendarWithBookings();
+                        } catch (error) {
+                            console.error(error.message);
+                        }
+                    }
+
+                    // Function to handle dropdown changes and update the chart
+                    function handleDropdownFilter(filter, bookingsData, rooms) {
+                        const filteredBookings = filterBookingsByTimePeriod(filter, bookingsData);
+                        updateAnalyticsChart(filteredBookings, rooms);
+                    }
+
+                    // Function to filter bookings by the selected time period
+                    function filterBookingsByTimePeriod(filter, bookingsData) {
+                        const now = new Date();
+
+                        return bookingsData.filter(booking => {
+                            const bookingDate = new Date(booking.startDate);
+                            switch (filter) {
+                                case 'day':
+                                    return now - bookingDate <= 86400000; // 1 day in milliseconds
+                                case 'week':
+                                    return now - bookingDate <= 604800000; // 1 week in milliseconds
+                                case 'month':
+                                    return now - bookingDate <= 2592000000; // 1 month in milliseconds
+                                case 'year':
+                                    return now - bookingDate <= 31536000000; // 1 year in milliseconds
+                                case 'all':
+                                default:
+                                    return true; // No filtering, show all bookings
+                            }
+                        });
+                    }
+
+                    // Updated Analytics Chart Function
+                    function updateAnalyticsChart(filteredBookings, rooms) {
+                        const roomStyleCategoryMapping = {
+                            'Classroom': 'Classroom',
+                            'Banquet': 'Banquet',
+                            'U-Shape': 'U-Shape',
+                            'Conference': 'Conference',
+                            'Auditorium': 'Auditorium',
+                            'Boardroom': 'Boardroom'
+                        };
+
+                        // Aggregate data by room categories
+                        const categoryCounts = filteredBookings.reduce((acc, booking) => {
+                            const roomId = booking.roomId;
+
+                            // Find the room associated with the booking
+                            const room = rooms.find(r => r.roomId === roomId);
+
+                            if (!room) {
+                                acc['Unknown Category'] = (acc['Unknown Category'] || 0) + 1;
+                                return acc;
                             }
 
-                            return {
-                                ...booking,
-                                userName: user ? user.name : 'Unknown User',
-                                roomName: room ? room.name : 'Unknown Room'
-                            };
-                        });
+                            const style = room.style || 'Unknown';
+                            const category = roomStyleCategoryMapping[style] || 'Unknown Category';
+                            acc[category] = (acc[category] || 0) + 1;
 
-                        renderBookings(bookingsData);
-                        renderRecentBookings(bookingsData);
-                        populateUserAndRoomSelect(users, rooms);
-                        updateAnalyticsChart();
-                        updateCalendarWithBookings();
-                    } catch (error) {
-                        console.error(error.message);
-                    }
-                }
+                            return acc;
+                        }, {});
 
-                function updateAnalyticsChart() {
-                    const roomTypeCounts = bookingsData.reduce((acc, booking) => {
-                        acc[booking.roomType] = (acc[booking.roomType] || 0) + 1;
-                        return acc;
-                    }, {});
-
-                    const roomTypes = Object.keys(roomTypeCounts);
-                    const counts = Object.values(roomTypeCounts);
-
-                    // Destroy existing chart instance if it exists
-                    if (analyticsChart) {
-                        analyticsChart.destroy();
-                    }
-
-                    const ctx = document.getElementById('analyticsChart').getContext('2d');
-                    analyticsChart = new Chart(ctx, {
-                        type: 'pie',
-                        data: {
-                            labels: roomTypes,
+                        // Chart data preparation
+                        const data = {
+                            labels: Object.keys(categoryCounts),
                             datasets: [{
-                                label: 'Bookings by Room Type',
-                                data: counts,
-                                backgroundColor: ['#6848FF', '#AFAEFF', '#E6DEFF', '#F3F0FF'],
-                                borderWidth: 0
+                                data: Object.values(categoryCounts),
+                                backgroundColor: ['#6848FF', '#AFAEFF', '#E6DEFF', '#F3F0FF', '#FFD700', '#FF5733']
                             }]
-                        },
-                        options: {
-                            responsive: true,
-                            plugins: {
-                                tooltip: {
-                                    callbacks: {
-                                        label: function (tooltipItem) {
-                                            const label = roomTypes[tooltipItem.dataIndex] || '';
-                                            const value = counts[tooltipItem.dataIndex];
-                                            return `${label}: ${value}`;
+                        };
+
+                        // Destroy existing chart instance if it exists
+                        if (window.analyticsChartInstance) {
+                            window.analyticsChartInstance.destroy();
+                        }
+
+                        // Render the updated pie chart
+                        const ctx = document.getElementById('analyticsChart').getContext('2d');
+                        window.analyticsChartInstance = new Chart(ctx, {
+                            type: 'pie',
+                            data,
+                            options: {
+                                plugins: {
+                                    legend: {
+                                        display: true,
+                                        labels: {
+                                            color: '#000',
+                                            font: {
+                                                size: 14
+                                            }
+                                        }
+                                    },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function (tooltipItem) {
+                                                const category = data.labels[tooltipItem.dataIndex];
+                                                const count = data.datasets[0].data[tooltipItem.dataIndex];
+                                                return `${category}: ${count}`;
+                                            }
                                         }
                                     }
-                                },
-                                legend: { display: false }
+                                }
                             }
-                        }
-                    });
-                }
+                        });
+
+                        // Update the legends dynamically
+                        updateLegends(Object.keys(categoryCounts));
+                    }
+
+                    // Function to update legends dynamically
+                    function updateLegends(categories) {
+                        const legendContainer = document.querySelector('.legend-container');
+                        legendContainer.innerHTML = ''; // Clear existing legends
+
+                        categories.forEach((category, index) => {
+                            const color = ['#6848FF', '#AFAEFF', '#E6DEFF', '#F3F0FF', '#FFD700', '#FF5733'][index % 6]; // Loop colors if needed
+
+                            const legendItem = `
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: ${color};"></div>
+                                    <span>${category}</span>
+                                </div>
+                            `;
+                            legendContainer.innerHTML += legendItem;
+                        });
+                    }
+
                 function populateUserAndRoomSelect(users, rooms) {
                     const addBookingUserSelect = document.getElementById('addBookingUser');
                     const bookingUserInputSelect = document.getElementById('bookingUserInput');
@@ -996,7 +1074,12 @@
                             const now = new Date();
                             const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
-                            if (!selectedDate || isNaN(selectedRoomId)) return;
+                            if (!selectedDate || isNaN(selectedRoomId)) {
+                                // Populate dropdowns without any disabled intervals
+                                populateDropdown(startSelect);
+                                populateDropdown(endSelect);
+                                return;
+                            }
 
                             const disabledIntervals = new Set();
 
@@ -1034,6 +1117,10 @@
                             populateDropdown(startSelect, disabledArray);
                             populateDropdown(endSelect, disabledArray);
                         }
+
+                        // Populate dropdowns with all time intervals on page load
+                        populateDropdown(addStartTimeSelect);
+                        populateDropdown(addEndTimeSelect);
 
                         if (addDateInput && addRoomSelect) {
                             addDateInput.addEventListener('change', () => updateDisabledTimes(addStartTimeSelect, addEndTimeSelect, addDateInput, addRoomSelect));
@@ -1184,18 +1271,44 @@
                 // Call this function periodically
                 setInterval(archiveExpiredBookings, 10 * 60 * 1000); // Every 10 minutes
 
-                document.getElementById('addBookingRecurring').addEventListener('change', function () {
-                    document.getElementById('frequencySection').style.display = this.checked ? 'block' : 'none';
-                });
+                    document.addEventListener("DOMContentLoaded", () => {
+                        document.getElementById('addBookingDate').setAttribute('min', new Date().toISOString().split('T')[0]);
+                        restrictBookingDate(); // Ensure no past dates are selectable
+                        populateTimeDropdowns(); // Populate time dropdowns for bookings
+                        populateTimeDropdownsForEditModal();
+                        fetchBookings(); // Fetch and render bookings
+                        archiveExpiredBookings(); // Archive expired bookings initially
 
-                document.addEventListener("DOMContentLoaded", () => {
-                    document.getElementById('addBookingDate').setAttribute('min', new Date().toISOString().split('T')[0]);
-                    restrictBookingDate(); // Ensure no past dates are selectable
-                    populateTimeDropdowns(); // Populate time dropdowns for bookings
-                    populateTimeDropdownsForEditModal();
-                    fetchBookings(); // Fetch and render bookings
-                    archiveExpiredBookings(); // Archive expired bookings initially
-                });
+                        // Add event listener for "Recurring Booking" toggle
+                        const addBookingRecurring = document.getElementById('addBookingRecurring');
+                        if (addBookingRecurring) {
+                            addBookingRecurring.addEventListener('change', function () {
+                                const frequencySection = document.getElementById('frequencySection');
+                                if (frequencySection) {
+                                    frequencySection.style.display = this.checked ? 'block' : 'none';
+                                }
+                            });
+                        } else {
+                            console.warn("Element with ID 'addBookingRecurring' not found.");
+                        }
+
+                        // Add event listener for dropdown filter
+                        const analyticsFilterOptions = document.getElementById('analyticsFilterOptions');
+                        if (analyticsFilterOptions) {
+                            analyticsFilterOptions.addEventListener('click', e => {
+                                if (e.target.tagName === 'A') {
+                                    const filter = e.target.dataset.filter;
+                                    const dropdownButton = document.getElementById('analyticsFilterButton');
+                                    if (dropdownButton) {
+                                        dropdownButton.textContent = e.target.textContent; // Update dropdown label
+                                    }
+                                    handleDropdownFilter(filter, bookingsData, rooms); // Update chart based on filter
+                                }
+                            });
+                        } else {
+                            console.warn("Element with ID 'analyticsFilterOptions' not found.");
+                        }
+                    });
            </script>
     </body>
 </html>
