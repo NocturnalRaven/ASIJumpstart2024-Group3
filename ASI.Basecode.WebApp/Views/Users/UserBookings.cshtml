@@ -178,7 +178,7 @@
                                     <td>${item.startTime} - ${item.endTime}</td>
                                     <td>${item.weekdays.length ? item.weekdays.join(', ') : 'Everyday'}</td>
                                     <td>
-                                        <button class="btn btn-warning btn-sm" onclick="editRecurringBooking(${index})">Edit</button>
+                                                <button class="btn btn-info btn-sm" onclick="editRecurringBooking(${index})">Edit</button>
                                         <button class="btn btn-danger btn-sm" onclick="cancelRecurringBooking(${index})">Cancel</button>
                                     </td>`;
                 tbody.appendChild(row);
