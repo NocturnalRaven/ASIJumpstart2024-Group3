@@ -37,12 +37,9 @@
                         <p class="bookingsDashboardTitle">Bookings</p>
                         <div>
                             <i class="bi bi-filter" data-bs-toggle="modal" data-bs-target="#filterModal"></i>
-                            <button class="btn adminAddBookingBtn btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
-                                <i class="bi bi-plus-square me-2"></i>New Booking
-                            </button>
                         </div>
                     </div>
-                    <div class="table-wrapper">
+                    <div class="table-responsive">
                         <table class="table table-striped align-middle" id="userBookingsTable">
                             <thead>
                                 <tr>
@@ -59,34 +56,6 @@
                                 <!-- Booking rows will be dynamically rendered here -->
                             </tbody>
                         </table>
-                    </div>
-
-                </div>
-
-                <div class="bookingsDashboardLower">
-                    <div class="dashboardPending">
-                        <div class="bookingsDashboardHeader">
-                            <p class="bookingsDashboardTitle">Recurring Bookings</p>
-                            <i class="bi bi-filter" data-bs-toggle="modal" data-bs-target="#filterModal"></i>
-                        </div>
-                        <div class="table-wrapper">
-                            <table class="table table-striped align-middle" id="recurringBookingsTable">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Room Name</th>
-                                        <th scope="col">Recurrence</th>
-                                        <th scope="col">Start Date</th>
-                                        <th scope="col">End Date</th>
-                                        <th scope="col">Time</th>
-                                        <th scope="col">Weekdays</th>
-                                        <th scope="col">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Recurring bookings data will be rendered here -->
-                                </tbody>
-                            </table>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -263,189 +232,258 @@
             </div>
         </div>
     </div>
+    <!-- Filter Modal -->
+    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="filterModalLabel">Filter Bookings</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <label for="bookingFilter" class="form-label">Select Filter</label>
+                    <select id="bookingFilter" class="form-select">
+                        <option value="upcoming">Upcoming Bookings</option>
+                        <option value="past">Past Bookings</option>
+                        <option value="all">All Bookings</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="applyFilterBtn">Apply Filter</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             fetchBookingDates(); // Fetch dates with bookings and initialize the calendar
-            fetchBookingsAndRooms(); // Fetch booking and room data
-        });
+
+
+            document.getElementById('applyFilterBtn').addEventListener('click', () => {
+                const filterValue = document.getElementById('bookingFilter').value;
+                filterBookings(filterValue); // Apply the filter when the button is clicked
+                $('#filterModal').modal('hide'); // Close the modal after applying the filter
+            });
 
         // Global Variables
-        let currentUserId = '@(User.Identity.Name ?? "0")'; // Logged-in user's ID
+        let currentUserId = '@(HttpContextAccessor.HttpContext.User.FindFirst("UserId")?.Value ?? "0")'; // Logged-in user's ID
         let currentUserName = '@(User.Claims.FirstOrDefault(c => c.Type == "name")?.Value ?? "Guest")'; // Logged-in user's name
         let bookingsData = []; // Store fetched bookings
         let rooms = []; // Store fetched rooms
         let bookingDates = []; // Store all dates with bookings
+            // Function to filter bookings
+            function filterBookings(filter) {
+                const now = new Date();
+                let filteredBookings = [];
 
-        // Initialize Calendar
-        function initializeCalendar() {
-            const today = new Date().toLocaleDateString('en-CA'); // Format today's date as YYYY-MM-DD
-
-            flatpickr("#calendar", {
-                inline: true,
-                mode: "single",
-                dateFormat: "Y-m-d",
-                onDayCreate: (dObj, dStr, fp, dayElem) => {
-                    const dateStr = dayElem.dateObj.toLocaleDateString('en-CA'); // Format as YYYY-MM-DD
-
-                    // Style past dates
-                    if (dateStr < today) {
-                        dayElem.classList.add('past-date'); // Gray out past dates
-                    }
-
-                    // Highlight days with bookings
-                    if (bookingDates.includes(dateStr)) {
-                        dayElem.classList.add('has-booking');
-                    }
-                },
-                onChange: (selectedDates) => {
-                    if (selectedDates.length > 0) {
-                        const selectedDate = selectedDates[0].toLocaleDateString('en-CA'); // Format as YYYY-MM-DD
-                        displayBookingsForDate(selectedDate); // Show bookings for the selected date
-                    }
-                },
-            });
-        }
-
-        // Fetch Booking Dates
-        async function fetchBookingDates() {
-            try {
-                const response = await fetch('/api/bookings/GetAllBookings'); // Fetch all bookings for validation
-                if (!response.ok) throw new Error("Failed to fetch booking dates.");
-
-                const bookings = await response.json();
-                bookingDates = [...new Set(bookings.map(booking => new Date(booking.startDate).toISOString().split('T')[0]))]; // Extract unique dates
-
-                initializeCalendar(); // Initialize the calendar with the fetched dates
-            } catch (error) {
-                console.error('Error fetching booking dates:', error.message);
-            }
-        }
-
-        // Fetch Bookings and Rooms
-        async function fetchBookingsAndRooms() {
-            try {
-                const [bookingsResponse, roomsResponse] = await Promise.all([
-                    fetch('/api/bookings/GetAllBookings'), // Fetch all bookings for validation
-                    fetch('/api/bookings/GetAllRooms'), // Fetch all rooms
-                ]);
-
-                if (!bookingsResponse.ok || !roomsResponse.ok) {
-                    throw new Error("Failed to fetch bookings or rooms.");
+                switch (filter) {
+                    case 'upcoming':
+                        filteredBookings = bookingsData.filter(booking => new Date(booking.endDate) > now);
+                        break;
+                    case 'past':
+                        filteredBookings = bookingsData.filter(booking => new Date(booking.endDate) < now);
+                        break;
+                    case 'all':
+                        filteredBookings = bookingsData;
+                        break;
+                    default:
+                        filteredBookings = bookingsData;
                 }
 
-                const allBookings = await bookingsResponse.json();
-                rooms = await roomsResponse.json();
+                renderBookingsTable(filteredBookings); // Render filtered bookings
+            }
 
-                // Filter bookings to only display the current user's bookings
-                const currentUserId = '@(HttpContextAccessor.HttpContext.User.FindFirst("UserId")?.Value ?? "0")'; // Replace with the actual user ID fetch logic
-                const userBookings = allBookings.filter(booking => booking.userId === parseInt(currentUserId, 10));
+            // Function to initialize the calendar with booking dates
+            function initializeCalendar() {
+                // Ensure data is available before initializing the calendar
+                if (!bookingsData.length || !rooms.length) {
+                    console.warn("Bookings or rooms data not initialized yet.");
+                    return;
+                }
 
-                // Map room details to all bookings for validation
-                bookingsData = allBookings.map(booking => {
-                    const room = rooms.find(r => r.roomId === booking.roomId);
+                const today = new Date().toLocaleDateString('en-CA'); // Format today's date as YYYY-MM-DD
 
-                    return {
-                        ...booking,
-                        roomName: room ? room.name : 'Unknown Room', // Ensure roomName is not undefined
-                        style: room ? room.style : 'Unknown Style', // Ensure style is not undefined
-                    };
+                // Filter the bookings for the current user
+                const userBookings = bookingsData.filter(booking => booking.userId === currentUserId);
+                const bookingDatesForUser = userBookings.map(booking => new Date(booking.startDate).toLocaleDateString('en-CA'));
+
+                flatpickr("#calendar", {
+                    inline: true,
+                    mode: "single",
+                    dateFormat: "Y-m-d",
+                    onDayCreate: (dObj, dStr, fp, dayElem) => {
+                        const dateStr = dayElem.dateObj.toLocaleDateString('en-CA'); // Ensure this is correctly formatted
+
+                        // Style past dates
+                        if (dateStr < today) {
+                            dayElem.classList.add('past-date'); // Gray out past dates
+                        }
+
+                        // Highlight days with the current user's bookings
+                        if (bookingDatesForUser.includes(dateStr)) {
+                            dayElem.classList.add('has-booking'); // Highlight days with current user's bookings
+                        }
+                    },
+                    onChange: (selectedDates) => {
+                        if (selectedDates.length > 0) {
+                            const selectedDate = selectedDates[0].toLocaleDateString('en-CA'); // Format as YYYY-MM-DD
+                            displayBookingsForDate(selectedDate); // Show bookings for the selected date
+                        }
+                    },
+                    onReady: () => {
+                        // Pre-highlight all days with current user's bookings when the calendar is ready
+                        const calendarDays = document.querySelectorAll('.flatpickr-day');
+                        calendarDays.forEach(dayElem => {
+                            const dateStr = dayElem.dateObj.toLocaleDateString('en-CA'); // Get the date string for the current day
+                            if (bookingDatesForUser.includes(dateStr)) {
+                                dayElem.classList.add('has-booking'); // Highlight the day
+                            }
+                        });
+                    }
+                });
+            }
+
+            // Function to fetch booking dates
+            async function fetchBookingDates() {
+                try {
+                    const response = await fetch('/api/bookings/GetAllBookings'); // Fetch all bookings for validation
+                    if (!response.ok) throw new Error("Failed to fetch booking dates.");
+                    const bookings = await response.json();
+                    bookingDates = [...new Set(bookings.map(booking => new Date(booking.startDate).toISOString().split('T')[0]))]; // Extract unique dates
+                    await fetchBookingsAndRooms(); // Wait for this to finish before initializing the calendar
+                } catch (error) {
+                    console.error('Error fetching booking dates:', error.message);
+                }
+            }
+            // Function to fetch bookings and rooms and populate bookingsData
+            async function fetchBookingsAndRooms() {
+                try {
+                    const [bookingsResponse, roomsResponse] = await Promise.all([
+                        fetch('/api/bookings/GetAllBookings'), // Fetch all bookings
+                        fetch('/api/bookings/GetAllRooms'), // Fetch all rooms
+                    ]);
+
+                    if (!bookingsResponse.ok || !roomsResponse.ok) {
+                        throw new Error("Failed to fetch bookings or rooms.");
+                    }
+
+                    const allBookings = await bookingsResponse.json();
+                    rooms = await roomsResponse.json();
+
+                    // Map room details to all bookings and store in bookingsData
+                    bookingsData = allBookings.map(booking => {
+                        const room = rooms.find(r => r.roomId === booking.roomId); // Find room details by roomId
+                        return {
+                            ...booking,
+                            roomName: room ? room.name : 'Unknown Room', // Ensure roomName is not undefined
+                            style: room ? room.style : 'Unknown Style', // Ensure style is not undefined
+                        };
+                    });
+
+                    // Filter bookings to only display the current user's bookings
+                    const userBookings = bookingsData.filter(booking => booking.userId === parseInt(currentUserId, 10));
+
+                    // Render the bookings table with the filtered user bookings
+                    renderBookingsTable(userBookings);
+
+                    // Initialize the calendar after bookings data is fetched
+                    initializeCalendar();
+                } catch (error) {
+                    console.error("Error fetching bookings and rooms:", error.message);
+                }
+            }
+            // Display Bookings for Selected Date
+            function displayBookingsForDate(date) {
+                const container = document.getElementById('selectedDateBookings');
+                container.innerHTML = ''; // Clear the existing content
+
+                // Filter to show bookings only for the selected date
+                const bookingsForDate = bookingsData.filter(booking => {
+                    const bookingDate = new Date(booking.startDate).toISOString().split('T')[0];
+                    return bookingDate === date && booking.userId === parseInt(currentUserId, 10); // Show only user's bookings
                 });
 
-                renderBookingsTable(userBookings); // Render only the user's bookings in the table
-            } catch (error) {
-                console.error("Error fetching bookings and rooms:", error.message);
-            }
-        }
+                if (bookingsForDate.length === 0) {
+                    container.innerHTML = `<p class="text-muted text-center">No bookings for this date.</p>`;
+                    return;
+                }
 
-        // Display Bookings for Selected Date
-        function displayBookingsForDate(date) {
-            const container = document.getElementById('selectedDateBookings');
-            container.innerHTML = ''; // Clear the existing content
+                bookingsForDate.forEach(booking => {
+                    const startTime = new Date(booking.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const endTime = new Date(booking.endDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const duration = formatDuration(new Date(booking.startDate), new Date(booking.endDate));
 
-            // Filter to show bookings only for the selected date
-            const bookingsForDate = bookingsData.filter(booking => {
-                const bookingDate = new Date(booking.startDate).toISOString().split('T')[0];
-                return bookingDate === date && booking.userId === parseInt(currentUserId, 10); // Show only user's bookings
-            });
-
-            if (bookingsForDate.length === 0) {
-                container.innerHTML = `<p class="text-muted text-center">No bookings for this date.</p>`;
-                return;
-            }
-
-            bookingsForDate.forEach(booking => {
-                const startTime = new Date(booking.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                const endTime = new Date(booking.endDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                const duration = formatDuration(new Date(booking.startDate), new Date(booking.endDate));
-
-                const bookingHTML = `
-                    <div class="recentBookings">
-                        <div class="recentBookingsDetailsDiv">
-                            <div class="recentBookingsDetails">
-                                <i class="bi bi-house-door-fill"></i>
-                                <p>${booking.roomName}</p>
-                            </div>
-                            <div class="recentBookingsDetails">
-                                <i class="bi bi-clock"></i>
-                                <p>${startTime} - ${endTime}</p>
-                            </div>
-                            <div class="recentBookingsDetails">
-                                <i class="bi bi-hourglass-split"></i>
-                                <p>${duration}</p>
+                    const bookingHTML = `
+                        <div class="recentBookings">
+                            <div class="recentBookingsDetailsDiv">
+                                <div class="recentBookingsDetails">
+                                    <i class="bi bi-house-door-fill"></i>
+                                    <p>${booking.roomName}</p>
+                                </div>
+                                <div class="recentBookingsDetails">
+                                    <i class="bi bi-clock"></i>
+                                    <p>${startTime} - ${endTime}</p>
+                                </div>
+                                <div class="recentBookingsDetails">
+                                    <i class="bi bi-hourglass-split"></i>
+                                    <p>${duration}</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
-                container.innerHTML += bookingHTML;
-            });
-        }
-
-        // Render Bookings Table
-        function renderBookingsTable(bookings) {
-            const tableBody = document.querySelector('#userBookingsTable tbody');
-            tableBody.innerHTML = ''; // Clear existing rows
-
-            const now = new Date();
-
-            // Filter bookings to show only upcoming bookings
-            const upcomingBookings = bookings.filter(booking => new Date(booking.endDate) > now);
-
-            if (upcomingBookings.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="7" class="text-center text-muted">No upcoming bookings.</td></tr>`;
-                return;
+                    `;
+                    container.innerHTML += bookingHTML;
+                });
             }
 
-            upcomingBookings.forEach(booking => {
-                // Retrieve room details using roomId
-                const room = rooms.find(room => room.roomId === booking.roomId);
+            // Function to render bookings table (you can adjust this based on your existing rendering logic)
+            function renderBookingsTable(bookings) {
+                const tableBody = document.getElementById('userBookingsTable').querySelector('tbody');
+                tableBody.innerHTML = ''; // Clear the table before adding filtered rows
 
-                // If the room is not found, use default values
-                const roomName = room ? room.name : 'Unknown Room';
-                const roomStyle = room ? room.style : 'Unknown Style';
+                bookings.forEach(booking => {
+                    // Find the room details based on the roomId
+                    const room = rooms.find(room => room.roomId === booking.roomId);
+                    const roomName = room ? room.name : 'Unknown Room';  // Get room name
+                    const roomStyle = room ? room.style : 'Unknown Style';  // Get room style
 
-                const startTime = formatTime(booking.startDate);
-                const endTime = formatTime(booking.endDate);
-                const duration = formatDuration(new Date(booking.startDate), new Date(booking.endDate));
+                    const bookingDate = new Date(booking.startDate).toLocaleDateString();
+                    const startTime = new Date(booking.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const endTime = new Date(booking.endDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${roomName}</td>
-                    <td>${roomStyle}</td>
-                    <td>${formatDate(booking.startDate)}</td>
+                    // Calculate Duration
+                    const startDateObj = new Date(booking.startDate);
+                    const endDateObj = new Date(booking.endDate);
+                    const duration = formatDuration(startDateObj, endDateObj);
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                    <td>${roomName || 'Unknown Room'}</td>
+                    <td>${roomStyle || 'Unknown Style'}</td> <!-- Added Room Style -->
+                    <td>${bookingDate}</td>
                     <td>${startTime}</td>
                     <td>${endTime}</td>
-                    <td>${duration}</td>
+                    <td>${duration}</td> <!-- Added Duration -->
                     <td>
                         <button class="btn btn-primary btn-sm" onclick="viewBooking(${booking.bookingId})">View</button>
                         <button class="btn btn-info btn-sm" onclick="editBooking(${booking.bookingId})">Edit</button>
                         <button class="btn btn-danger btn-sm" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
                     </td>
                 `;
+                    tableBody.appendChild(row);
+                });
 
-                tableBody.appendChild(row);
-            });
-        }
+                // Show a message if there are no bookings after filtering
+                if (bookings.length === 0) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td colspan="5" class="text-center text-muted">No bookings found.</td>
+                    `;
+                    tableBody.appendChild(row);
+                }
+            }
+        });
 
 
         // Utility Functions
@@ -464,6 +502,7 @@
             return `${hours}h ${minutes}m`;
         }
 
+        // Function to view booking details
         function viewBooking(bookingId) {
             const booking = bookingsData.find(b => b.bookingId === bookingId);
             if (!booking) {
