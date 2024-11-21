@@ -86,33 +86,53 @@ namespace ASI.Basecode.WebApp.Controllers
             {
                 var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
                 _logger.LogWarning("Invalid booking data: {Errors}", string.Join(", ", errors));
-                return BadRequest("Invalid booking data");
+                return BadRequest(new { message = "Invalid booking data", errors });
             }
 
             try
             {
-                if (model.IsRecurring == true && !string.IsNullOrEmpty(model.Frequency))
+                if (model.IsRecurring == true && !string.IsNullOrEmpty(model.Frequency) && model.RecurringEndDate.HasValue)
                 {
-                    // Use the new service method to generate recurring bookings
+                    // Ensure RecurringEndDate is valid
+                    if (model.RecurringEndDate <= model.StartDate)
+                    {
+                        _logger.LogWarning("Recurring end date must be after the start date");
+                        return BadRequest(new { message = "Recurring end date must be after the start date" });
+                    }
+
+                    // Generate recurring bookings using the service method
                     var recurringBookings = _bookingService.GenerateRecurringBookings(model);
+
+                    if (!recurringBookings.Any())
+                    {
+                        _logger.LogWarning("No recurring bookings generated for the provided frequency and end date");
+                        return BadRequest(new { message = "No recurring bookings generated. Please check the frequency and end date." });
+                    }
+
+                    // Add each recurring booking
                     foreach (var recurringBooking in recurringBookings)
                     {
                         _bookingService.Add(recurringBooking);
                     }
+
+                    _logger.LogInformation("Successfully added {Count} recurring bookings", recurringBookings.Count());
                 }
                 else
                 {
+                    // Add single booking
                     _bookingService.Add(model);
+                    _logger.LogInformation("Successfully added a single booking with ID {BookingId}", model.BookingId);
                 }
 
-                return Ok(new { message = "Booking added successfully" });
+                return Ok(new { message = "Booking(s) added successfully" });
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error adding booking: {Message}", ex.Message);
-                return StatusCode(500, "Internal server error while adding booking");
+                _logger.LogError(ex, "Error adding booking");
+                return StatusCode(500, new { message = "Internal server error while adding booking", error = ex.Message });
             }
         }
+
 
         private IEnumerable<BookingViewModel> GenerateRecurringBookings(BookingViewModel model)
         {

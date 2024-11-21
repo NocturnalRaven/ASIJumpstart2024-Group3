@@ -37,7 +37,7 @@
                             <i class="bi bi-filter ms-3"></i>
                         </div>
                     </div>
-                    <div class="table-wrapper">
+                    <div class="table-responsive">
                         <div id="noBookingsMessage" style="display: none;">
                             <div class="noBookingsMessageGroup">
                                 <i class="bi bi-calendar2-x"></i>
@@ -162,6 +162,10 @@
                                         <option value="Monthly">Monthly</option>
                                     </select>
                                 </div>
+                                    <div class="mb-3" id="recurringSection" style="display: none;">
+                                        <label for="addBookingEndDate" class="form-label">Recurring End Date</label>
+                                        <input type="date" class="form-control" id="addBookingEndDate">
+                                    </div>
                             </form>
                         </div>
                         <div class="modal-footer">
@@ -218,18 +222,6 @@
                                         <option value="Confirmed">Confirmed</option>
                                         <option value="Pending">Pending</option>
                                         <option value="Canceled">Canceled</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="editBookingRecurring" class="form-label">Recurring</label>
-                                    <input type="checkbox" id="editBookingRecurring">
-                                </div>
-                                <div class="mb-3" id="editFrequencySection" style="display: none;">
-                                    <label for="editBookingFrequency" class="form-label">Frequency</label>
-                                    <select class="form-select" id="editBookingFrequency">
-                                        <option value="Daily">Daily</option>
-                                        <option value="Weekly">Weekly</option>
-                                        <option value="Monthly">Monthly</option>
                                     </select>
                                 </div>
                             </form>
@@ -614,7 +606,6 @@
                     });
                 }
 
-                    // Add Booking function updated to show success modal
                     async function addBooking() {
                         try {
                             const formId = 'addBookingForm';
@@ -624,6 +615,36 @@
 
                             const isRecurring = document.getElementById('addBookingRecurring')?.checked || false;
                             const frequency = isRecurring ? document.getElementById('addBookingFrequency')?.value : null;
+                            const recurringEndDate = isRecurring ? document.getElementById('addBookingEndDate')?.value : null;
+
+                            // Generate recurring dates if recurring booking is enabled
+                            let recurringDates = [];
+                            if (isRecurring) {
+                                if (!frequency || !recurringEndDate) {
+                                    alert("Please select a frequency and an end date for recurring bookings.");
+                                    return;
+                                }
+
+                                const startDate = new Date(document.getElementById('addBookingDate').value);
+                                const endDate = new Date(recurringEndDate);
+
+                                while (startDate <= endDate) {
+                                    recurringDates.push(new Date(startDate).toISOString().split('T')[0]); // Add the date
+                                    if (frequency === 'Daily') {
+                                        startDate.setDate(startDate.getDate() + 1); // Increment by 1 day
+                                    } else if (frequency === 'Weekly') {
+                                        startDate.setDate(startDate.getDate() + 7); // Increment by 7 days
+                                    } else if (frequency === 'Monthly') {
+                                        startDate.setMonth(startDate.getMonth() + 1); // Increment by 1 month
+                                    }
+                                }
+
+                                // Ensure the last selected date (endDate) is included explicitly
+                                const lastGeneratedDate = new Date(recurringDates[recurringDates.length - 1]);
+                                if (lastGeneratedDate.getTime() !== endDate.getTime()) {
+                                    recurringDates.push(endDate.toISOString().split('T')[0]);
+                                }
+                            }
 
                             const newBooking = {
                                 userId: parseInt(document.getElementById('addBookingUser').value, 10),
@@ -634,6 +655,8 @@
                                 status: document.getElementById('addBookingStatus').value,
                                 isRecurring,
                                 frequency,
+                                recurringEndDate,
+                                recurringDates, // Include the recurring dates
                             };
 
                             const response = await fetch('/api/bookings/AddBooking', {
@@ -656,6 +679,7 @@
                             alert("An unexpected error occurred while adding the booking.");
                         }
                     }
+
 
                     // Updated cancelBooking function to use the cancellation confirmation modal
                     async function cancelBooking(bookingId) {
@@ -1275,9 +1299,8 @@
                         let currentEditingBookingId = null;
 
                         // Populate dropdown helper function
-                        function populateDropdown(selectElement, disabledIntervals = [], filterFn = null) {
-                            const currentValue = selectElement.value;
-                            selectElement.innerHTML = '';
+                        function populateDropdown(selectElement, disabledIntervals = [], filterFn = null, currentValue = null) {
+                            selectElement.innerHTML = ''; // Clear existing options
 
                             timeIntervals.forEach(time => {
                                 if (filterFn && !filterFn(time)) return; // Skip times not matching the filter
@@ -1286,7 +1309,8 @@
                                 option.value = time;
                                 option.textContent = time;
 
-                                if (disabledIntervals.includes(time)) {
+                                // Disable option if it's in the disabledIntervals array and not the current value
+                                if (disabledIntervals.includes(time) && time !== currentValue) {
                                     option.disabled = true;
                                     option.style.color = 'gray';
                                 }
@@ -1294,7 +1318,8 @@
                                 selectElement.appendChild(option);
                             });
 
-                            if (currentValue && timeIntervals.includes(currentValue) && !disabledIntervals.includes(currentValue)) {
+                            // Restore the previously selected value if valid
+                            if (currentValue && timeIntervals.includes(currentValue)) {
                                 selectElement.value = currentValue;
                             } else {
                                 selectElement.value = ''; // Reset invalid value
@@ -1311,13 +1336,14 @@
 
                             if (!selectedDate || isNaN(selectedRoomId)) return;
 
-                            const disabledIntervals = new Set();
+                            const disabledStartTimes = new Set();
+                            const disabledEndTimes = new Set();
 
                             // Disable past times for today
                             if (selectedDate === today) {
                                 timeIntervals.forEach(time => {
                                     if (time <= currentTime) {
-                                        disabledIntervals.add(time);
+                                        disabledStartTimes.add(time);
                                     }
                                 });
                             }
@@ -1345,23 +1371,34 @@
 
                                 if (startIndex !== -1 && endIndex !== -1) {
                                     for (let i = startIndex; i < endIndex; i++) {
-                                        disabledIntervals.add(timeIntervals[i]);
+                                        disabledStartTimes.add(timeIntervals[i]);
                                     }
                                 }
                             });
 
-                            const disabledArray = Array.from(disabledIntervals);
-                            populateDropdown(startSelect, disabledArray);
-                            populateDropdown(endSelect, disabledArray, time => {
-                                // Ensure end times cannot go before the selected start time
-                                const selectedStartTime = startSelect.value;
-                                if (selectedStartTime) {
-                                    const startTimeIndex = timeIntervals.indexOf(selectedStartTime);
-                                    const currentIndex = timeIntervals.indexOf(time);
-                                    return currentIndex > startTimeIndex;
-                                }
-                                return true; // No start time selected, allow all times
-                            });
+                            const selectedStartTime = startSelect.value;
+
+                            populateDropdown(
+                                startSelect,
+                                Array.from(disabledStartTimes),
+                                null,
+                                selectedStartTime
+                            );
+
+                            populateDropdown(
+                                endSelect,
+                                Array.from(disabledEndTimes),
+                                time => {
+                                    // Ensure end times cannot go before the selected start time
+                                    if (selectedStartTime) {
+                                        const startTimeIndex = timeIntervals.indexOf(selectedStartTime);
+                                        const currentIndex = timeIntervals.indexOf(time);
+                                        return currentIndex > startTimeIndex;
+                                    }
+                                    return true; // No start time selected, allow all times
+                                },
+                                endSelect.value
+                            );
                         }
 
                         // Attach event listeners
@@ -1390,8 +1427,6 @@
                             updateDisabledTimes(editStartTimeSelect, editEndTimeSelect, editDateInput, editRoomSelect, currentEditingBookingId);
                         };
                     }
-
-
 
                     // Function to generate time intervals
                     function generateTimeIntervals(intervalMinutes, startHour, endHour) {
@@ -1437,11 +1472,39 @@
                     return `${hours}h ${minutes}m`; // Format as "Xh Ym"
                 }
 
+
+                    function generateRecurringDates(startDate, frequency, endDate) {
+                        const dates = [];
+                        const current = new Date(startDate);
+                        const end = new Date(endDate);
+
+                        while (current <= end) {
+                            dates.push(current.toISOString().split('T')[0]);
+
+                            if (frequency === 'Daily') {
+                                current.setDate(current.getDate() + 1);
+                            } else if (frequency === 'Weekly') {
+                                current.setDate(current.getDate() + 7);
+                            } else if (frequency === 'Monthly') {
+                                current.setMonth(current.getMonth() + 1);
+                            } else {
+                                throw new Error(`Invalid frequency: ${frequency}`);
+                            }
+                        }
+
+                        return dates;
+                    }
+
                 // Call this function periodically
                 setInterval(archiveExpiredBookings, 10 * 60 * 1000); // Every 10 minutes
 
                     document.addEventListener("DOMContentLoaded", () => {
-                        document.getElementById('addBookingDate').setAttribute('min', new Date().toISOString().split('T')[0]);
+                        // Set the minimum date for the booking date input
+                        const addBookingDate = document.getElementById('addBookingDate');
+                        if (addBookingDate) {
+                            addBookingDate.setAttribute('min', new Date().toISOString().split('T')[0]);
+                        }
+
                         restrictBookingDate(); // Ensure no past dates are selectable
                         populateTimeDropdowns(); // Populate time dropdowns for bookings
                         populateTimeDropdownsForEditModal();
@@ -1450,11 +1513,24 @@
 
                         // Add event listener for "Recurring Booking" toggle
                         const addBookingRecurring = document.getElementById('addBookingRecurring');
+                        const frequencySection = document.getElementById('frequencySection');
+                        const recurringSection = document.getElementById('recurringSection');
+                        const addBookingEndDate = document.getElementById('addBookingEndDate');
+
                         if (addBookingRecurring) {
                             addBookingRecurring.addEventListener('change', function () {
-                                const frequencySection = document.getElementById('frequencySection');
-                                if (frequencySection) {
-                                    frequencySection.style.display = this.checked ? 'block' : 'none';
+                                if (this.checked) {
+                                    if (frequencySection) frequencySection.style.display = 'block';
+                                    if (recurringSection) recurringSection.style.display = 'block';
+
+                                    // Set the minimum date for the end date field
+                                    const startDate = addBookingDate?.value;
+                                    if (startDate && addBookingEndDate) {
+                                        addBookingEndDate.setAttribute('min', startDate);
+                                    }
+                                } else {
+                                    if (frequencySection) frequencySection.style.display = 'none';
+                                    if (recurringSection) recurringSection.style.display = 'none';
                                 }
                             });
                         } else {
@@ -1464,7 +1540,7 @@
                         // Add event listener for dropdown filter
                         const analyticsFilterOptions = document.getElementById('analyticsFilterOptions');
                         if (analyticsFilterOptions) {
-                            analyticsFilterOptions.addEventListener('click', e => {
+                            analyticsFilterOptions.addEventListener('click', (e) => {
                                 if (e.target.tagName === 'A') {
                                     const filter = e.target.dataset.filter;
                                     const dropdownButton = document.getElementById('analyticsFilterButton');
@@ -1478,33 +1554,44 @@
                             console.warn("Element with ID 'analyticsFilterOptions' not found.");
                         }
                     });
+
                     // Function to show the Booking Success Modal
                     function showBookingSuccessModal() {
-                        const bookingSuccessModal = new bootstrap.Modal(document.getElementById('bookingSuccessModal'));
+                        const bookingSuccessModal = new bootstrap.Modal(
+                            document.getElementById('bookingSuccessModal')
+                        );
                         bookingSuccessModal.show();
                     }
 
                     // Function to show the Booking Cancelled Modal
                     function showBookingCancelledModal() {
-                        const bookingCancelledModal = new bootstrap.Modal(document.getElementById('bookingCancelledModal'));
+                        const bookingCancelledModal = new bootstrap.Modal(
+                            document.getElementById('bookingCancelledModal')
+                        );
                         bookingCancelledModal.show();
                     }
 
                     // Function to show the Cancel Booking Confirmation Modal
                     function showCancelBookingConfirmationModal(bookingId, onConfirmCallback) {
-                        const cancelBookingModal = new bootstrap.Modal(document.getElementById('cancelBookingModal'));
+                        const cancelBookingModal = new bootstrap.Modal(
+                            document.getElementById('cancelBookingModal')
+                        );
 
                         // Set up the confirmation button's click event
                         const confirmCancelButton = document.getElementById('confirmCancelButton');
-                        confirmCancelButton.onclick = () => {
-                            if (typeof onConfirmCallback === 'function') {
-                                onConfirmCallback(bookingId);
-                            }
-                            cancelBookingModal.hide();
-                        };
+                        if (confirmCancelButton) {
+                            confirmCancelButton.onclick = () => {
+                                if (typeof onConfirmCallback === 'function') {
+                                    onConfirmCallback(bookingId);
+                                }
+                                cancelBookingModal.hide();
+                            };
+                        }
 
                         cancelBookingModal.show();
                     }
+
+
            </script>
     </body>
 </html>
