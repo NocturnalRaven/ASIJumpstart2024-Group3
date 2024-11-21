@@ -694,9 +694,10 @@
 
                     if (!selectedDate) return;
 
-                    const bookingsForDate = bookingsData.filter(booking => {
-                        const bookingDate = new Date(booking.startDate).toISOString().split('T')[0];
-                        return bookingDate === selectedDate;
+                    // Only filter bookings for the selected room and date
+                    const bookingsForSelectedRoom = bookingsData.filter(booking => {
+                        return booking.roomId == selectedRoomId && // Check for the selected room
+                            new Date(booking.startDate).toISOString().split("T")[0] === selectedDate; // Check for the selected date
                     });
 
                     const disabledStartTimes = new Set();
@@ -704,6 +705,7 @@
 
                     // Add real-time validation for today
                     if (selectedDate === today) {
+                        // Disable past times for today's booking
                         timeIntervals.forEach(time => {
                             if (time <= currentTime) {
                                 disabledStartTimes.add(time);
@@ -712,15 +714,15 @@
                         });
                     }
 
-                    // Add validation for overlapping bookings
-                    bookingsForDate.forEach(booking => {
+                    // Add validation for overlapping bookings only for the selected room
+                    bookingsForSelectedRoom.forEach(booking => {
                         const bookingStart = new Date(`1970-01-01T${booking.startDate.split('T')[1]}`).getTime();
                         const bookingEnd = new Date(`1970-01-01T${booking.endDate.split('T')[1]}`).getTime();
 
                         timeIntervals.forEach(time => {
-                            const intervalTime = new Date(`1970-01-01T${time}:00`).getTime();
+                            const intervalTime = new Date(`1970-01-01T${time}`).getTime();
 
-                            // Disable start times overlapping with existing bookings
+                            // Disable start times overlapping with existing bookings for the selected room
                             if (intervalTime >= bookingStart && intervalTime < bookingEnd) {
                                 disabledStartTimes.add(time);
                             }
@@ -735,7 +737,7 @@
                     // If a start time is selected, further restrict the end time based on overlapping bookings
                     if (selectedStartTime) {
                         const selectedStartTimestamp = new Date(`1970-01-01T${selectedStartTime}:00`).getTime();
-                        bookingsForDate.forEach(booking => {
+                        bookingsForSelectedRoom.forEach(booking => {
                             const bookingStart = new Date(`1970-01-01T${booking.startDate.split('T')[1]}`).getTime();
                             if (bookingStart > selectedStartTimestamp) {
                                 timeIntervals.forEach(time => {
@@ -763,6 +765,7 @@
                     populateDropdown(startTimeSelect, Array.from(disabledStartTimes), startTimeSelect.value);
                     populateDropdown(endTimeSelect, Array.from(disabledEndTimes), endTimeSelect.value);
                 }
+
 
                 // Attach event listeners for dynamic validation
                 document.getElementById('bookingDate').addEventListener('change', validateTimeDropdowns);
@@ -982,8 +985,8 @@
                         option.value = time;
                         option.textContent = time;
 
-                        // Disable option if it's in the disabledIntervals array
-                        if (disabledIntervals.includes(time)) {
+                        // Disable option if it's in the disabledIntervals array and it's not the current value
+                        if (disabledIntervals.includes(time) && time !== currentValue) {
                             option.disabled = true;
                             option.style.color = 'gray'; // Optional styling for disabled options
                         }
@@ -991,8 +994,8 @@
                         selectElement.appendChild(option);
                     });
 
-                    // Restore the previously selected value if valid
-                    if (currentValue && timeIntervals.includes(currentValue) && !disabledIntervals.includes(currentValue)) {
+                    // Restore the previously selected value
+                    if (currentValue && timeIntervals.includes(currentValue)) {
                         selectElement.value = currentValue;
                     } else {
                         selectElement.value = ''; // Reset the value if invalid
@@ -1013,13 +1016,13 @@
                     const selectedDate = document.getElementById('editBookingDate').value;
                     const today = new Date().toISOString().split('T')[0];
                     const now = new Date(); // Current date and time
-                    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`; // Current time in HH:mm format
 
                     if (!selectedDate) return;
 
                     const bookingsForDate = bookingsData.filter(booking => {
                         const bookingDate = new Date(booking.startDate).toISOString().split('T')[0];
-                        return bookingDate === selectedDate;
+                        return bookingDate === selectedDate && booking.bookingId !== parseInt(document.getElementById('editBookingId').value);
                     });
 
                     const disabledStartTimes = new Set();
@@ -1048,43 +1051,42 @@
                                 disabledStartTimes.add(time);
                             }
 
-                            // Disable end times if they overlap or are adjacent to existing bookings
+                            // Disable end times if they overlap with the start of an existing booking
                             if (intervalTime > bookingStart && intervalTime <= bookingEnd) {
                                 disabledEndTimes.add(time);
                             }
                         });
                     });
 
-                    // Logical validation: End time must be after start time
+                    // If a start time is selected, further restrict the end time based on overlapping bookings
                     if (selectedStartTime) {
-                        const selectedStartTimestamp = new Date(`1970-01-01T${selectedStartTime}`).getTime();
-                        let nextBookingStart = null;
-
-                        // Find the next booking's start time after the selected start time
+                        const selectedStartTimestamp = new Date(`1970-01-01T${selectedStartTime}:00`).getTime();
                         bookingsForDate.forEach(booking => {
                             const bookingStart = new Date(`1970-01-01T${booking.startDate.split('T')[1]}`).getTime();
-                            if (bookingStart > selectedStartTimestamp && (!nextBookingStart || bookingStart < nextBookingStart)) {
-                                nextBookingStart = bookingStart;
+                            if (bookingStart > selectedStartTimestamp) {
+                                timeIntervals.forEach(time => {
+                                    const intervalTime = new Date(`1970-01-01T${time}:00`).getTime();
+                                    if (intervalTime >= bookingStart) {
+                                        disabledEndTimes.add(time);
+                                    }
+                                });
                             }
                         });
+                    }
 
+                    // Disable end times before or equal to selected start time
+                    if (selectedStartTime) {
+                        const selectedStartTimestamp = new Date(`1970-01-01T${selectedStartTime}:00`).getTime();
                         timeIntervals.forEach(time => {
-                            const intervalTime = new Date(`1970-01-01T${time}`).getTime();
-
-                            // Disable end times that are before or equal to the selected start time
+                            const intervalTime = new Date(`1970-01-01T${time}:00`).getTime();
                             if (intervalTime <= selectedStartTimestamp) {
-                                disabledEndTimes.add(time);
-                            }
-
-                            // Disable end times that extend into the next booking's start time
-                            if (nextBookingStart && intervalTime >= nextBookingStart) {
                                 disabledEndTimes.add(time);
                             }
                         });
                     }
 
                     // Update dropdowns with the disabled times
-                    populateDropdown(startTimeSelect, Array.from(disabledStartTimes), startTimeSelect.value);
+                    populateDropdown(startTimeSelect, Array.from(disabledStartTimes), selectedStartTime);
                     populateDropdown(endTimeSelect, Array.from(disabledEndTimes), endTimeSelect.value);
                 }
 
