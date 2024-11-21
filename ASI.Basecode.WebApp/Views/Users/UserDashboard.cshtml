@@ -371,38 +371,38 @@
                 recurringEndDateContainer.style.display = isRecurring ? 'block' : 'none';
             }
             async function handleBookingSubmit(event) {
-    event.preventDefault();
+                event.preventDefault();
 
-    const bookingData = {
-        userId: '@(HttpContextAccessor.HttpContext.User.FindFirst("UserId")?.Value ?? "0")',
-        roomId: selectedRoomId,
-        startDate: `${document.getElementById('bookingDate').value}T${document.getElementById('startTime').value}`,
-        endDate: `${document.getElementById('bookingDate').value}T${document.getElementById('endTime').value}`,
-        isRecurring: document.getElementById('isRecurring').value === 'Yes',
-        frequency: document.getElementById('isRecurring').value === 'Yes' ? document.getElementById('recurringFrequency').value : null,
-        RecurringEndDate: document.getElementById('RecurringEndDate').value || null, // Use the correct field name
-    };
+                const bookingData = {
+                    userId: '@(HttpContextAccessor.HttpContext.User.FindFirst("UserId")?.Value ?? "0")',
+                    roomId: selectedRoomId,
+                    startDate: `${document.getElementById('bookingDate').value}T${document.getElementById('startTime').value}`,
+                    endDate: `${document.getElementById('bookingDate').value}T${document.getElementById('endTime').value}`,
+                    isRecurring: document.getElementById('isRecurring').value === 'Yes',
+                    frequency: document.getElementById('isRecurring').value === 'Yes' ? document.getElementById('recurringFrequency').value : null,
+                    RecurringEndDate: document.getElementById('RecurringEndDate').value || null, // Use the correct field name
+                };
 
-    try {
-        const response = await fetch('/api/bookings/AddBooking', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(bookingData),
-        });
+                try {
+                    const response = await fetch('/api/bookings/AddBooking', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(bookingData),
+                    });
 
-        if (response.ok) {
-            alert('Booking successful!');
-            document.getElementById('bookingForm').reset();
-            fetchUserBookings(); // Refresh bookings
-        } else {
-            const errorText = await response.text();
-            alert(`Booking failed: ${errorText}`);
-        }
-    } catch (error) {
-        console.error('Error booking room:', error.message);
-        alert('Error occurred while booking. Please try again later.');
-    }
-}
+                    if (response.ok) {
+                        alert('Booking successful!');
+                        document.getElementById('bookingForm').reset();
+                        fetchUserBookings(); // Refresh bookings
+                    } else {
+                        const errorText = await response.text();
+                        alert(`Booking failed: ${errorText}`);
+                    }
+                } catch (error) {
+                    console.error('Error booking room:', error.message);
+                    alert('Error occurred while booking. Please try again later.');
+                }
+            }
 
 
             async function fetchUserBookings() {
