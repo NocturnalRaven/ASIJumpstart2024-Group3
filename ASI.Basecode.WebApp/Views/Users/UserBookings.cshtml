@@ -255,339 +255,268 @@
             </div>
         </div>
     </div>
-
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        let bookingsData = []; // Global variable to store bookings data
+        let bookingDates = []; // Store dates with bookings
+        const currentUserId = '@(HttpContextAccessor.HttpContext.User.FindFirst("UserId")?.Value ?? "0")'; // Make sure it is a string
+
         document.addEventListener('DOMContentLoaded', () => {
-            fetchBookingDates(); // Fetch dates with bookings and initialize the calendar
+            fetchUserBookings();
+            initializeCalendar(); // Initialize calendar once bookings are fetched
+            initializeBookingDateInput(); // Restrict the booking date input
 
-
+            // Add event listener for the Apply Filter button
             document.getElementById('applyFilterBtn').addEventListener('click', () => {
                 const filterValue = document.getElementById('bookingFilter').value;
                 filterBookings(filterValue); // Apply the filter when the button is clicked
                 $('#filterModal').modal('hide'); // Close the modal after applying the filter
             });
+        });
+        async function fetchUserBookings() {
+            try {
+                // Fetch all bookings, users, and rooms from the API
+                const bookingsResponse = await fetch('/api/bookings/GetAllBookings');
+                if (!bookingsResponse.ok) throw new Error("Failed to load bookings.");
 
-        // Global Variables
-        let currentUserId = '@(HttpContextAccessor.HttpContext.User.FindFirst("UserId")?.Value ?? "0")'; // Logged-in user's ID
-        let currentUserName = '@(User.Claims.FirstOrDefault(c => c.Type == "name")?.Value ?? "Guest")'; // Logged-in user's name
-        let bookingsData = []; // Store fetched bookings
-        let rooms = []; // Store fetched rooms
-        let bookingDates = []; // Store all dates with bookings
-            // Function to filter bookings
-            function filterBookings(filter) {
-                const now = new Date();
-                let filteredBookings = [];
+                const usersResponse = await fetch('/api/bookings/GetAllUsers');
+                if (!usersResponse.ok) throw new Error("Failed to load users.");
 
-                switch (filter) {
-                    case 'upcoming':
-                        filteredBookings = bookingsData.filter(booking => new Date(booking.endDate) > now);
-                        break;
-                    case 'past':
-                        filteredBookings = bookingsData.filter(booking => new Date(booking.endDate) < now);
-                        break;
-                    case 'all':
-                        filteredBookings = bookingsData;
-                        break;
-                    default:
-                        filteredBookings = bookingsData;
-                }
+                const roomsResponse = await fetch('/api/bookings/GetAllRooms');
+                if (!roomsResponse.ok) throw new Error("Failed to load rooms.");
 
-                renderBookingsTable(filteredBookings); // Render filtered bookings
-            }
+                // Parse the data
+                const allBookings = await bookingsResponse.json();
+                const users = await usersResponse.json();
+                const rooms = await roomsResponse.json();
 
-            // Function to initialize the calendar with booking dates
-            function initializeCalendar() {
-                // Ensure data is available before initializing the calendar
-                if (!bookingsData.length || !rooms.length) {
-                    console.warn("Bookings or rooms data not initialized yet.");
-                    return;
-                }
+                // Retrieve current user's ID (ensure it's a string for comparison)
+                const userId = String('@(HttpContextAccessor.HttpContext.User.FindFirst("UserId")?.Value ?? "0")'); // Convert to string
 
-                const today = new Date().toLocaleDateString('en-CA'); // Format today's date as YYYY-MM-DD
-
-                // Filter the bookings for the current user
-                const userBookings = bookingsData.filter(booking => booking.userId === currentUserId);
-                const bookingDatesForUser = userBookings.map(booking => new Date(booking.startDate).toLocaleDateString('en-CA'));
-
-                flatpickr("#calendar", {
-                    inline: true,
-                    mode: "single",
-                    dateFormat: "Y-m-d",
-                    onDayCreate: (dObj, dStr, fp, dayElem) => {
-                        const dateStr = dayElem.dateObj.toLocaleDateString('en-CA'); // Ensure this is correctly formatted
-
-                        // Style past dates
-                        if (dateStr < today) {
-                            dayElem.classList.add('past-date'); // Gray out past dates
-                        }
-
-                        // Highlight days with the current user's bookings
-                        if (bookingDatesForUser.includes(dateStr)) {
-                            dayElem.classList.add('has-booking'); // Highlight days with current user's bookings
-                        }
-                    },
-                    onChange: (selectedDates) => {
-                        if (selectedDates.length > 0) {
-                            const selectedDate = selectedDates[0].toLocaleDateString('en-CA'); // Format as YYYY-MM-DD
-                            displayBookingsForDate(selectedDate); // Show bookings for the selected date
-                        }
-                    },
-                    onReady: () => {
-                        // Pre-highlight all days with current user's bookings when the calendar is ready
-                        const calendarDays = document.querySelectorAll('.flatpickr-day');
-                        calendarDays.forEach(dayElem => {
-                            const dateStr = dayElem.dateObj.toLocaleDateString('en-CA'); // Get the date string for the current day
-                            if (bookingDatesForUser.includes(dateStr)) {
-                                dayElem.classList.add('has-booking'); // Highlight the day
-                            }
-                        });
-                    }
-                });
-            }
-
-            // Function to fetch booking dates
-            async function fetchBookingDates() {
-                try {
-                    const response = await fetch('/api/bookings/GetAllBookings'); // Fetch all bookings for validation
-                    if (!response.ok) throw new Error("Failed to fetch booking dates.");
-                    const bookings = await response.json();
-                    bookingDates = [...new Set(bookings.map(booking => new Date(booking.startDate).toISOString().split('T')[0]))]; // Extract unique dates
-                    await fetchBookingsAndRooms(); // Wait for this to finish before initializing the calendar
-                } catch (error) {
-                    console.error('Error fetching booking dates:', error.message);
-                }
-            }
-            // Function to fetch bookings and rooms and populate bookingsData
-            async function fetchBookingsAndRooms() {
-                try {
-                    const [bookingsResponse, roomsResponse] = await Promise.all([
-                        fetch('/api/bookings/GetAllBookings'), // Fetch all bookings
-                        fetch('/api/bookings/GetAllRooms'), // Fetch all rooms
-                    ]);
-
-                    if (!bookingsResponse.ok || !roomsResponse.ok) {
-                        throw new Error("Failed to fetch bookings or rooms.");
-                    }
-
-                    const allBookings = await bookingsResponse.json();
-                    rooms = await roomsResponse.json();
-
-                    // Map room details to all bookings and store in bookingsData
-                    bookingsData = allBookings.map(booking => {
-                        const room = rooms.find(r => r.roomId === booking.roomId); // Find room details by roomId
-                        return {
-                            ...booking,
-                            roomName: room ? room.name : 'Unknown Room', // Ensure roomName is not undefined
-                            style: room ? room.style : 'Unknown Style', // Ensure style is not undefined
-                        };
-                    });
-
-                    // Filter bookings to only display the current user's bookings
-                    const userBookings = bookingsData.filter(booking => booking.userId === parseInt(currentUserId, 10));
-
-                    // Render the bookings table with the filtered user bookings
-                    renderBookingsTable(userBookings);
-
-                    // Initialize the calendar after bookings data is fetched
-                    initializeCalendar();
-                } catch (error) {
-                    console.error("Error fetching bookings and rooms:", error.message);
-                }
-            }
-            // Display Bookings for Selected Date
-            function displayBookingsForDate(date) {
-                const container = document.getElementById('selectedDateBookings');
-                container.innerHTML = ''; // Clear the existing content
-
-                // Filter to show bookings only for the selected date
-                const bookingsForDate = bookingsData.filter(booking => {
-                    const bookingDate = new Date(booking.startDate).toISOString().split('T')[0];
-                    return bookingDate === date && booking.userId === parseInt(currentUserId, 10); // Show only user's bookings
-                });
-
-                if (bookingsForDate.length === 0) {
-                    container.innerHTML = `<p class="text-muted text-center">No bookings for this date.</p>`;
-                    return;
-                }
-
-                bookingsForDate.forEach(booking => {
-                    const startTime = new Date(booking.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                    const endTime = new Date(booking.endDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                    const duration = formatDuration(new Date(booking.startDate), new Date(booking.endDate));
-
-                    const bookingHTML = `
-                        <div class="recentBookings">
-                            <div class="recentBookingsDetailsDiv">
-                                <div class="recentBookingsDetails">
-                                    <i class="bi bi-house-door-fill"></i>
-                                    <p>${booking.roomName}</p>
-                                </div>
-                                <div class="recentBookingsDetails">
-                                    <i class="bi bi-clock"></i>
-                                    <p>${startTime} - ${endTime}</p>
-                                </div>
-                                <div class="recentBookingsDetails">
-                                    <i class="bi bi-hourglass-split"></i>
-                                    <p>${duration}</p>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    container.innerHTML += bookingHTML;
-                });
-            }
-
-            // Function to render bookings table (you can adjust this based on your existing rendering logic)
-            function renderBookingsTable(bookings) {
-                const tableBody = document.getElementById('userBookingsTable').querySelector('tbody');
-                tableBody.innerHTML = ''; // Clear the table before adding filtered rows
-
-                bookings.forEach(booking => {
-                    // Find the room details based on the roomId
+                // Populate bookingsData with all bookings for conflict checking
+                bookingsData = allBookings.map(booking => {
+                    const user = users.find(user => String(user.id) === String(booking.userId)); // Ensure ID comparison as strings
                     const room = rooms.find(room => room.roomId === booking.roomId);
-                    const roomName = room ? room.name : 'Unknown Room';  // Get room name
-                    const roomStyle = room ? room.style : 'Unknown Style';  // Get room style
 
-                    const bookingDate = new Date(booking.startDate).toLocaleDateString();
-                    const startTime = new Date(booking.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                    const endTime = new Date(booking.endDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    if (!room) console.warn(`Room with ID ${booking.roomId} not found`);
 
-                    // Calculate Duration
-                    const startDateObj = new Date(booking.startDate);
-                    const endDateObj = new Date(booking.endDate);
-                    const duration = formatDuration(startDateObj, endDateObj);
+                    // Add booking date to bookingDates array if not already present
+                    const bookingDate = new Date(booking.startDate).toISOString().split("T")[0];
+                    if (!bookingDates.includes(bookingDate)) {
+                        bookingDates.push(bookingDate);
+                    }
 
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                    <td>${roomName || 'Unknown Room'}</td>
-                    <td>${roomStyle || 'Unknown Style'}</td> <!-- Added Room Style -->
+                    return {
+                        ...booking,
+                        bookingDate,
+                        userName: user ? user.name : 'Unknown User', // Assign user name
+                        roomName: room ? room.name : 'Unknown Room', // Assign room name
+                        roomStyle: room ? room.style : 'Unknown Style' // Add room style
+                    };
+                });
+
+                // Filter bookings to only show the current user's bookings
+                const currentUserBookings = bookingsData.filter(booking => String(booking.userId) === userId); // Ensure ID comparison as strings
+
+                // Render bookings for the current user
+                renderBookingsTable(currentUserBookings);
+
+                // Highlight today's bookings by default
+                const today = new Date().toISOString().split('T')[0];
+                displayBookingsForDate(today);
+            } catch (error) {
+                console.error('Error fetching user bookings:', error.message);
+                alert('Could not fetch your bookings. Please try again later.');
+            }
+        }
+
+        function renderBookingsTable(bookings) {
+            const tableBody = document.getElementById('userBookingsTable').querySelector('tbody');
+            tableBody.innerHTML = '';
+
+            const now = new Date();
+
+            bookings.forEach(booking => {
+                const bookingDate = new Date(booking.startDate).toLocaleDateString();
+                const startTime = new Date(booking.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const endTime = new Date(booking.endDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                const startDate = new Date(booking.startDate);
+                const endDate = new Date(booking.endDate);
+                const duration = Math.abs(endDate - startDate) / (1000 * 60); // Duration in minutes
+                const hours = Math.floor(duration / 60);
+                const minutes = duration % 60;
+                const formattedDuration = `${hours}h ${minutes}m`;
+
+                const roomName = booking.roomName;
+                const roomStyle = booking.roomStyle;
+
+                // Determine if the booking is in the past
+                const isPastBooking = endDate < now;
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${roomName}</td>
+                    <td>${roomStyle}</td> <!-- Room style -->
                     <td>${bookingDate}</td>
                     <td>${startTime}</td>
                     <td>${endTime}</td>
-                    <td>${duration}</td> <!-- Added Duration -->
+                    <td>${formattedDuration}</td>
                     <td>
                         <button class="btn btn-primary btn-sm" onclick="viewBooking(${booking.bookingId})">View</button>
-                        <button class="btn btn-info btn-sm" onclick="editBooking(${booking.bookingId})">Edit</button>
-                        <button class="btn btn-danger btn-sm" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
+                        ${isPastBooking ? '' : `
+                            <button class="btn btn-info btn-sm" onclick="editBooking(${booking.bookingId})">Edit</button>
+                            <button class="btn btn-danger btn-sm" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
+                        `}
                     </td>
                 `;
-                    tableBody.appendChild(row);
-                });
 
-                // Show a message if there are no bookings after filtering
-                if (bookings.length === 0) {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td colspan="5" class="text-center text-muted">No bookings found.</td>
-                    `;
-                    tableBody.appendChild(row);
-                }
+                tableBody.appendChild(row);
+            });
+
+            // Show a message if there are no bookings
+            if (bookings.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="7" class="text-center text-muted">No bookings available.</td>
+                `;
+                tableBody.appendChild(row);
             }
-        });
-
-
-        // Utility Functions
-        function formatDate(dateStr) {
-            return new Date(dateStr).toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' });
         }
 
-        function formatTime(dateStr) {
-            return new Date(dateStr).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        function cancelBooking(bookingId) {
+            if (confirm('Are you sure you want to cancel this booking?')) {
+                fetch(`/api/bookings/DeleteBooking/${bookingId}`, {
+                    method: 'DELETE',
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('Booking canceled successfully.');
+                            fetchUserBookings(); // Refresh the table
+                        } else {
+                            return response.text().then(errorText => {
+                                alert(`Failed to cancel booking: ${errorText}`);
+                                throw new Error(errorText);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error canceling booking:', error);
+                        alert('An error occurred while canceling the booking. Please try again later.');
+                    });
+            }
         }
 
-        function formatDuration(startDate, endDate) {
-            const duration = Math.abs(endDate - startDate) / (1000 * 60); // Duration in minutes
-            const hours = Math.floor(duration / 60);
-            const minutes = duration % 60;
-            return `${hours}h ${minutes}m`;
-        }
-
-        // Function to view booking details
         function viewBooking(bookingId) {
             const booking = bookingsData.find(b => b.bookingId === bookingId);
+
             if (!booking) {
                 alert('Booking not found.');
                 return;
             }
 
-            const { roomName, style, startDate, endDate, isRecurring, frequency } = booking;
-            const duration = formatDuration(new Date(startDate), new Date(endDate));
-
             // Populate modal with booking details
-            document.getElementById('viewRoomName').textContent = roomName || 'Unknown Room';
-            document.getElementById('viewRoomStyle').textContent = style || 'Unknown Style';
-            document.getElementById('viewBookingDate').textContent = formatDate(startDate);
-            document.getElementById('viewStartTime').textContent = formatTime(startDate);
-            document.getElementById('viewEndTime').textContent = formatTime(endDate);
-            document.getElementById('viewBookingDuration').textContent = duration;
-            document.getElementById('viewRecurring').textContent = isRecurring ? 'Yes' : 'No';
-            document.getElementById('viewFrequency').textContent = frequency || 'N/A';
+            document.getElementById('viewRoomName').textContent = booking.roomName || 'Unknown';
+            document.getElementById('viewRoomStyle').textContent = booking.roomStyle || 'Unknown';
+            document.getElementById('viewBookingDate').textContent = new Date(booking.startDate).toLocaleDateString();
+            document.getElementById('viewStartTime').textContent = new Date(booking.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('viewEndTime').textContent = new Date(booking.endDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const duration = Math.abs(new Date(booking.endDate) - new Date(booking.startDate)) / (1000 * 60); // Duration in minutes
+            document.getElementById('viewBookingDuration').textContent = `${Math.floor(duration / 60)}h ${duration % 60}m`;
+            document.getElementById('viewRecurring').textContent = booking.isRecurring ? 'Yes' : 'No';
+            document.getElementById('viewFrequency').textContent = booking.frequency || 'N/A';
 
             // Show modal
             const viewModal = new bootstrap.Modal(document.getElementById('viewBookingModal'));
             viewModal.show();
         }
+
         async function editBooking(bookingId) {
             console.log("editBooking called with bookingId:", bookingId);
 
             try {
-                // Fetch the booking details by ID
+                // Fetch the latest booking details dynamically
                 const response = await fetch(`/api/bookings/GetBookedRoomById/${bookingId}`);
                 if (!response.ok) throw new Error("Failed to fetch booking details.");
 
                 const booking = await response.json();
+
                 console.log("Fetched booking details:", booking);
 
-                // Fetch all room details
+                // Fetch room details to map roomName
                 const roomResponse = await fetch('/api/bookings/GetAllRooms');
                 if (!roomResponse.ok) throw new Error("Failed to fetch rooms.");
                 const rooms = await roomResponse.json();
 
-                // Map room details to the booking
+                // Find the room associated with the booking
                 const room = rooms.find(r => r.roomId === booking.roomId);
-                booking.roomName = room ? room.name : "Unknown Room";
-                booking.roomStyle = room ? room.style : "Unknown Style";
+                booking.roomName = room ? room.name : 'Unknown';
+                booking.roomStyle = room ? room.style : 'Unknown';
 
-                // Populate the modal with booking details
+                console.log("Mapped room name:", booking.roomName);
+
+                // Restrict past dates for booking
+                const today = new Date().toISOString().split('T')[0]; // Format today's date as YYYY-MM-DD
+
+                // Populate modal with booking details
                 document.getElementById('editBookingId').value = bookingId;
                 document.getElementById('editRoomName').value = booking.roomName;
                 document.getElementById('editRoomStyle').value = booking.roomStyle;
 
-                const bookingDate = new Date(booking.startDate).toISOString().split('T')[0];
-                document.getElementById('editBookingDate').value = bookingDate;
-                document.getElementById('editBookingDate').setAttribute('min', new Date().toISOString().split('T')[0]);
 
-                const startTime = new Date(booking.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                const endTime = new Date(booking.endDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                populateEditTimeDropdowns(startTime, endTime);
+                const bookingDateInput = document.getElementById('editBookingDate');
+                const formattedStartDate = new Date(booking.startDate).toISOString().split('T')[0];
+                bookingDateInput.value = formattedStartDate;
+                bookingDateInput.setAttribute('min', today); // Restrict past dates
 
-                document.getElementById('editRecurring').value = booking.isRecurring ? "Yes" : "No";
-                document.getElementById('editFrequencyContainer').style.display = booking.isRecurring ? "block" : "none";
-                document.getElementById('editFrequency').value = booking.frequency || "Daily";
+                console.log("Populated editBookingDate with:", formattedStartDate, "and set min to:", today);
+
+                // Populate time dropdowns with the existing booking times
+                const bookingStartTime = new Date(booking.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const bookingEndTime = new Date(booking.endDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                console.log("Populating time dropdowns with startTime:", bookingStartTime, "endTime:", bookingEndTime);
+
+                populateEditTimeDropdowns(bookingStartTime, bookingEndTime);
+
+                document.getElementById('editRecurring').value = booking.isRecurring ? 'Yes' : 'No';
+                document.getElementById('editFrequencyContainer').style.display = booking.isRecurring ? 'block' : 'none';
+                document.getElementById('editFrequency').value = booking.frequency || 'Daily';
+
+                console.log("Recurring status set to:", booking.isRecurring, "Frequency set to:", booking.frequency);
+
+                // Toggle frequency input visibility
+                document.getElementById('editRecurring').addEventListener('change', () => {
+                    const isRecurring = document.getElementById('editRecurring').value === 'Yes';
+                    document.getElementById('editFrequencyContainer').style.display = isRecurring ? 'block' : 'none';
+                    console.log("Recurring toggled to:", isRecurring);
+                });
 
                 // Save changes
                 document.getElementById('saveBookingChanges').onclick = async () => {
                     const updatedBooking = {
                         bookingId: parseInt(document.getElementById('editBookingId').value, 10),
+                        userId: booking.userId,
                         roomId: booking.roomId,
                         startDate: `${document.getElementById('editBookingDate').value}T${document.getElementById('editStartTime').value}`,
                         endDate: `${document.getElementById('editBookingDate').value}T${document.getElementById('editEndTime').value}`,
-                        isRecurring: document.getElementById('editRecurring').value === "Yes",
-                        frequency: document.getElementById('editRecurring').value === "Yes" ? document.getElementById('editFrequency').value : null,
+                        isRecurring: document.getElementById('editRecurring').value === 'Yes',
+                        frequency: document.getElementById('editRecurring').value === 'Yes' ? document.getElementById('editFrequency').value : null,
                     };
 
                     console.log("Saving updated booking:", updatedBooking);
 
-                    // Validate updated times against existing bookings
+                    // Fetch all bookings from the database for conflict checking
                     const allBookingsResponse = await fetch('/api/bookings/GetAllBookings');
                     if (!allBookingsResponse.ok) {
                         console.error("Failed to fetch all bookings for conflict checking.");
                         alert("Could not validate booking conflicts. Please try again later.");
                         return;
                     }
-
                     const allBookings = await allBookingsResponse.json();
-                    const overlapping = allBookings.some(existingBooking => {
+
+                    // Check for overlapping bookings
+                    const overlapping = bookingsData.some(existingBooking => {
                         const existingStart = new Date(existingBooking.startDate).getTime();
                         const existingEnd = new Date(existingBooking.endDate).getTime();
                         const updatedStart = new Date(updatedBooking.startDate).getTime();
@@ -595,14 +524,15 @@
 
                         return (
                             existingBooking.roomId === updatedBooking.roomId &&
-                            existingBooking.bookingId !== updatedBooking.bookingId &&
+                            existingBooking.bookingId !== updatedBooking.bookingId && // Exclude current booking from overlap check
                             (
-                                (updatedStart >= existingStart && updatedStart < existingEnd) ||
-                                (updatedEnd > existingStart && updatedEnd <= existingEnd) ||
-                                (updatedStart <= existingStart && updatedEnd >= existingEnd)
+                                (updatedStart >= existingStart && updatedStart < existingEnd) || // Overlaps with start
+                                (updatedEnd > existingStart && updatedEnd <= existingEnd) ||    // Overlaps with end
+                                (updatedStart <= existingStart && updatedEnd >= existingEnd)    // Encloses existing booking
                             )
                         );
                     });
+
 
                     if (overlapping) {
                         alert("Updated booking conflicts with an existing booking. Please choose another time slot.");
@@ -611,36 +541,41 @@
 
                     // Send the updated booking to the server
                     try {
-                        const updateResponse = await fetch(`/api/bookings/UpdateBooking/${updatedBooking.bookingId}`, {
+                        const response = await fetch(`/api/bookings/UpdateBooking/${updatedBooking.bookingId}`, {
                             method: 'PUT',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(updatedBooking),
                         });
 
-                        if (updateResponse.ok) {
-                            alert("Booking updated successfully.");
-                            fetchBookingsAndRooms(); // Refresh bookings
+                        console.log("UpdateBooking API response:", response);
+
+                        if (response.ok) {
+                            console.log("Booking updated successfully.");
+                            alert('Booking updated successfully.');
+                            fetchUserBookings(); // Refresh bookings
                             const editModal = bootstrap.Modal.getInstance(document.getElementById('editBookingModal'));
                             editModal.hide();
                         } else {
-                            const errorText = await updateResponse.text();
+                            const errorText = await response.text();
+                            console.error("Failed to update booking. Response:", errorText);
                             alert(`Failed to update booking: ${errorText}`);
                         }
                     } catch (error) {
-                        console.error("Error updating booking:", error);
-                        alert("An error occurred while updating the booking. Please try again later.");
+                        console.error('Error updating booking:', error);
+                        alert('Error occurred while updating booking. Please try again later.');
                     }
                 };
 
-                // Show the edit modal
+                // Show modal
                 const editModal = new bootstrap.Modal(document.getElementById('editBookingModal'));
                 editModal.show();
+                console.log("Edit modal displayed for bookingId:", bookingId);
+
             } catch (error) {
                 console.error("Error fetching booking for editing:", error);
-                alert("An error occurred while fetching the booking details.");
+                alert("An error occurred while editing the booking.");
             }
         }
-
 
         function populateEditTimeDropdowns(bookingStartTime, bookingEndTime) {
             const timeIntervals = generateTimeIntervals(30, 8, 20); // 30-minute intervals from 8 AM to 8 PM
@@ -772,6 +707,115 @@
             validateTimeDropdowns();
         }
 
+        async function initializeCalendar() {
+            const today = new Date().toLocaleDateString('en-CA'); // Format today's date as YYYY-MM-DD
+
+            const calendar = flatpickr('#calendar', {
+                inline: true,
+                mode: 'single',
+                dateFormat: 'Y-m-d',
+                onDayCreate: (dObj, dStr, fp, dayElem) => {
+                    const dateStr = dayElem.dateObj.toLocaleDateString('en-CA'); // Format as YYYY-MM-DD
+
+                    // Check if the day is a past date
+                    if (dateStr < today) {
+                        dayElem.classList.add('past-date'); // Add class for past dates
+                    }
+
+                    // Highlight days with bookings for the current user
+                    if (bookingDates.includes(dateStr) && isBookingForCurrentUser(dateStr)) {
+                        dayElem.classList.add('has-booking'); // Add class for days with bookings
+                    }
+                },
+                onChange: (selectedDates, dateStr, instance) => {
+                    if (selectedDates.length > 0) {
+                        const selectedDate = selectedDates[0].toLocaleDateString('en-CA'); // Format as YYYY-MM-DD
+                        displayBookingsForDate(selectedDate);
+                        applyDayStyles(instance, today); // Reapply styles when a date is selected
+                    }
+                },
+                onReady: (selectedDates, dateStr, instance) => {
+                    applyDayStyles(instance, today); // Apply styles immediately on calendar initialization
+                },
+            });
+
+            // Ensure highlights are applied after calendar initialization
+            calendar.redraw();
+        }
+
+        // Function to check if the booking for the given date is for the current user
+        function isBookingForCurrentUser(dateStr) {
+            // Filter bookingsData to check if the current user has a booking on this date
+            const userBookings = bookingsData.filter(booking => booking.bookingDate === dateStr && String(booking.userId) === String(currentUserId));
+            return userBookings.length > 0;
+        }
+
+        function applyDayStyles(instance, today) {
+            // Loop through all day elements in the calendar
+            instance.calendarContainer.querySelectorAll('.flatpickr-day').forEach(dayElem => {
+                const dayDateStr = dayElem.dateObj.toLocaleDateString('en-CA'); // Format as YYYY-MM-DD
+
+                // Style past dates
+                if (dayDateStr < today) {
+                    dayElem.classList.add('past-date');
+                } else {
+                    dayElem.classList.remove('past-date');
+                }
+
+                // Style days with bookings for the current user
+                if (bookingDates.includes(dayDateStr) && isBookingForCurrentUser(dayDateStr)) {
+                    dayElem.classList.add('has-booking');
+                } else {
+                    dayElem.classList.remove('has-booking');
+                }
+            });
+        }
+
+        function displayBookingsForDate(date) {
+            const container = document.getElementById('selectedDateBookings');
+            container.innerHTML = '';
+
+            // Filter bookings for the selected date and the current user
+            const bookingsForDate = bookingsData.filter(booking => booking.bookingDate === date && String(booking.userId) === String(currentUserId));
+
+            if (bookingsForDate.length === 0) {
+                container.innerHTML = `<p class="text-muted text-center">No bookings for this date.</p>`;
+            } else {
+                bookingsForDate.forEach(booking => {
+                    const startTime = new Date(booking.startDate);
+                    const endTime = new Date(booking.endDate);
+                    const duration = ((endTime - startTime) / 60000).toFixed(2); // Duration in minutes
+                    const hours = Math.floor(duration / 60);
+                    const minutes = duration % 60;
+                    const formattedDuration = `${hours}h ${minutes}m`;
+
+                    const bookingHTML = `
+                                <div class="recentBookings">
+                                    <div class="recentBookingsDetailsDiv">
+                                        <div class="recentBookingsDetails">
+                                            <i class="bi bi-house-door-fill"></i>
+                                            <p>${booking.roomName || 'Unknown Room'}</p>
+                                        </div>
+                                        <div class="recentBookingsDetails">
+                                            <i class="bi bi-calendar2-week"></i>
+                                            <p>${startTime.toLocaleDateString()}</p>
+                                        </div>
+                                        <div class="recentBookingsDetails">
+                                            <i class="bi bi-clock"></i>
+                                            <p>${startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                        </div>
+                                        <div class="recentBookingsDetails">
+                                            <i class="bi bi-hourglass-split"></i>
+                                            <p>${formattedDuration}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                    container.innerHTML += bookingHTML;
+                });
+            }
+        }
+
         function generateTimeIntervals(intervalMinutes, startHour, endHour) {
             const times = [];
             const currentTime = new Date();
@@ -791,25 +835,33 @@
 
             return times;
         }
-        async function cancelBooking(bookingId) {
-            if (!confirm('Are you sure you want to cancel this booking?')) return;
+        
+        
+        function filterBookings(filter) {
+            const now = new Date();
+            let filteredBookings = [];
 
-            try {
-                const response = await fetch(`/api/bookings/DeleteBooking/${bookingId}`, { method: 'DELETE' });
-
-                if (response.ok) {
-                    alert('Booking canceled successfully.');
-                    fetchBookingsAndRooms(); // Refresh the table
-                } else {
-                    const errorText = await response.text();
-                    alert(`Failed to cancel booking: ${errorText}`);
-                }
-            } catch (error) {
-                console.error('Error canceling booking:', error.message);
-                alert('An error occurred while canceling the booking. Please try again later.');
+            switch (filter) {
+                case 'upcoming':
+                    filteredBookings = bookingsData.filter(booking => new Date(booking.endDate) > now && String(booking.userId) === currentUserId);
+                    break;
+                case 'past':
+                    filteredBookings = bookingsData.filter(booking => new Date(booking.endDate) < now && String(booking.userId) === currentUserId);
+                    break;
+                case 'all':
+                    filteredBookings = bookingsData.filter(booking => String(booking.userId) === currentUserId);
+                    break;
             }
-        }
 
+            // Render the filtered bookings
+            renderBookingsTable(filteredBookings);
+        }
+        // Event listener to show the filter modal and apply the selected filter
+        document.getElementById('applyFilterBtn').addEventListener('click', () => {
+            const filterValue = document.getElementById('bookingFilter').value;
+            filterBookings(filterValue); // Apply the filter when the button is clicked
+            $('#filterModal').modal('hide'); // Close the modal after applying the filter
+        });
     </script>
 
 </body>
