@@ -107,12 +107,7 @@
                     </div>
                 </section>
             </div>
-
-
         </div>
-
-
-
         <div class="offcanvas offcanvas-end" data-bs-backdrop="static" tabindex="-1" id="staticBackdrop" aria-labelledby="staticBackdropLabel">
             <div class="offcanvas-header">
                 <h5 class="offcanvas-title" id="staticBackdropLabel">Book a Room</h5>
@@ -171,7 +166,10 @@
                             <option value="Monthly">Monthly</option>
                         </select>
                     </div>
-
+                    <div class="mb-3" id="recurringEndDateContainer" style="display: none;">
+                        <label for="RecurringEndDate" class="form-label">End Recurring Date</label>
+                        <input type="date" class="form-control" id="RecurringEndDate">
+                    </div>
                     <!-- Actions -->
                     <div class="buttonsOffCanvas">
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">Cancel</button>
@@ -296,116 +294,116 @@
             }
         }
 
-        function renderRooms(rooms) {
-            const roomsContainer = document.getElementById('roomsContainer');
-            roomsContainer.innerHTML = ''; // Clear any existing content
+            function renderRooms(rooms) {
+                const roomsContainer = document.getElementById('roomsContainer');
+                roomsContainer.innerHTML = ''; // Clear any existing content
 
-            rooms.forEach(room => {
-                const isAvailable = room.status === "Available";
-                const roomCard = document.createElement('div');
-                roomCard.classList.add('userDashboardRoomsCard');
-                roomCard.innerHTML = `
-                    <img src="${room.image || '/img/classroomStyle.jpg'}" class="userDashboardRoomsCardImg" alt="${room.name || 'Room'}">
-                    <div class="userDashboardRoomsCardDetails">
-                        <p class="userDashboardRoomsCardDetailsName">${room.name || 'Unnamed Room'}</p>
-                        <div class="userDashboardRoomsCardDetailsInner mb-1">
-                            <i class="bi bi-house-fill"></i>
-                            <p>${room.style || 'Unknown Style'}</p>
+                rooms.forEach(room => {
+                    const isAvailable = room.status === "Available";
+                    const roomCard = document.createElement('div');
+                    roomCard.classList.add('userDashboardRoomsCard');
+                    roomCard.innerHTML = `
+                        <img src="${room.image || '/img/classroomStyle.jpg'}" class="userDashboardRoomsCardImg" alt="${room.name || 'Room'}">
+                        <div class="userDashboardRoomsCardDetails">
+                            <p class="userDashboardRoomsCardDetailsName">${room.name || 'Unnamed Room'}</p>
+                            <div class="userDashboardRoomsCardDetailsInner mb-1">
+                                <i class="bi bi-house-fill"></i>
+                                <p>${room.style || 'Unknown Style'}</p>
+                            </div>
+                            <div class="userDashboardRoomsCardDetailsInner mb-3">
+                                <i class="bi bi-people-fill"></i>
+                                <p>${room.capacity || 'N/A'} pax</p>
+                            </div>
+                            <button class="btn adminAddBookingBtn btn-sm" type="button"
+                                data-room-id="${room.roomId}"
+                                data-room-name="${room.name || 'Unnamed Room'}"
+                                data-room-style="${room.style || 'Unknown Style'}"
+                                data-bs-toggle="offcanvas"
+                                data-bs-target="#staticBackdrop"
+                                ${!isAvailable ? 'disabled' : ''}>
+                                ${isAvailable ? 'Book' : 'Unavailable'}
+                            </button>
                         </div>
-                        <div class="userDashboardRoomsCardDetailsInner mb-3">
-                            <i class="bi bi-people-fill"></i>
-                            <p>${room.capacity || 'N/A'} pax</p>
-                        </div>
-                        <button class="btn adminAddBookingBtn btn-sm" type="button"
-                            data-room-id="${room.roomId}"
-                            data-room-name="${room.name || 'Unnamed Room'}"
-                            data-room-style="${room.style || 'Unknown Style'}"
-                            data-room-capacity="${room.capacity || 'N/A'}"
-                            data-bs-toggle="offcanvas"
-                            data-bs-target="#staticBackdrop"
-                            ${!isAvailable ? 'disabled' : ''}>
-                            ${isAvailable ? 'Book' : 'Unavailable'}
-                        </button>
-                    </div>
-                `;
+                    `;
 
-                // Attach click listener to the button
-                const bookButton = roomCard.querySelector('button');
-                bookButton.addEventListener('click', () => {
-                    const roomId = bookButton.getAttribute('data-room-id');
-                    const roomName = bookButton.getAttribute('data-room-name');
-                    const roomStyle = bookButton.getAttribute('data-room-style');
-                    const roomCapacity = bookButton.getAttribute('data-room-capacity');
+                    // Attach click listener to the button
+                    const bookButton = roomCard.querySelector('button');
+                    bookButton.addEventListener('click', () => {
+                        const roomId = bookButton.getAttribute('data-room-id');
+                        const roomName = bookButton.getAttribute('data-room-name');
+                        const roomStyle = bookButton.getAttribute('data-room-style');
 
-                    if (!roomId) {
-                        console.error("Room ID is missing. Unable to proceed with booking.");
-                        alert("An error occurred. Please try again.");
-                        return;
-                    }
+                        if (!roomId) {
+                            console.error("Room ID is missing. Unable to proceed with booking.");
+                            alert("An error occurred. Please try again.");
+                            return;
+                        }
 
-                    handleBookButtonClick({ roomId, roomName, roomStyle, roomCapacity });
+                        handleBookButtonClick({ roomId, roomName, roomStyle });
+                    });
+
+                    roomsContainer.appendChild(roomCard);
                 });
-
-                roomsContainer.appendChild(roomCard);
-            });
-        }
-
-
-        function handleBookButtonClick(roomData) {
-            // Validate and assign room data
-            if (!roomData || !roomData.roomId) {
-                console.error("Invalid room data provided:", roomData);
-                alert("Unable to retrieve room details. Please try again.");
-                return;
             }
 
-            selectedRoomId = roomData.roomId;
 
-            // Populate room details in the booking modal
-            document.getElementById('roomName').value = roomData.roomName || "Unknown Room";
-            document.getElementById('roomStyle').value = roomData.roomStyle || "Unknown Style";
+            function handleBookButtonClick(roomData) {
+                selectedRoomId = roomData.roomId;
 
-            console.log(`Room selected: ID=${roomData.roomId}, Name=${roomData.roomName}, Style=${roomData.roomStyle}, Capacity=${roomData.roomCapacity}`);
-        }
+                // Populate room details in the booking modal
+                document.getElementById('roomName').value = roomData.roomName || "Unknown Room";
+                document.getElementById('roomStyle').value = roomData.roomStyle || "Unknown Style";
 
-        async function handleBookingSubmit(event) {
-            event.preventDefault();
+                // Reset recurring fields
+                document.getElementById('isRecurring').value = "No";
+                document.getElementById('recurringFrequencyContainer').style.display = "none";
 
-            const bookingDateInput = document.getElementById('bookingDate');
-            if (!bookingDateInput.value) {
-                alert('Please select a valid booking date.');
-                return;
+                // Ensure event listener for recurring booking toggle
+                document.getElementById('isRecurring').addEventListener('change', toggleFrequencyInput);
             }
 
-            const bookingData = {
-                userId: '@(HttpContextAccessor.HttpContext.User.FindFirst("UserId")?.Value ?? "0")',
-                roomId: selectedRoomId,
-                startDate: `${bookingDateInput.value}T${document.getElementById('startTime').value}`,
-                endDate: `${bookingDateInput.value}T${document.getElementById('endTime').value}`,
-                isRecurring: document.getElementById('isRecurring').value === 'Yes',
-                frequency: document.getElementById('isRecurring').value === 'Yes' ? document.getElementById('recurringFrequency').value : null,
-            };
+            function toggleFrequencyInput() {
+                const isRecurring = document.getElementById('isRecurring').value === 'Yes';
+                const frequencyContainer = document.getElementById('recurringFrequencyContainer');
+                const recurringEndDateContainer = document.getElementById('recurringEndDateContainer');
 
-            try {
-                const response = await fetch('/api/bookings/AddBooking', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(bookingData),
-                });
-
-                if (response.ok) {
-                    alert('Booking successful!');
-                    document.getElementById('bookingForm').reset();
-                    fetchUserBookings(); // Refresh bookings
-                } else {
-                    const errorText = await response.text();
-                    alert(`Booking failed: ${errorText}`);
-                }
-            } catch (error) {
-                console.error('Error booking room:', error.message);
-                alert('Error occurred while booking. Please try again later.');
+                frequencyContainer.style.display = isRecurring ? 'block' : 'none';
+                recurringEndDateContainer.style.display = isRecurring ? 'block' : 'none';
             }
+            async function handleBookingSubmit(event) {
+    event.preventDefault();
+
+    const bookingData = {
+        userId: '@(HttpContextAccessor.HttpContext.User.FindFirst("UserId")?.Value ?? "0")',
+        roomId: selectedRoomId,
+        startDate: `${document.getElementById('bookingDate').value}T${document.getElementById('startTime').value}`,
+        endDate: `${document.getElementById('bookingDate').value}T${document.getElementById('endTime').value}`,
+        isRecurring: document.getElementById('isRecurring').value === 'Yes',
+        frequency: document.getElementById('isRecurring').value === 'Yes' ? document.getElementById('recurringFrequency').value : null,
+        RecurringEndDate: document.getElementById('RecurringEndDate').value || null, // Use the correct field name
+    };
+
+    try {
+        const response = await fetch('/api/bookings/AddBooking', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(bookingData),
+        });
+
+        if (response.ok) {
+            alert('Booking successful!');
+            document.getElementById('bookingForm').reset();
+            fetchUserBookings(); // Refresh bookings
+        } else {
+            const errorText = await response.text();
+            alert(`Booking failed: ${errorText}`);
         }
+    } catch (error) {
+        console.error('Error booking room:', error.message);
+        alert('Error occurred while booking. Please try again later.');
+    }
+}
+
 
             async function fetchUserBookings() {
                 try {

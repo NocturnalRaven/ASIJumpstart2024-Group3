@@ -24,10 +24,8 @@ namespace ASI.Basecode.Services.ServiceModels
         [CompareDates("StartDate", ErrorMessage = "End date must be after the start date")]
         public DateTime EndDate { get; set; }
 
-        [Range(1, int.MaxValue, ErrorMessage = "Number of people must be at least 1")]
         public int NoOfPeople { get; set; }
 
-        [Required(ErrorMessage = "Status is required")]
         [StringLength(50, ErrorMessage = "Status cannot exceed 50 characters")]
         public string Status { get; set; }
 
