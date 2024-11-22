@@ -18,59 +18,66 @@
 <body>
     <main class="mainBody mainBodyAdminAnalytics">
         <div class="mainBodyInner mainBodyInnerAdminAnalytics">
-            <div class="bookingsDashboardLower">
-                <div class="analytics-card">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <p class="bookingsDashboardTitle">Analytics</p>
-                        <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle btn-sm analyticsDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="analyticsFilterButton">
-                                All Time
-                            </button>
-                            <ul class="dropdown-menu" id="analyticsFilterOptions">
-                                <li><a class="dropdown-item" href="#" data-filter="all">All Time</a></li>
-                                <li><a class="dropdown-item" href="#" data-filter="day">Past Day</a></li>
-                                <li><a class="dropdown-item" href="#" data-filter="week">Past Week</a></li>
-                                <li><a class="dropdown-item" href="#" data-filter="month">Past Month</a></li>
-                                <li><a class="dropdown-item" href="#" data-filter="year">Past Year</a></li>
-                            </ul>
+            <aside class="calendarSide admin-analytics-calendar-side">
+                <div id="calendar"></div>
+            </aside>
+            <div class="mainContent mainContentAdminAnalytics ">
+                <div class="admin-analytics-pie-bar-group">
+                    <div class="analytics-card admin-analytics-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <p class="bookingsDashboardTitle">Analytics</p>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle btn-sm analyticsDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="analyticsFilterButton">
+                                    All Time
+                                </button>
+                                <ul class="dropdown-menu" id="analyticsFilterOptions">
+                                    <li><a class="dropdown-item" href="#" data-filter="all">All Time</a></li>
+                                    <li><a class="dropdown-item" href="#" data-filter="day">Past Day</a></li>
+                                    <li><a class="dropdown-item" href="#" data-filter="week">Past Week</a></li>
+                                    <li><a class="dropdown-item" href="#" data-filter="month">Past Month</a></li>
+                                    <li><a class="dropdown-item" href="#" data-filter="year">Past Year</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="chart-container3 analytics-chart-canvas-container">
+                            <canvas id="analyticsChart"></canvas>
+                        </div>
+                        <div class="legend-container">
+                            <div class="legend-item">
+                                <div class="legend-color meeting-room"></div>
+                                <span>Meeting Room</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color event-venue"></div>
+                                <span>Event Venue</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color unit"></div>
+                                <span>Unit</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color apartment"></div>
+                                <span>Apartment</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="chart-container">
-                        <canvas id="analyticsChart"></canvas>
-                    </div>
-                    <div class="legend-container">
-                        <div class="legend-item">
-                            <div class="legend-color meeting-room"></div>
-                            <span>Meeting Room</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color event-venue"></div>
-                            <span>Event Venue</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color unit"></div>
-                            <span>Unit</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color apartment"></div>
-                            <span>Apartment</span>
+
+                    <div class="dashboardPending admin-analytics-bar-chart">
+                        <div class="chart-container3 chart-container-bar-chart">
+                            <canvas id="barChart"></canvas>
                         </div>
                     </div>
                 </div>
 
-            </div>
-            <div class="mainContent mainContentAdminAnalytics">
-
-                <div class="dashboardPending admin-analytics-bar-chart">
-                    <div class="chart-container3">
-                        <canvas id="barChart"></canvas>
+                <div class="mainContent admin-analytics-line-chart-div-outer">
+                    
+                    <div class="bookingsDashboard admin-analytics-line-chart-div">
+                        <div class="chart-container4">
+                            <canvas id="lineChart"></canvas>
+                        </div>
                     </div>
                 </div>
-                <div class="bookingsDashboard">
-                    <div class="chart-container3">
-                        <canvas id="lineChart"></canvas>
-                    </div>
-                </div>
+                
             </div>
         </div>
     </main>

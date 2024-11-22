@@ -18,9 +18,9 @@
 <body>
     <div class="mainBody">
         <div class="mainBodyInner">
-            @*               <aside class="calendarSide">
+            <aside class="calendarSide">
             <div id="calendar"></div>
-            </aside> *@
+            </aside>
             <div class="mainContent user-analytics-overall">
                 <div class=" user-analytics-section-side">
                     <!-- Analytics Card -->
@@ -42,7 +42,7 @@
                         </div>
 
                         <!-- Pie Chart -->
-                        <div class="chart-container">
+                        <div class="chart-container3">
                             <canvas id="analyticsChart"></canvas>
                         </div>
                         <div class="legend-container"></div>
@@ -55,13 +55,13 @@
                     <!-- Bar Chart for Pending Bookings -->
                     <div class=" dashboardPending user-analytics-bar-chart ">
                         <div class="chart-container2">
-                            <canvas id="barChart" width="200" height="200"></canvas>
+                            <canvas id="barChart"></canvas>
                         </div>
                     </div>
                     <!-- Line Chart for Bookings Over Time -->
                     <div class="bookingsDashboard user-analytics-line-chart">
                         <div class="chart-container2">
-                            <canvas id="lineChart" width="200" height="200"></canvas>
+                            <canvas id="lineChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -70,6 +70,7 @@
             </div>
         </div>
     </div>
+    </main>
 
     <!-- Script -->
     <script>
@@ -281,20 +282,35 @@
             });
         }
 
-        // Update calendar with user-specific hotspots
+        // Update calendar with user-specific hotspots and booking density
         function updateCalendarHotspots(userBookings) {
-            const hotspotDates = userBookings.map(booking => {
-                return new Date(booking.startDate).toLocaleDateString('en-CA'); // Format as YYYY-MM-DD
-            });
+            // Calculate the number of bookings per day
+            const bookingCounts = userBookings.reduce((acc, booking) => {
+                const day = new Date(booking.startDate).toLocaleDateString('en-CA'); // Format as YYYY-MM-DD
+                acc[day] = (acc[day] || 0) + 1;
+                return acc;
+            }, {});
 
+            // Determine the max number of bookings in a single day to normalize intensity
+            const maxBookings = Math.max(...Object.values(bookingCounts), 1); // Prevent division by zero
+
+            // Configure Flatpickr with hotspots
             flatpickr("#calendar", {
                 inline: true,
                 mode: "single",
                 dateFormat: "Y-m-d",
                 onDayCreate: (dObj, dStr, fp, dayElem) => {
                     const dayDate = dayElem.dateObj.toLocaleDateString('en-CA');
-                    if (hotspotDates.includes(dayDate)) {
-                        dayElem.style.backgroundColor = '#FFD700';
+                    const count = bookingCounts[dayDate] || 0;
+
+                    if (count > 0) {
+                        // Normalize count to determine intensity (0.1 to 1 scale)
+                        const intensity = count / maxBookings;
+
+                        // Generate color with intensity (light yellow to dark orange)
+                        const color = `rgba(255, 165, 0, ${intensity})`;
+                        dayElem.style.backgroundColor = color;
+                        dayElem.style.borderRadius = '50%'; // Optional: make the color hotspot circular
                     }
                 }
             });
