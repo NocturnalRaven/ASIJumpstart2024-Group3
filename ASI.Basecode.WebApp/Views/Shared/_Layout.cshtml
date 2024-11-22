@@ -31,7 +31,7 @@
 
             .profile-dropdown p {
                 margin-bottom: 5px;
-                font-weight: bold;
+                font-weight: 500;
             }
 
             .profile-dropdown button {
@@ -40,6 +40,14 @@
 
         .settings-modal .modal-body label {
             font-weight: bold;
+        }
+
+        .profile-username-dropdown {
+            font-size: 14px !important;
+        }
+
+        .edit-profile-dropdown-btn {
+            background-color: yellow !important;
         }
     </style>
 }
@@ -110,10 +118,10 @@
                             <i class="bi bi-gear settings-icon navItemA" data-bs-toggle="modal" data-bs-target="#settingsModal" style="font-size: 1.5rem; margin-right: 10px;"></i>
                             <i class="bi bi-person-circle profile-icon" id="profileIcon"></i>
                             <div class="profile-dropdown" id="profileDropdown">
-                                <p>@userName</p>
-                                <button class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
+                                <p class="profile-username-dropdown">@userName</p>
+                                <button class="btn mb-1 edit-profile-dropdown-btn" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
                                 <form asp-controller="Account" asp-action="SignOutUser" method="post">
-                                    <button type="submit" class="btn btn-danger">Logout</button>
+                                    <button type="submit" class="btn logout-btn-profile-dropdown">Logout</button>
                                 </form>
                             </div>
                         </div>
@@ -203,7 +211,7 @@
                 </div>
             </div>
 
-    <!-- Modals here for Edit Profile and Settings -->
+            <!-- Modals here for Edit Profile and Settings -->
             <!-- Edit Profile Modal -->
             <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -231,43 +239,43 @@
                     </div>
                 </div>
             </div>
-    <!-- Optional Scripts Section -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const profileIcon = document.getElementById("profileIcon");
-            const profileDropdown = document.getElementById("profileDropdown");
+            <!-- Optional Scripts Section -->
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const profileIcon = document.getElementById("profileIcon");
+                    const profileDropdown = document.getElementById("profileDropdown");
 
-            // Toggle profile dropdown visibility
-            profileIcon.addEventListener("click", function (event) {
-                event.stopPropagation();
-                profileDropdown.style.display = profileDropdown.style.display === "block" ? "none" : "block";
-            });
+                    // Toggle profile dropdown visibility
+                    profileIcon.addEventListener("click", function (event) {
+                        event.stopPropagation();
+                        profileDropdown.style.display = profileDropdown.style.display === "block" ? "none" : "block";
+                    });
 
-            // Close dropdown when clicking outside
-            document.addEventListener("click", function (event) {
-                if (!profileDropdown.contains(event.target) && event.target !== profileIcon) {
-                    profileDropdown.style.display = "none";
-                }
-            });
+                    // Close dropdown when clicking outside
+                    document.addEventListener("click", function (event) {
+                        if (!profileDropdown.contains(event.target) && event.target !== profileIcon) {
+                            profileDropdown.style.display = "none";
+                        }
+                    });
 
-            // Save profile changes
-            document.getElementById("saveProfileBtn").addEventListener("click", function () {
-                const name = document.getElementById("userNameInput").value;
-                const email = document.getElementById("userEmailInput").value;
-                const resetPassword = document.getElementById("resetPasswordInput").value;
-                alert(`Profile updated:\nName: ${name}\nEmail: ${email}`);
-                $('#editProfileModal').modal('hide');
-            });
+                    // Save profile changes
+                    document.getElementById("saveProfileBtn").addEventListener("click", function () {
+                        const name = document.getElementById("userNameInput").value;
+                        const email = document.getElementById("userEmailInput").value;
+                        const resetPassword = document.getElementById("resetPasswordInput").value;
+                        alert(`Profile updated:\nName: ${name}\nEmail: ${email}`);
+                        $('#editProfileModal').modal('hide');
+                    });
 
-            // Save settings changes
-            document.getElementById("saveSettingsBtn").addEventListener("click", function () {
-                const setting1 = document.getElementById("setting1").value;
-                const setting2 = document.getElementById("setting2").value;
-                alert(`Settings saved:\nSetting 1: ${setting1}\nSetting 2: ${setting2}`);
-                $('#settingsModal').modal('hide');
-            });
-        });
-    </script>
-    @RenderSection("scripts", required: false)
+                    // Save settings changes
+                    document.getElementById("saveSettingsBtn").addEventListener("click", function () {
+                        const setting1 = document.getElementById("setting1").value;
+                        const setting2 = document.getElementById("setting2").value;
+                        alert(`Settings saved:\nSetting 1: ${setting1}\nSetting 2: ${setting2}`);
+                        $('#settingsModal').modal('hide');
+                    });
+                });
+            </script>
+            @RenderSection("scripts", required: false)
 </body>
 </html>

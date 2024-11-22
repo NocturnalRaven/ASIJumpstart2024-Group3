@@ -16,60 +16,59 @@
 </head>
 
 <body>
-    <main class="mainBody">
-        <div class="mainBodyInner">
-            <aside class="calendarSide">
-                <div id="calendar"></div>
-            </aside>
-            <div class="mainContent">
-                <div class="bookingsDashboardLower">
-                    <div class="analytics-card">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <p class="bookingsDashboardTitle">Analytics</p>
-                            <div class="dropdown">
-                                <button class="btn btn-secondary dropdown-toggle btn-sm analyticsDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="analyticsFilterButton">
-                                    All Time
-                                </button>
-                                <ul class="dropdown-menu" id="analyticsFilterOptions">
-                                    <li><a class="dropdown-item" href="#" data-filter="all">All Time</a></li>
-                                    <li><a class="dropdown-item" href="#" data-filter="day">Past Day</a></li>
-                                    <li><a class="dropdown-item" href="#" data-filter="week">Past Week</a></li>
-                                    <li><a class="dropdown-item" href="#" data-filter="month">Past Month</a></li>
-                                    <li><a class="dropdown-item" href="#" data-filter="year">Past Year</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="analyticsChart"></canvas>
-                        </div>
-                        <div class="legend-container">
-                            <div class="legend-item">
-                                <div class="legend-color meeting-room"></div>
-                                <span>Meeting Room</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-color event-venue"></div>
-                                <span>Event Venue</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-color unit"></div>
-                                <span>Unit</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-color apartment"></div>
-                                <span>Apartment</span>
-                            </div>
+    <main class="mainBody mainBodyAdminAnalytics">
+        <div class="mainBodyInner mainBodyInnerAdminAnalytics">
+            <div class="bookingsDashboardLower">
+                <div class="analytics-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <p class="bookingsDashboardTitle">Analytics</p>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle btn-sm analyticsDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="analyticsFilterButton">
+                                All Time
+                            </button>
+                            <ul class="dropdown-menu" id="analyticsFilterOptions">
+                                <li><a class="dropdown-item" href="#" data-filter="all">All Time</a></li>
+                                <li><a class="dropdown-item" href="#" data-filter="day">Past Day</a></li>
+                                <li><a class="dropdown-item" href="#" data-filter="week">Past Week</a></li>
+                                <li><a class="dropdown-item" href="#" data-filter="month">Past Month</a></li>
+                                <li><a class="dropdown-item" href="#" data-filter="year">Past Year</a></li>
+                            </ul>
                         </div>
                     </div>
-                    <div class="dashboardPending">
-                        <div class="chart-container2">
-                            <canvas id="barChart" height="300"></canvas>
+                    <div class="chart-container">
+                        <canvas id="analyticsChart"></canvas>
+                    </div>
+                    <div class="legend-container">
+                        <div class="legend-item">
+                            <div class="legend-color meeting-room"></div>
+                            <span>Meeting Room</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color event-venue"></div>
+                            <span>Event Venue</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color unit"></div>
+                            <span>Unit</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color apartment"></div>
+                            <span>Apartment</span>
                         </div>
                     </div>
                 </div>
+
+            </div>
+            <div class="mainContent mainContentAdminAnalytics">
+
+                <div class="dashboardPending admin-analytics-bar-chart">
+                    <div class="chart-container3">
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
                 <div class="bookingsDashboard">
-                    <div class="chart-container2">
-                        <canvas id="lineChart" height="300"></canvas>
+                    <div class="chart-container3">
+                        <canvas id="lineChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -170,7 +169,7 @@
                 }
             });
         }
-    
+
 
         function updatePieChart(filteredBookings, rooms) {
             const roomStyleCategoryMapping = {
@@ -244,17 +243,16 @@
                 const color = ['#6848FF', '#AFAEFF', '#E6DEFF', '#F3F0FF', '#FFD700', '#FF5733'][index];
 
                 const legendItem = `
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: ${color};"></div>
-                        <span>${category}</span>
-                    </div>
-                `;
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: ${color};"></div>
+                                <span>${category}</span>
+                            </div>
+                        `;
                 legendContainer.innerHTML += legendItem;
             });
         }
 
 
-        // Bar Chart
         function updateBarChart(filteredBookings) {
             const dayCounts = filteredBookings.reduce((acc, booking) => {
                 const day = new Date(booking.startDate).toLocaleDateString('en-US', { weekday: 'long' });
@@ -272,10 +270,23 @@
             };
 
             const ctx = document.getElementById('barChart').getContext('2d');
-            new Chart(ctx, { type: 'bar', data });
+            new Chart(ctx, {
+                type: 'bar',
+                data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true, // Maintain aspect ratio
+                    aspectRatio: 2, // Adjust this value as needed
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
         }
 
-        // Line Chart
+
         function updateLineChart(filteredBookings) {
             const hourCounts = filteredBookings.reduce((acc, booking) => {
                 const hour = new Date(booking.startDate).getHours();
@@ -294,8 +305,22 @@
             };
 
             const ctx = document.getElementById('lineChart').getContext('2d');
-            new Chart(ctx, { type: 'line', data });
+            new Chart(ctx, {
+                type: 'line',
+                data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true, // Maintain aspect ratio
+                    aspectRatio: 2, // Adjust this value as needed
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
         }
+
 
         // Event Listener for Analytics Filter
         document.getElementById('analyticsFilterOptions').addEventListener('click', e => {
@@ -309,5 +334,5 @@
         // Fetch Data on Page Load
         fetchBookingsData();
     </script>
-    </body>
+</body>
 </html>

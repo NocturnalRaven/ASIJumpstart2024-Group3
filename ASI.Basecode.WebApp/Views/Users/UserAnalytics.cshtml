@@ -16,13 +16,13 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <main class="mainBody">
+    <div class="mainBody">
         <div class="mainBodyInner">
-            <aside class="calendarSide">
-                <div id="calendar"></div>
-            </aside>
-            <div class="mainContent">
-                <div class="bookingsDashboardLower">
+            @*               <aside class="calendarSide">
+            <div id="calendar"></div>
+            </aside> *@
+            <div class="mainContent user-analytics-overall">
+                <div class=" user-analytics-section-side">
                     <!-- Analytics Card -->
                     <div class="analytics-card">
                         <div class="d-flex justify-content-between align-items-center">
@@ -48,23 +48,28 @@
                         <div class="legend-container"></div>
                     </div>
 
+
+                </div>
+
+                <div class="user-analytics-bar-line-section">
                     <!-- Bar Chart for Pending Bookings -->
-                    <div class="dashboardPending">
+                    <div class=" dashboardPending user-analytics-bar-chart ">
                         <div class="chart-container2">
-                            <canvas id="barChart" width="300" height="300"></canvas>
+                            <canvas id="barChart" width="200" height="200"></canvas>
+                        </div>
+                    </div>
+                    <!-- Line Chart for Bookings Over Time -->
+                    <div class="bookingsDashboard user-analytics-line-chart">
+                        <div class="chart-container2">
+                            <canvas id="lineChart" width="200" height="200"></canvas>
                         </div>
                     </div>
                 </div>
 
-                <!-- Line Chart for Bookings Over Time -->
-                <div class="bookingsDashboard">
-                    <div class="chart-container2">
-                        <canvas id="lineChart" width="300" height="300"></canvas>
-                    </div>
-                </div>
+
             </div>
         </div>
-    </main>
+    </div>
 
     <!-- Script -->
     <script>
@@ -97,7 +102,7 @@
                 // Ensure both bookings and rooms are available before updating analytics
                 await fetchRoomsData();
                 updateAnalytics('all'); // Default filter
-                updateCalendarHotspots(userBookings);
+                // updateCalendarHotspots(userBookings);
             } catch (error) {
                 console.error('Error fetching bookings:', error.message);
             }
@@ -201,23 +206,23 @@
         }
 
         // Update calendar with user-specific hotspots
-        function updateCalendarHotspots(userBookings) {
-            const hotspotDates = userBookings.map(booking => {
-                return new Date(booking.startDate).toLocaleDateString('en-CA'); // Format as YYYY-MM-DD
-            });
+        // function updateCalendarHotspots(userBookings) {
+        //     const hotspotDates = userBookings.map(booking => {
+        //         return new Date(booking.startDate).toLocaleDateString('en-CA'); Format as YYYY-MM-DD
+        //     });
 
-            flatpickr("#calendar", {
-                inline: true,
-                mode: "single",
-                dateFormat: "Y-m-d",
-                onDayCreate: (dObj, dStr, fp, dayElem) => {
-                    const dayDate = dayElem.dateObj.toLocaleDateString('en-CA');
-                    if (hotspotDates.includes(dayDate)) {
-                        dayElem.style.backgroundColor = '#FFD700';
-                    }
-                }
-            });
-        }
+        //     flatpickr("#calendar", {
+        //         inline: true,
+        //         mode: "single",
+        //         dateFormat: "Y-m-d",
+        //         onDayCreate: (dObj, dStr, fp, dayElem) => {
+        //             const dayDate = dayElem.dateObj.toLocaleDateString('en-CA');
+        //             if (hotspotDates.includes(dayDate)) {
+        //                 dayElem.style.backgroundColor = '#FFD700';
+        //             }
+        //         }
+        //     });
+        // }
 
         // Fetch data on page load
         fetchBookingsData();

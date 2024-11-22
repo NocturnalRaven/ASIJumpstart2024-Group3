@@ -573,11 +573,11 @@ table tbody tr td {
 
 
 /* analytics */
-.chart-container2 {
+/*.chart-container2 {
     position: relative;
     width: 100%;
     height: 100%;
-}
+}*/
 
 
 /* room  */
@@ -935,34 +935,22 @@ table tbody tr td {
     color: lightgray !important;
 }
 
-.chart-container,
-.chart-container2 {
-    position: relative;
-    width: 100%;
-    height: 100%; /* Make the chart fill the parent container */
-    display: flex; /* Ensure proper alignment */
+.chart-container, .chart-container2 {
+    width: 100%; /* Full width of parent */
+    height: 300px; /* Consistent height */
+    display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
 }
+
 
     .chart-container canvas,
     .chart-container2 canvas {
         width: 100% !important;
-        height: 100% !important; /* Force the canvas to fill its container */
+        /*        height: 100% !important;  Force the canvas to fill its container */
     }
 
-.chart-container {
-    position: relative;
-    width: 100%; /* Let it take full width of the parent */
-    max-width: none; /* Remove any restrictions on width */
-    height: 100%; /* Adjust height dynamically */
-    margin: 0 auto; /* Center the chart */
-}
-
-    .chart-container canvas {
-        width: 100% !important; /* Make canvas responsive */
-        height: auto !important; /* Maintain aspect ratio */
-    }
 
 
 .flatpickr-next-month {
@@ -1108,4 +1096,107 @@ table tbody tr td {
 
 .super-admin-accounts-db {
     height: 98% !important;
+}
+
+/*User Analytics page*/
+.mainBodyAdminAnalytics {
+    height: 100vh; /* Use the full viewport height */
+}
+
+.mainBodyInnerAdminAnalytics {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    height: 90%; /* Ensure it doesn’t stretch excessively */
+    align-items: flex-start; /* Align sections at the top */
+}
+
+.mainContentAdminAnalytics {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto; /* Allow vertical scrolling if necessary */
+    padding: 20px;
+}
+
+.user-analytics-overall {
+    display: flex;
+    flex-direction: row;
+}
+
+.user-analytics-section-side {
+    flex: 1; /* Take up less space compared to the main content */
+    max-width: 300px; /* Ensure a fixed width for the side section */
+}
+
+.user-analytics-bar-line-section {
+    flex: 2; /* Main content takes up more space */
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Space between charts */
+}
+
+.user-analytics-bar-chart, .user-analytics-line-chart {
+    height: 38vh;
+}
+
+.profile-username-dropdown {
+    font-size: 14px !important;
+    font-weight: 500 !important;
+}
+
+.edit-profile-dropdown-btn {
+    font-size: 12px !important;
+}
+
+.logout-btn-profile-dropdown {
+    font-size: 12px !important;
+    background-color: #FA9884 !important;
+}
+
+.chart-container3 {
+    width: 100%; /* Take full width of parent */
+    max-width: 600px; /* Optional: Constrain maximum width */
+    height: 300px; /* Fixed height for charts */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto; /* Center charts horizontally */
+}
+
+.user-analytics-bar-chart, .user-analytics-line-chart {
+    height: 350px; /* Ensure consistent height */
+    padding: 10px;
+    border-radius: 15px;
+    background-color: #ffffff; /* Optional: Add background color */
+}
+
+.chart-container3 {
+    width: 100%; /* Take the full width of the parent container */
+    max-width: 600px; /* Optional: Constrain the maximum width */
+    height: 350px; /* Fixed height for charts */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto; /* Center the chart horizontally */
+}
+
+.chart-container3 {
+    width: 100%; /* Full width of the parent */
+    max-width: 600px; /* Optional: Constrain the maximum width */
+    height: 300px; /* Fixed height for charts */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto; /* Center the chart horizontally */
+}
+
+.user-analytics-bar-chart,
+.user-analytics-line-chart {
+    flex: none; /* Prevent stretching */
+    height: 350px; /* Ensure consistent chart heights */
+    padding: 10px;
+    border-radius: 15px;
+    background-color: #ffffff;
 }
