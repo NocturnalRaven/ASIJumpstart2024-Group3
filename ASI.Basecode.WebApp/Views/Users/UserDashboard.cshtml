@@ -92,12 +92,11 @@
                             <table class="table table-striped align-middle" id="userBookingsTable">
                                 <thead>
                                     <tr>
-                                        <th scope="col">User</th>
-                                        <th scope="col">Room</th>
-                                        <th scope="col">Date</th>
-                                        <th scope="col">No. of People</th>
-                                        <th scope="col">Price</th>
-                                        <th scope="col">Actions</th>
+                                        <th scope="col">Room Name</th>
+                                        <th scope="col">Booking Date</th>
+                                        <th scope="col">Start Time</th>
+                                        <th scope="col">End Time</th>
+                                        <th scope="col">Booking Duration</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -108,12 +107,7 @@
                     </div>
                 </section>
             </div>
-
-
         </div>
-
-
-
         <div class="offcanvas offcanvas-end" data-bs-backdrop="static" tabindex="-1" id="staticBackdrop" aria-labelledby="staticBackdropLabel">
             <div class="offcanvas-header">
                 <h5 class="offcanvas-title" id="staticBackdropLabel">Book a Room</h5>
@@ -261,12 +255,12 @@
                 </div>
             </div>
         </div>
-        <!-- Scripts -->
-        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-        <script>
-            let selectedRoomId = null;
-            let bookingsData = []; // Global variable to store bookings data
-            let bookingDates = []; // Store dates with bookings
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        let selectedRoomId = null;
+        let bookingsData = []; // Global variable to store bookings data
+        let bookingDates = []; // Store dates with bookings
 
             document.addEventListener('DOMContentLoaded', () => {
                 fetchUserBookings();
@@ -304,45 +298,33 @@
                 const roomsContainer = document.getElementById('roomsContainer');
                 roomsContainer.innerHTML = ''; // Clear any existing content
 
-                if (rooms.length === 0) {
-                    // Display the "No rooms added yet" message if no rooms are available
-                    roomsContainer.innerHTML = `
-                                    <div class="text-center text-muted noRoomsAddedYetGroup" style="padding: 20px;">
-                                        <i class="bi bi-emoji-frown"></i>
-                                        <p class="noRoomsAddedYetText">No rooms added yet</p>
-                                    </div>
-                                `;
-                    return;
-                }
-
                 rooms.forEach(room => {
                     const isAvailable = room.status === "Available";
                     const roomCard = document.createElement('div');
                     roomCard.classList.add('userDashboardRoomsCard');
                     roomCard.innerHTML = `
-                                    <img src="${room.image || '/img/classroomStyle.jpg'}" class="userDashboardRoomsCardImg" alt="${room.name || 'Room'}">
-                                    <div class="userDashboardRoomsCardDetails">
-                                        <p class="userDashboardRoomsCardDetailsName">${room.name || 'Unnamed Room'}</p>
-                                        <div class="userDashboardRoomsCardDetailsInner mb-1">
-                                            <i class="bi bi-house-fill"></i>
-                                            <p>${room.style || 'Unknown Style'}</p>
-                                        </div>
-                                        <div class="userDashboardRoomsCardDetailsInner mb-3">
-                                            <i class="bi bi-people-fill"></i>
-                                            <p>${room.capacity || 'N/A'} pax</p>
-                                        </div>
-                                        <button class="btn adminAddBookingBtn btn-sm" type="button"
-                                            data-room-id="${room.roomId}"
-                                            data-room-name="${room.name || 'Unnamed Room'}"
-                                            data-room-style="${room.style || 'Unknown Style'}"
-                                            data-room-capacity="${room.capacity || 'N/A'}"
-                                            data-bs-toggle="offcanvas"
-                                            data-bs-target="#staticBackdrop"
-                                            ${!isAvailable ? 'disabled' : ''}>
-                                            ${isAvailable ? 'Book' : 'Unavailable'}
-                                        </button>
-                                    </div>
-                                `;
+                        <img src="${room.image || '/img/classroomStyle.jpg'}" class="userDashboardRoomsCardImg" alt="${room.name || 'Room'}">
+                        <div class="userDashboardRoomsCardDetails">
+                            <p class="userDashboardRoomsCardDetailsName">${room.name || 'Unnamed Room'}</p>
+                            <div class="userDashboardRoomsCardDetailsInner mb-1">
+                                <i class="bi bi-house-fill"></i>
+                                <p>${room.style || 'Unknown Style'}</p>
+                            </div>
+                            <div class="userDashboardRoomsCardDetailsInner mb-3">
+                                <i class="bi bi-people-fill"></i>
+                                <p>${room.capacity || 'N/A'} pax</p>
+                            </div>
+                            <button class="btn adminAddBookingBtn btn-sm" type="button"
+                                data-room-id="${room.roomId}"
+                                data-room-name="${room.name || 'Unnamed Room'}"
+                                data-room-style="${room.style || 'Unknown Style'}"
+                                data-bs-toggle="offcanvas"
+                                data-bs-target="#staticBackdrop"
+                                ${!isAvailable ? 'disabled' : ''}>
+                                ${isAvailable ? 'Book' : 'Unavailable'}
+                            </button>
+                        </div>
+                    `;
 
                     // Attach click listener to the button
                     const bookButton = roomCard.querySelector('button');
@@ -350,7 +332,6 @@
                         const roomId = bookButton.getAttribute('data-room-id');
                         const roomName = bookButton.getAttribute('data-room-name');
                         const roomStyle = bookButton.getAttribute('data-room-style');
-                        const roomCapacity = bookButton.getAttribute('data-room-capacity');
 
                         if (!roomId) {
                             console.error("Room ID is missing. Unable to proceed with booking.");
@@ -358,7 +339,7 @@
                             return;
                         }
 
-                        handleBookButtonClick({ roomId, roomName, roomStyle, roomCapacity });
+                        handleBookButtonClick({ roomId, roomName, roomStyle });
                     });
 
                     roomsContainer.appendChild(roomCard);
@@ -586,7 +567,6 @@
             function renderBookingsTable(bookings) {
                 const tableWrapper = document.querySelector('.userBookingsDashboard .table-wrapper');
                 tableWrapper.innerHTML = ''; // Clear existing content
-
                 if (bookings.length === 0) {
                     // If there are no bookings, display a message
                     tableWrapper.innerHTML = `<div class="text-center text-muted m-0 no-rooms-available-placeholder no-bookings-currently-user-db">
@@ -595,7 +575,6 @@
                                         </div>`;
                     return;
                 }
-
                 // If there are bookings, render the table
                 const tableHTML = `
                                 <table class="table table-striped align-middle" id="userBookingsTable">
@@ -620,7 +599,6 @@
                                 const hours = Math.floor(duration / 60);
                                 const minutes = duration % 60;
                                 const formattedDuration = `${hours}h ${minutes}m`;
-
                                 return `
                                                         <tr>
                                                             <td>${booking.roomName || 'Unknown Room'}</td>
@@ -641,10 +619,8 @@
                                     </tbody>
                                 </table>
                             `;
-
                 tableWrapper.innerHTML = tableHTML;
             }
-
 
             function cancelBooking(bookingId) {
                 if (confirm('Are you sure you want to cancel this booking?')) {
@@ -827,16 +803,16 @@
                     currentTime.setMinutes(currentTime.getMinutes() + intervalMinutes);
                 }
 
-                return times;
+            return times;
+        }
+        
+        function initializeBookingDateInput() {
+            const bookingDateInput = document.getElementById('bookingDate');
+            if (bookingDateInput) {
+                const today = new Date().toISOString().split('T')[0]; // Format today as YYYY-MM-DD
+                bookingDateInput.setAttribute('min', today); // Set the minimum selectable date
             }
-
-            function initializeBookingDateInput() {
-                const bookingDateInput = document.getElementById('bookingDate');
-                if (bookingDateInput) {
-                    const today = new Date().toISOString().split('T')[0]; // Format today as YYYY-MM-DD
-                    bookingDateInput.setAttribute('min', today); // Set the minimum selectable date
-                }
-            }
+        }
 
             function viewBooking(bookingId) {
                 const booking = bookingsData.find(b => b.bookingId === bookingId);
@@ -1132,6 +1108,6 @@
                 validateTimeDropdowns();
             }
 
-        </script>
+    </script>
 </body>
 </html>

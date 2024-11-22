@@ -266,17 +266,17 @@
                 usersToRender.forEach(user => {
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                                    <td>${user.Id}</td>
-                                    <td>${user.Name}</td>
-                                    <td>${user.Email}</td>
-                                    <td>${user.DisplayRole}</td>
-                                    <td>${new Date(user.DateCreated).toLocaleDateString()}</td>
-                                    <td>${new Date(user.DateModified).toLocaleDateString()}</td>
-                                    <td>
-                                                    <button type="button" class="btn btn-sm edit-btn-user-db" onclick="editUser(${user.Id})">Edit</button>
-                                                    <button type="button" class="btn btn-sm cancel-btn-user-db" onclick="showDeleteModal(${user.Id})">Delete</button>
-                                    </td>
-                                `;
+                        <td>${user.Id}</td>
+                        <td>${user.Name}</td>
+                        <td>${user.Email}</td>
+                        <td>${user.DisplayRole}</td>
+                        <td>${new Date(user.DateCreated).toLocaleDateString()}</td>
+                        <td>${new Date(user.DateModified).toLocaleDateString()}</td>
+                        <td>
+                        <button type="button" class="btn btn-sm edit-btn-user-db" onclick="editUser(${user.Id})">Edit</button>
+                        <button type="button" class="btn btn-sm cancel-btn-user-db" onclick="showDeleteModal(${user.Id})">Delete</button>
+                        </td>
+                    `;
                     tbody.appendChild(tr);
                 });
             }

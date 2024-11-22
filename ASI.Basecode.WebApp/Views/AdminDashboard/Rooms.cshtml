@@ -158,14 +158,12 @@
         function renderRooms(rooms) {
             const container = document.querySelector('.admin-rooms-section:first-child');
             const tableWrapper = container.querySelector('.table-wrapper');
-
             if (rooms.length === 0) {
                 tableWrapper.innerHTML = `<div class="text-center text-muted m-0 no-rooms-available-placeholder">
                 <p class="m-0 no-rooms-available-placeholder-label">No Rooms Available</p>
                 </div>`;
                 return;
             }
-
             // Render table if there are rooms
             const tableHTML = `
                 <table class="table table-striped align-middle" id="adminRoomTable">
@@ -184,7 +182,6 @@
                 </table>
             `;
             tableWrapper.innerHTML = tableHTML;
-
             const tbody = container.querySelector('#adminRoomTable tbody');
             rooms.forEach(room => {
                 const row = document.createElement('tr');

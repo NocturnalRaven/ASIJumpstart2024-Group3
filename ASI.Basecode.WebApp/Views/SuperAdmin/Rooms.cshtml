@@ -29,7 +29,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="table-wrapper">
+                <div class="table-wrapper  admin-rooms-section-table-wrapper">
                     <table class="table table-striped align-middle" id="adminRoomTable">
                         <thead>
                             <tr>
@@ -50,7 +50,7 @@
             </div>
 
             <!-- Booked Rooms Table -->
-            <div class="bookingsDashboard userDashboard  admin-rooms-section">
+            <div class="bookingsDashboard userDashboard admin-rooms-section">
                 <div class="bookingsDashboardHeader">
                     <p class="bookingsDashboardTitle">Booked Rooms</p>
                 </div>
@@ -156,23 +156,47 @@
         }
 
         function renderRooms(rooms) {
-            const tbody = document.querySelector('#adminRoomTable tbody');
-            tbody.innerHTML = '';
-
+            const container = document.querySelector('.admin-rooms-section:first-child');
+            const tableWrapper = container.querySelector('.table-wrapper');
+            if (rooms.length === 0) {
+                tableWrapper.innerHTML = `<div class="text-center text-muted m-0 no-rooms-available-placeholder">
+                        <p class="m-0 no-rooms-available-placeholder-label">No Rooms Available</p>
+                        </div>`;
+                return;
+            }
+            // Render table if there are rooms
+            const tableHTML = `
+                        <table class="table table-striped align-middle" id="adminRoomTable">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Room ID</th>
+                                    <th scope="col">Room</th>
+                                    <th scope="col">Style</th>
+                                    <th scope="col">Capacity</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Floor</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    `;
+            tableWrapper.innerHTML = tableHTML;
+            const tbody = container.querySelector('#adminRoomTable tbody');
             rooms.forEach(room => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                                    <td>${room.roomId}</td>
-                                    <td>${room.name}</td>
-                                    <td>${room.style}</td>
-                                    <td>${room.capacity}</td>
-                                    <td style="color: ${room.status === 'Available' ? 'green' : 'red'}">${room.status}</td>
-                                    <td>${room.floor}</td>
-                                    <td>
-                                        <i class="bi bi-pencil-square" onclick="editRoom(${room.roomId})"></i>
-                                        <i class="bi bi-trash3 ms-2" onclick="deleteRoom(${room.roomId})"></i>
-                                    </td>
-                                `;
+                                            <td>${room.roomId}</td>
+                                            <td>${room.name}</td>
+                                            <td>${room.style}</td>
+                                            <td>${room.capacity}</td>
+                                            <td style="color: ${room.status === 'Available' ? 'green' : 'red'}">${room.status}</td>
+                                            <td>${room.floor}</td>
+                                            <td>
+                                                <i class="bi bi-pencil-square" onclick="editRoom(${room.roomId})"></i>
+                                                <i class="bi bi-trash3 ms-2" onclick="deleteRoom(${room.roomId})"></i>
+                                            </td>
+                                        `;
                 tbody.appendChild(row);
             });
         }
@@ -272,43 +296,42 @@
             if (bookedRooms.length === 0) {
                 // Show "No Booked Rooms" message if there are no booked rooms
                 tableWrapper.innerHTML = `<div class="text-center text-muted m-0 no-rooms-available-placeholder">
-                        <p class="m-0 no-rooms-available-placeholder-label">No Booked Rooms Currently</p>
-                        </div>`;
+                                <p class="m-0 no-rooms-available-placeholder-label">No Booked Rooms Currently</p>
+                                </div>`;
                 return;
             }
-
             // If there are booked rooms, render the table
             const tableHTML = `
-                        <table class="table table-striped align-middle" id="adminBookedTable">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Room</th>
-                                    <th scope="col">User</th>
-                                    <th scope="col">No. of People</th>
-                                    <th scope="col">Date Booked</th>
-                                    <th scope="col">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${bookedRooms
+                                <table class="table table-striped align-middle" id="adminBookedTable">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Room</th>
+                                            <th scope="col">User</th>
+                                            <th scope="col">No. of People</th>
+                                            <th scope="col">Date Booked</th>
+                                            <th scope="col">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${bookedRooms
                     .map(
                         (booked) => `
-                                        <tr>
-                                            <td>${booked.roomName}</td>
-                                            <td>${booked.userName}</td>
-                                            <td>${booked.noOfPeople}</td>
-                                            <td>${new Date(booked.startDate).toLocaleDateString()}</td>
-                                            <td>
-                                                <i class="bi bi-pencil-square" onclick="editBookedRoom(${booked.bookingId})"></i>
-                                                <i class="bi bi-trash3 ms-2" onclick="deleteBookedRoom(${booked.bookingId})"></i>
-                                            </td>
-                                        </tr>
-                                    `
+                                                <tr>
+                                                    <td>${booked.roomName}</td>
+                                                    <td>${booked.userName}</td>
+                                                    <td>${booked.noOfPeople}</td>
+                                                    <td>${new Date(booked.startDate).toLocaleDateString()}</td>
+                                                    <td>
+                                                        <i class="bi bi-pencil-square" onclick="editBookedRoom(${booked.bookingId})"></i>
+                                                        <i class="bi bi-trash3 ms-2" onclick="deleteBookedRoom(${booked.bookingId})"></i>
+                                                    </td>
+                                                </tr>
+                                            `
                     )
                     .join('')}
-                            </tbody>
-                        </table>
-                    `;
+                                    </tbody>
+                                </table>
+                            `;
             tableWrapper.innerHTML = tableHTML;
         }
 

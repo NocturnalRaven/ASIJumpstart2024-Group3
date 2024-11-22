@@ -255,7 +255,7 @@
             </div>
         </div>
     </div>
-
+    
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         let bookingsData = []; // Global variable to store bookings data
@@ -333,7 +333,6 @@
         function renderBookingsTable(bookings) {
             const tableWrapper = document.querySelector('.table-responsive');
             tableWrapper.innerHTML = ''; // Clear existing content
-
             if (bookings.length === 0) {
                 // If there are no bookings, display a message
                 tableWrapper.innerHTML = `<div class="text-center text-muted m-0 no-rooms-available-placeholder no-bookings-currently-user-db">
@@ -342,7 +341,6 @@
                                             </div>`;
                 return;
             }
-
             // If there are bookings, render the table
             const tableHTML = `
                         <table class="table table-striped align-middle" id="userBookingsTable">
@@ -367,10 +365,8 @@
                         const hours = Math.floor(duration / 60);
                         const minutes = duration % 60;
                         const formattedDuration = `${hours}h ${minutes}m`;
-
                         // Check if the booking is in the past
                         const isPastBooking = new Date(booking.endDate) < new Date();
-
                         return `
                                             <tr>
                                                 <td>${booking.roomName || 'Unknown Room'}</td>
@@ -380,12 +376,12 @@
                                                 <td>${endTime}</td>
                                                 <td>${formattedDuration}</td>
                                                 <td>
-                                                    <button class="btn btn-primary btn-sm" onclick="viewBooking(${booking.bookingId})">View</button>
+                                                    <button class="btn btn-sm view-btn-user-db" onclick="viewBooking(${booking.bookingId})">View</button>
                                                     ${isPastBooking
                                 ? ''
                                 : `
-                                                        <button class="btn btn-info btn-sm" onclick="editBooking(${booking.bookingId})">Edit</button>
-                                                        <button class="btn btn-danger btn-sm" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
+                                                        <button class="btn btn-sm edit-btn-user-db" onclick="editBooking(${booking.bookingId})">Edit</button>
+                                                        <button class="btn btn-sm cancel-btn-user-db" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
                                                     `
                             }
                                                 </td>
@@ -396,10 +392,8 @@
                             </tbody>
                         </table>
                     `;
-
             tableWrapper.innerHTML = tableHTML;
         }
-
 
         function cancelBooking(bookingId) {
             if (confirm('Are you sure you want to cancel this booking?')) {
@@ -805,27 +799,27 @@
                     const formattedDuration = `${hours}h ${minutes}m`;
 
                     const bookingHTML = `
-                                        <div class="recentBookings">
-                                            <div class="recentBookingsDetailsDiv">
-                                                <div class="recentBookingsDetails">
-                                                    <i class="bi bi-house-door-fill"></i>
-                                                    <p>${booking.roomName || 'Unknown Room'}</p>
-                                                </div>
-                                                <div class="recentBookingsDetails">
-                                                    <i class="bi bi-calendar2-week"></i>
-                                                    <p>${startTime.toLocaleDateString()}</p>
-                                                </div>
-                                                <div class="recentBookingsDetails">
-                                                    <i class="bi bi-clock"></i>
-                                                    <p>${startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-                                                </div>
-                                                <div class="recentBookingsDetails">
-                                                    <i class="bi bi-hourglass-split"></i>
-                                                    <p>${formattedDuration}</p>
-                                                </div>
-                                            </div>
+                                <div class="recentBookings">
+                                    <div class="recentBookingsDetailsDiv">
+                                        <div class="recentBookingsDetails">
+                                            <i class="bi bi-house-door-fill"></i>
+                                            <p>${booking.roomName || 'Unknown Room'}</p>
                                         </div>
-                                    `;
+                                        <div class="recentBookingsDetails">
+                                            <i class="bi bi-calendar2-week"></i>
+                                            <p>${startTime.toLocaleDateString()}</p>
+                                        </div>
+                                        <div class="recentBookingsDetails">
+                                            <i class="bi bi-clock"></i>
+                                            <p>${startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                        </div>
+                                        <div class="recentBookingsDetails">
+                                            <i class="bi bi-hourglass-split"></i>
+                                            <p>${formattedDuration}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
                     container.innerHTML += bookingHTML;
                 });
             }
@@ -850,8 +844,8 @@
 
             return times;
         }
-
-
+        
+        
         function filterBookings(filter) {
             const now = new Date();
             let filteredBookings = [];

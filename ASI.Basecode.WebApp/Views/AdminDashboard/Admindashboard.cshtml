@@ -92,7 +92,6 @@
                                 <i class="bi bi-bar-chart"></i>
                                 <p class=" text-muted noAnalyticsMessageText">No Inputs Yet</p>
                             </div>
-
                         </div>
                         <div class="chart-container">
                             <canvas id="analyticsChart"></canvas>
@@ -512,11 +511,11 @@
                             const color = ['#6848FF', '#AFAEFF', '#E6DEFF', '#F3F0FF', '#FFD700', '#FF5733'][index % 6]; // Loop colors if needed
 
                             const legendItem = `
-                                                                                            <div class="legend-item">
-                                                                                                <div class="legend-color" style="background-color: ${color};"></div>
-                                                                                                <span>${category}</span>
-                                                                                            </div>
-                                                                                        `;
+                                            <div class="legend-item">
+                                            <div class="legend-color" style="background-color: ${color};"></div>
+                                            <span>${category}</span>
+                                            </div>
+                                            `;
                             legendContainer.innerHTML += legendItem;
                         });
                     }
@@ -586,20 +585,20 @@
 
                             const row = document.createElement('tr');
                             row.innerHTML = `
-                                                                                                                <td>${booking.userId}</td>
-                                                                                                                <td>${booking.userName}</td>
-                                                                                                                <td>${booking.roomId}</td>
-                                                                                                                <td>${booking.roomName}</td>
-                                                                                                                <td>${bookingDate}</td>
-                                                                                                                <td>${startTime}</td>
-                                                                                                                <td>${endTime}</td>
-                                                                                                                <td>${duration}</td>
-                                                                                                                <td>
-                                                                                                                                        <button class="btn btn-sm view-btn-user-db" onclick="viewBooking(${booking.bookingId})">View</button>
-                                                                                                                                        <button class="btn btn-sm edit-btn-user-db" onclick="editBooking(${booking.bookingId})">Edit</button>
-                                                                                                                                        <button class="btn btn-sm cancel-btn-user-db" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
-                                                                                                                </td>
-                                                                                                            `;
+                                <td>${booking.userId}</td>
+                                <td>${booking.userName}</td>
+                                <td>${booking.roomId}</td>
+                                <td>${booking.roomName}</td>
+                                <td>${bookingDate}</td>
+                                <td>${startTime}</td>
+                                <td>${endTime}</td>
+                                <td>${duration}</td>
+                                <td>
+                                    <button class="btn btn-sm view-btn-user-db"  onclick="viewBooking(${booking.bookingId})">View</button>
+                                    <button class="btn btn-sm edit-btn-user-db" onclick="editBooking(${booking.bookingId})">Edit</button>
+                                    <button class="btn btn-sm cancel-btn-user-db" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
+                                </td>
+                                `;
                             tbody.appendChild(row);
                         });
                     }
@@ -608,25 +607,25 @@
                         const container = document.querySelector('#recentBookingsContainer');
                         container.innerHTML = '';
 
-                        bookings.slice(0, 3).forEach(booking => {
-                            const bookingHTML = `
-                                                                                                <div class="recentBookings">
-                                                                                                <p class="userRecentBookings">${booking.userName}</p>
-                                                                                                <hr>
-                                                                                                    <div class="recentBookingsDetailsDiv">
-                                                                                                        <div class="recentBookingsDetails">
-                                                                                                            <i class="bi bi-house-door-fill"></i>
-                                                                                                            <p>${booking.roomName}</p>
-                                                                                                        </div>
-                                                                                                        <div class="recentBookingsDetails">
-                                                                                                            <i class="bi bi-calendar2-week"></i>
-                                                                                                            <p>${new Date(booking.startDate).toLocaleDateString()}</p>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                               </div>`;
-                            container.innerHTML += bookingHTML;
-                        });
-                    }
+                    bookings.slice(0, 3).forEach(booking => {
+                        const bookingHTML = `
+                            <div class="recentBookings">
+                            <p class="userRecentBookings">${booking.userName}</p>
+                            <hr>
+                            <div class="recentBookingsDetailsDiv">
+                            <div class="recentBookingsDetails">
+                            <i class="bi bi-house-door-fill"></i>
+                            <p>${booking.roomName}</p>
+                            </div>
+                            <div class="recentBookingsDetails">
+                            <i class="bi bi-calendar2-week"></i>
+                            <p>${new Date(booking.startDate).toLocaleDateString()}</p>
+                            </div>
+                            </div>
+                            </div>`;
+                        container.innerHTML += bookingHTML;
+                    });
+                }
 
                     async function addBooking() {
                         try {
@@ -1517,8 +1516,8 @@
                         return dates;
                     }
 
-                    // Call this function periodically
-                    setInterval(archiveExpiredBookings, 10 * 60 * 1000); // Every 10 minutes
+                // Call this function periodically
+                setInterval(archiveExpiredBookings, 10 * 60 * 1000); // Every 10 minutes
 
                     document.addEventListener("DOMContentLoaded", () => {
                         // Set the minimum date for the booking date input
@@ -1614,6 +1613,6 @@
                     }
 
 
-                </script>
-</body>
+           </script>
+    </body>
 </html>

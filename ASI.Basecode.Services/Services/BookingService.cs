@@ -109,55 +109,47 @@ namespace ASI.Basecode.Services.Services
             _logger.LogInformation("{Count} expired bookings archived.", archivedCount);
             return archivedCount;
         }
-        public IEnumerable<BookingViewModel> GenerateRecurringBookings(BookingViewModel model)
+        public List<BookingViewModel> GenerateRecurringBookings(BookingViewModel model)
         {
-            var recurringBookings = new List<BookingViewModel>();
+            var bookings = new List<BookingViewModel>();
+            var currentDate = model.StartDate;
 
-            // Since model.StartDate and model.EndDate are non-nullable, use them directly
-            DateTime nextStartDate = model.StartDate;
-            DateTime nextEndDate = model.EndDate;
-
-            // Define an end date for recurrence (e.g., one year from the start date)
-            DateTime recurrenceEndDate = model.StartDate.AddYears(1);
-
-            while (nextStartDate <= recurrenceEndDate)
+            while (currentDate <= model.RecurringEndDate)
             {
                 var newBooking = new BookingViewModel
                 {
                     UserId = model.UserId,
                     RoomId = model.RoomId,
-                    StartDate = nextStartDate,
-                    EndDate = nextEndDate,
+                    StartDate = currentDate,
+                    EndDate = currentDate.Add(model.EndDate - model.StartDate),
                     NoOfPeople = model.NoOfPeople,
                     Status = model.Status,
                     IsRecurring = true,
                     Frequency = model.Frequency
                 };
 
-                recurringBookings.Add(newBooking);
+                bookings.Add(newBooking);
 
-                // Move to the next recurrence based on frequency
+                // Update the currentDate based on frequency
                 switch (model.Frequency.ToLower())
                 {
                     case "daily":
-                        nextStartDate = nextStartDate.AddDays(1);
-                        nextEndDate = nextEndDate.AddDays(1);
+                        currentDate = currentDate.AddDays(1);
                         break;
                     case "weekly":
-                        nextStartDate = nextStartDate.AddDays(7);
-                        nextEndDate = nextEndDate.AddDays(7);
+                        currentDate = currentDate.AddDays(7);
                         break;
                     case "monthly":
-                        nextStartDate = nextStartDate.AddMonths(1);
-                        nextEndDate = nextEndDate.AddMonths(1);
+                        currentDate = currentDate.AddMonths(1);
                         break;
                     default:
-                        throw new ArgumentException("Invalid frequency specified.");
+                        throw new ArgumentException("Invalid frequency specified");
                 }
             }
 
-            return recurringBookings;
+            return bookings;
         }
+
 
     }
 }

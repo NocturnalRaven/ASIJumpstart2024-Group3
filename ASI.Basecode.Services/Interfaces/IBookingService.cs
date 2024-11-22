@@ -15,7 +15,7 @@ namespace ASI.Basecode.Services.Interfaces
         void Delete(int id);
         IEnumerable<BookedRoomViewModel> RetrieveBookedRooms();
         int ArchiveExpiredBookings();
-        IEnumerable<BookingViewModel> GenerateRecurringBookings(BookingViewModel model);
+        public List<BookingViewModel> GenerateRecurringBookings(BookingViewModel model);
 
     }
 }
