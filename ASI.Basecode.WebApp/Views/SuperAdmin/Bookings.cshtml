@@ -92,7 +92,6 @@
                                 <i class="bi bi-bar-chart"></i>
                                 <p class=" text-muted noAnalyticsMessageText">No Inputs Yet</p>
                             </div>
-
                         </div>
                         <div class="chart-container">
                             <canvas id="analyticsChart"></canvas>
@@ -104,135 +103,135 @@
                 </div>
 
 
-                <!-- Add Booking Modal -->
-                <div class="modal fade" id="addBookingModal" tabindex="-1" aria-labelledby="addBookingModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="addBookingModalLabel">Add Booking</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form id="addBookingForm">
-                                    <div class="mb-3">
-                                        <label for="addBookingUser" class="form-label">User</label>
-                                        <select class="form-select" id="addBookingUser" required>
-                                            <!-- User options will be filled dynamically -->
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="addBookingRoom" class="form-label">Room</label>
-                                        <select class="form-select" id="addBookingRoom" required>
-                                            <!-- Room options will be filled dynamically -->
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="addBookingDate" class="form-label">Date</label>
-                                        <input type="date" class="form-control" id="addBookingDate" required>
-                                    </div>
-                                    <div>
-                                        <label for="AddBookingStartTime" class="form-label">Start Time</label>
-                                        <select class="form-control" id="AddBookingStartTime" required></select>
-                                    </div>
-                                    <div>
-                                        <label for="AddBookingEndTime" class="form-label">End Time</label>
-                                        <select class="form-control" id="AddBookingEndTime" required></select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="addBookingPeople" class="form-label">No. of People</label>
-                                        <input type="number" class="form-control" id="addBookingPeople" min="1" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="addBookingStatus" class="form-label">Status</label>
-                                        <select class="form-select" id="addBookingStatus" required>
-                                            <option value="Confirmed">Confirmed</option>
-                                            <option value="Pending">Pending</option>
-                                            <option value="Canceled">Canceled</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="addBookingRecurring" class="form-label">Recurring</label>
-                                        <input type="checkbox" id="addBookingRecurring">
-                                    </div>
-                                    <div class="mb-3" id="frequencySection" style="display: none;">
-                                        <label for="addBookingFrequency" class="form-label">Frequency</label>
-                                        <select class="form-select" id="addBookingFrequency">
-                                            <option value="Daily">Daily</option>
-                                            <option value="Weekly">Weekly</option>
-                                            <option value="Monthly">Monthly</option>
-                                        </select>
-                                    </div>
+            <!-- Add Booking Modal -->
+            <div class="modal fade" id="addBookingModal" tabindex="-1" aria-labelledby="addBookingModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addBookingModalLabel">Add Booking</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="addBookingForm">
+                                <div class="mb-3">
+                                    <label for="addBookingUser" class="form-label">User</label>
+                                    <select class="form-select" id="addBookingUser" required>
+                                        <!-- User options will be filled dynamically -->
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="addBookingRoom" class="form-label">Room</label>
+                                    <select class="form-select" id="addBookingRoom" required>
+                                        <!-- Room options will be filled dynamically -->
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="addBookingDate" class="form-label">Date</label>
+                                    <input type="date" class="form-control" id="addBookingDate" required>
+                                </div>
+                                <div>
+                                    <label for="AddBookingStartTime" class="form-label">Start Time</label>
+                                    <select class="form-control" id="AddBookingStartTime" required></select>
+                                </div>
+                                <div>
+                                    <label for="AddBookingEndTime" class="form-label">End Time</label>
+                                    <select class="form-control" id="AddBookingEndTime" required></select>
+                                </div>
+                                <div class="mb-3"> 
+                                    <label for="addBookingPeople" class="form-label">No. of People</label>
+                                    <input type="number" class="form-control" id="addBookingPeople" min="1" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="addBookingStatus" class="form-label">Status</label>
+                                    <select class="form-select" id="addBookingStatus" required>
+                                        <option value="Confirmed">Confirmed</option>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Canceled">Canceled</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="addBookingRecurring" class="form-label">Recurring</label>
+                                    <input type="checkbox" id="addBookingRecurring">
+                                </div>
+                                <div class="mb-3" id="frequencySection" style="display: none;">
+                                    <label for="addBookingFrequency" class="form-label">Frequency</label>
+                                    <select class="form-select" id="addBookingFrequency">
+                                        <option value="Daily">Daily</option>
+                                        <option value="Weekly">Weekly</option>
+                                        <option value="Monthly">Monthly</option>
+                                    </select>
+                                </div>
                                     <div class="mb-3" id="recurringSection" style="display: none;">
                                         <label for="addBookingEndDate" class="form-label">Recurring End Date</label>
                                         <input type="date" class="form-control" id="addBookingEndDate">
                                     </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                <button type="button" class="btn btn-primary" onclick="addBooking()">Add Booking</button>
-                            </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" onclick="addBooking()">Add Booking</button>
                         </div>
                     </div>
                 </div>
-
-                <!-- Edit Booking Modal -->
-                <div class="modal fade" id="editBookingModal" tabindex="-1" aria-labelledby="editBookingModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="editBookingModalLabel">Edit Booking</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form id="editBookingForm">
-                                    <div class="mb-3">
-                                        <label for="bookingUserInput" class="form-label">User</label>
-                                        <select class="form-select" id="bookingUserInput" required>
-                                            <!-- User options will be filled dynamically -->
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="bookingRoomInput" class="form-label">Room</label>
-                                        <select class="form-select" id="bookingRoomInput" required>
-                                            <!-- Room options will be filled dynamically -->
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="bookingDateInput" class="form-label">Date</label>
-                                        <input type="date" class="form-control" id="bookingDateInput" required>
-                                    </div>
-                                    <div>
-                                        <label for="startTime" class="form-label">Start Time</label>
-                                        <select class="form-control" id="startTime" required></select>
-                                    </div>
-                                    <div>
-                                        <label for="endTime" class="form-label">End Time</label>
-                                        <select class="form-control" id="endTime" required></select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="bookingPeopleInput" class="form-label">No. of People</label>
-                                        <input type="number"
-                                               class="form-control"
-                                               id="bookingPeopleInput">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="bookingStatusInput" class="form-label">Status</label>
-                                        <select class="form-select" id="bookingStatusInput" required>
-                                            <option value="Confirmed">Confirmed</option>
-                                            <option value="Pending">Pending</option>
-                                            <option value="Canceled">Canceled</option>
-                                        </select>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary" id="saveChangesBtn">Save changes</button>
-                            </div>
+            </div>
+                
+            <!-- Edit Booking Modal -->
+            <div class="modal fade" id="editBookingModal" tabindex="-1" aria-labelledby="editBookingModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editBookingModalLabel">Edit Booking</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="editBookingForm">
+                                <div class="mb-3">
+                                    <label for="bookingUserInput" class="form-label">User</label>
+                                    <select class="form-select" id="bookingUserInput" required>
+                                        <!-- User options will be filled dynamically -->
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bookingRoomInput" class="form-label">Room</label>
+                                    <select class="form-select" id="bookingRoomInput" required>
+                                        <!-- Room options will be filled dynamically -->
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bookingDateInput" class="form-label">Date</label>
+                                    <input type="date" class="form-control" id="bookingDateInput" required>
+                                </div>
+                                <div>
+                                    <label for="startTime" class="form-label">Start Time</label>
+                                    <select class="form-control" id="startTime" required></select>
+                                </div>
+                                <div>
+                                    <label for="endTime" class="form-label">End Time</label>
+                                    <select class="form-control" id="endTime" required></select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bookingPeopleInput" class="form-label">No. of People</label>
+                                    <input type="number"
+                                           class="form-control"
+                                           id="bookingPeopleInput">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bookingStatusInput" class="form-label">Status</label>
+                                    <select class="form-select" id="bookingStatusInput" required>
+                                        <option value="Confirmed">Confirmed</option>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Canceled">Canceled</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="saveChangesBtn">Save changes</button>
                         </div>
                     </div>
                 </div>
+            </div>
                 <!-- Success Modal for Booking -->
                 <div class="modal fade" id="bookingSuccessModal" tabindex="-1" aria-labelledby="bookingSuccessModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
@@ -288,10 +287,10 @@
                     </div>
                 </div>
 
-                <!-- JS Libraries -->
-                <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+            <!-- JS Libraries -->
+            <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
                 <script>
                     let bookingsData = []; // Global variable to store fetched bookings
                     let bookingDates = []; // Array to store unique booking dates
@@ -488,47 +487,47 @@
                             const color = ['#6848FF', '#AFAEFF', '#E6DEFF', '#F3F0FF', '#FFD700', '#FF5733'][index % 6]; // Loop colors if needed
 
                             const legendItem = `
-                                                                                            <div class="legend-item">
-                                                                                                <div class="legend-color" style="background-color: ${color};"></div>
-                                                                                                <span>${category}</span>
-                                                                                            </div>
-                                                                                        `;
+                                            <div class="legend-item">
+                                            <div class="legend-color" style="background-color: ${color};"></div>
+                                            <span>${category}</span>
+                                            </div>
+                                            `;
                             legendContainer.innerHTML += legendItem;
                         });
                     }
 
-                    function populateUserAndRoomSelect(users, rooms) {
-                        const addBookingUserSelect = document.getElementById('addBookingUser');
-                        const bookingUserInputSelect = document.getElementById('bookingUserInput');
-                        const addBookingRoomSelect = document.getElementById('addBookingRoom');
-                        const bookingRoomInputSelect = document.getElementById('bookingRoomInput');
+                function populateUserAndRoomSelect(users, rooms) {
+                    const addBookingUserSelect = document.getElementById('addBookingUser');
+                    const bookingUserInputSelect = document.getElementById('bookingUserInput');
+                    const addBookingRoomSelect = document.getElementById('addBookingRoom');
+                    const bookingRoomInputSelect = document.getElementById('bookingRoomInput');
 
-                        // Populate user options
-                        users.forEach(user => {
-                            const optionText = `${user.id} - ${user.name}`;
-                            const option = new Option(optionText, user.id);
-                            addBookingUserSelect.add(option);
-                            bookingUserInputSelect.add(option.cloneNode(true));
-                        });
+                    // Populate user options
+                    users.forEach(user => {
+                        const optionText = `${user.id} - ${user.name}`;
+                        const option = new Option(optionText, user.id);
+                        addBookingUserSelect.add(option);
+                        bookingUserInputSelect.add(option.cloneNode(true));
+                    });
 
-                        // Populate room options and add data attributes
-                        rooms.forEach(room => {
-                            const optionText = `${room.roomId} - ${room.name}`;
-                            const option = new Option(optionText, room.roomId);
+                    // Populate room options and add data attributes
+                    rooms.forEach(room => {
+                        const optionText = `${room.roomId} - ${room.name}`;
+                        const option = new Option(optionText, room.roomId);
 
-                            // Assign capacity with a fallback if undefined
-                            const capacity = room.capacity || 0;
-                            option.dataset.capacity = capacity;
+                        // Assign capacity with a fallback if undefined
+                        const capacity = room.capacity || 0;
+                        option.dataset.capacity = capacity;
 
-                            console.log(`Setting capacity for room ${room.roomId} as ${capacity}`); // Debug log
+                        console.log(`Setting capacity for room ${room.roomId} as ${capacity}`); // Debug log
 
-                            addBookingRoomSelect.add(option);
-                            bookingRoomInputSelect.add(option.cloneNode(true));
-                        });
+                        addBookingRoomSelect.add(option);
+                        bookingRoomInputSelect.add(option.cloneNode(true));
+                    });
 
-                        // Add event listener to update capacity display on room selection change
-                        addBookingRoomSelect.addEventListener('change', updateRoomCapacityDisplay);
-                    }
+                    // Add event listener to update capacity display on room selection change
+                    addBookingRoomSelect.addEventListener('change', updateRoomCapacityDisplay);
+                }
 
                     function renderBookings(bookings) {
                         const tbody = document.querySelector('#bookingsTable tbody');
@@ -562,49 +561,49 @@
 
                             const row = document.createElement('tr');
                             row.innerHTML = `
-                                                                                                                <td>${booking.userId}</td>
-                                                                                                                <td>${booking.userName}</td>
-                                                                                                                <td>${booking.roomId}</td>
-                                                                                                                <td>${booking.roomName}</td>
-                                                                                                                <td>${bookingDate}</td>
-                                                                                                                <td>${startTime}</td>
-                                                                                                                <td>${endTime}</td>
-                                                                                                                <td>${duration}</td>
-                                                                                                                <td>
-                                                                                                                    <button class="btn btn-primary btn-sm" onclick="viewBooking(${booking.bookingId})">View</button>
-                                                                                                                    <button class="btn btn-info btn-sm" onclick="editBooking(${booking.bookingId})">Edit</button>
-                                                                                                                    <button class="btn btn-danger btn-sm" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
-                                                                                                                </td>
-                                                                                                            `;
+                                <td>${booking.userId}</td>
+                                <td>${booking.userName}</td>
+                                <td>${booking.roomId}</td>
+                                <td>${booking.roomName}</td>
+                                <td>${bookingDate}</td>
+                                <td>${startTime}</td>
+                                <td>${endTime}</td>
+                                <td>${duration}</td>
+                                <td>
+                                    <button class="btn btn-sm view-btn-user-db"  onclick="viewBooking(${booking.bookingId})">View</button>
+                                    <button class="btn btn-sm edit-btn-user-db" onclick="editBooking(${booking.bookingId})">Edit</button>
+                                    <button class="btn btn-sm cancel-btn-user-db" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
+                                </td>
+                                `;
                             tbody.appendChild(row);
                         });
                     }
 
 
 
-                    function renderRecentBookings(bookings) {
-                        const container = document.querySelector('#recentBookingsContainer');
-                        container.innerHTML = '';
+                function renderRecentBookings(bookings) {
+                    const container = document.querySelector('#recentBookingsContainer');
+                    container.innerHTML = '';
 
-                        bookings.slice(0, 3).forEach(booking => {
-                            const bookingHTML = `
-                                                                                                <div class="recentBookings">
-                                                                                                <p class="userRecentBookings">${booking.userName}</p>
-                                                                                                <hr>
-                                                                                                    <div class="recentBookingsDetailsDiv">
-                                                                                                        <div class="recentBookingsDetails">
-                                                                                                            <i class="bi bi-house-door-fill"></i>
-                                                                                                            <p>${booking.roomName}</p>
-                                                                                                        </div>
-                                                                                                        <div class="recentBookingsDetails">
-                                                                                                            <i class="bi bi-calendar2-week"></i>
-                                                                                                            <p>${new Date(booking.startDate).toLocaleDateString()}</p>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                               </div>`;
-                            container.innerHTML += bookingHTML;
-                        });
-                    }
+                    bookings.slice(0, 3).forEach(booking => {
+                        const bookingHTML = `
+                            <div class="recentBookings">
+                            <p class="userRecentBookings">${booking.userName}</p>
+                            <hr>
+                            <div class="recentBookingsDetailsDiv">
+                            <div class="recentBookingsDetails">
+                            <i class="bi bi-house-door-fill"></i>
+                            <p>${booking.roomName}</p>
+                            </div>
+                            <div class="recentBookingsDetails">
+                            <i class="bi bi-calendar2-week"></i>
+                            <p>${new Date(booking.startDate).toLocaleDateString()}</p>
+                            </div>
+                            </div>
+                            </div>`;
+                        container.innerHTML += bookingHTML;
+                    });
+                }
 
                     async function addBooking() {
                         try {
@@ -717,22 +716,22 @@
                     }
 
 
-                    async function viewBooking(bookingId) {
-                        try {
-                            const booking = bookingsData.find(b => b.bookingId === bookingId);
+                async function viewBooking(bookingId) {
+                    try {
+                        const booking = bookingsData.find(b => b.bookingId === bookingId);
 
-                            if (!booking) throw new Error("Booking not found in fetched data");
+                        if (!booking) throw new Error("Booking not found in fetched data");
 
-                            const bookingDate = new Date(booking.startDate).toLocaleDateString();
-                            const startTime = new Date(booking.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                            const endTime = new Date(booking.endDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        const bookingDate = new Date(booking.startDate).toLocaleDateString();
+                        const startTime = new Date(booking.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        const endTime = new Date(booking.endDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-                            alert(`Booking Details:\nUser: ${booking.userName}\nRoom: ${booking.roomName}\nDate: ${bookingDate}\nStart Time: ${startTime}\nEnd Time: ${endTime}`);
-                        } catch (error) {
-                            console.error("Error viewing booking:", error);
-                            alert("An error occurred while viewing booking details.");
-                        }
+                        alert(`Booking Details:\nUser: ${booking.userName}\nRoom: ${booking.roomName}\nDate: ${bookingDate}\nStart Time: ${startTime}\nEnd Time: ${endTime}`);
+                    } catch (error) {
+                        console.error("Error viewing booking:", error);
+                        alert("An error occurred while viewing booking details.");
                     }
+                }
 
                     async function editBooking(bookingId) {
                         try {
@@ -838,70 +837,70 @@
 
 
 
-                    function updateCalendarWithBookings() {
-                        flatpickr("#calendar", {
-                            inline: true,
-                            mode: "single",
-                            dateFormat: "Y-m-d",
-                            defaultDate: bookingDates,
-                            onDayCreate: function (dObj, dStr, fp, dayElem) {
-                                const dateStr = new Date(dayElem.dateObj.getTime() - dayElem.dateObj.getTimezoneOffset() * 60000)
+                function updateCalendarWithBookings() {
+                    flatpickr("#calendar", {
+                        inline: true,
+                        mode: "single",
+                        dateFormat: "Y-m-d",
+                        defaultDate: bookingDates,
+                        onDayCreate: function (dObj, dStr, fp, dayElem) {
+                            const dateStr = new Date(dayElem.dateObj.getTime() - dayElem.dateObj.getTimezoneOffset() * 60000)
+                                .toISOString()
+                                .split("T")[0];
+                            if (bookingDates.includes(dateStr)) {
+                                dayElem.classList.add("has-booking");
+                            }
+                        },
+                        onChange: function (selectedDates) {
+                            if (selectedDates.length > 0) {
+                                const selectedDate = new Date(selectedDates[0].getTime() - selectedDates[0].getTimezoneOffset() * 60000)
                                     .toISOString()
                                     .split("T")[0];
-                                if (bookingDates.includes(dateStr)) {
-                                    dayElem.classList.add("has-booking");
-                                }
-                            },
-                            onChange: function (selectedDates) {
-                                if (selectedDates.length > 0) {
-                                    const selectedDate = new Date(selectedDates[0].getTime() - selectedDates[0].getTimezoneOffset() * 60000)
-                                        .toISOString()
-                                        .split("T")[0];
-                                    showBookingsForDate(selectedDate);
-                                }
+                                showBookingsForDate(selectedDate);
                             }
-                        });
-                    }
-
-                    // Helper function to update the room status to "Booked" without affecting other fields
-                    async function updateRoomStatus(roomId, status) {
-                        try {
-                            // Fetch the full room details to get all attributes
-                            const roomResponse = await fetch(`/api/rooms/${roomId}`);
-
-                            if (!roomResponse.ok) {
-                                console.error("Failed to fetch room details for status update.");
-                                alert("Error fetching room details before updating status.");
-                                return;
-                            }
-
-                            const roomData = await roomResponse.json();
-
-                            // Check the values of the room data before updating
-                            console.log("Room data fetched before update:", roomData);
-
-                            // Ensure we only modify the status field while preserving other attributes
-                            roomData.status = status;
-
-                            // Send back the full room data to preserve all properties
-                            const updateResponse = await fetch(`/api/rooms/${roomId}`, {
-                                method: 'PUT',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify(roomData),
-                            });
-
-                            if (!updateResponse.ok) {
-                                const errorText = await updateResponse.text();
-                                console.error("Failed to update room status:", errorText);
-                                alert(`Error updating room status: ${errorText}`);
-                            } else {
-                                console.log("Room status updated successfully:", roomData);
-                            }
-                        } catch (error) {
-                            console.error("Error updating room status:", error);
-                            alert("An unexpected error occurred while updating room status.");
                         }
+                    });
+                }
+
+                // Helper function to update the room status to "Booked" without affecting other fields
+                async function updateRoomStatus(roomId, status) {
+                    try {
+                        // Fetch the full room details to get all attributes
+                        const roomResponse = await fetch(`/api/rooms/${roomId}`);
+
+                        if (!roomResponse.ok) {
+                            console.error("Failed to fetch room details for status update.");
+                            alert("Error fetching room details before updating status.");
+                            return;
+                        }
+
+                        const roomData = await roomResponse.json();
+
+                        // Check the values of the room data before updating
+                        console.log("Room data fetched before update:", roomData);
+
+                        // Ensure we only modify the status field while preserving other attributes
+                        roomData.status = status;
+
+                        // Send back the full room data to preserve all properties
+                        const updateResponse = await fetch(`/api/rooms/${roomId}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(roomData),
+                        });
+
+                        if (!updateResponse.ok) {
+                            const errorText = await updateResponse.text();
+                            console.error("Failed to update room status:", errorText);
+                            alert(`Error updating room status: ${errorText}`);
+                        } else {
+                            console.log("Room status updated successfully:", roomData);
+                        }
+                    } catch (error) {
+                        console.error("Error updating room status:", error);
+                        alert("An unexpected error occurred while updating room status.");
                     }
+                }
 
                     function validateBookingForm(formId) {
                         const form = document.getElementById(formId);
@@ -1068,95 +1067,95 @@
                         return isValid;
                     }
 
-                    function updateRoomCapacityDisplay() {
-                        const roomSelect = document.getElementById('addBookingRoom');
-                        const selectedOption = roomSelect.options[roomSelect.selectedIndex];
+                function updateRoomCapacityDisplay() {
+                    const roomSelect = document.getElementById('addBookingRoom');
+                    const selectedOption = roomSelect.options[roomSelect.selectedIndex];
 
-                        // Parse the capacity value and log it
-                        selectedRoomCapacity = parseInt(selectedOption.dataset.capacity, 10);
-                        console.log(`Selected room capacity: ${selectedRoomCapacity}`); // Debug log
+                    // Parse the capacity value and log it
+                    selectedRoomCapacity = parseInt(selectedOption.dataset.capacity, 10);
+                    console.log(`Selected room capacity: ${selectedRoomCapacity}`); // Debug log
 
-                        // Display room capacity to the user
-                        let capacityDisplay = document.getElementById('capacityDisplay');
-                        if (!capacityDisplay) {
-                            capacityDisplay = document.createElement('div');
-                            capacityDisplay.id = 'capacityDisplay';
-                            capacityDisplay.className = 'text-muted';
-                            roomSelect.parentElement.appendChild(capacityDisplay);
-                        }
-                        capacityDisplay.textContent = `Room Capacity: ${selectedRoomCapacity}`;
+                    // Display room capacity to the user
+                    let capacityDisplay = document.getElementById('capacityDisplay');
+                    if (!capacityDisplay) {
+                        capacityDisplay = document.createElement('div');
+                        capacityDisplay.id = 'capacityDisplay';
+                        capacityDisplay.className = 'text-muted';
+                        roomSelect.parentElement.appendChild(capacityDisplay);
                     }
-                    function showBookingsForDate(date) {
-                        const selectedDate = new Date(date).toISOString().split("T")[0];
+                    capacityDisplay.textContent = `Room Capacity: ${selectedRoomCapacity}`;
+                }
+                function showBookingsForDate(date) {
+                    const selectedDate = new Date(date).toISOString().split("T")[0];
 
-                        const filteredBookings = bookingsData.filter(booking => {
-                            const bookingDate = new Date(new Date(booking.startDate).getTime() - new Date(booking.startDate).getTimezoneOffset() * 60000)
-                                .toISOString()
-                                .split("T")[0];
-                            return bookingDate === selectedDate;
+                    const filteredBookings = bookingsData.filter(booking => {
+                        const bookingDate = new Date(new Date(booking.startDate).getTime() - new Date(booking.startDate).getTimezoneOffset() * 60000)
+                            .toISOString()
+                            .split("T")[0];
+                        return bookingDate === selectedDate;
+                    });
+
+                    const bookingsContainer = document.getElementById("recentBookingsContainer");
+                    bookingsContainer.innerHTML = '';
+
+                    if (filteredBookings.length > 0) {
+                        filteredBookings.forEach(booking => {
+                            const bookingHTML = `
+                                                                                                <div class="recentBookings">
+                                                                                                    <p class="userRecentBookings">${booking.userName}</p>
+                                                                                                    <hr>
+                                                                                                    <div class="recentBookingsDetailsDiv">
+                                                                                                        <div class="recentBookingsDetails">
+                                                                                                            <i class="bi bi-house-door-fill"></i>
+                                                                                                            <p>${booking.roomName}</p>
+                                                                                                        </div>
+                                                                                                        <div class="recentBookingsDetails">
+                                                                                                            <i class="bi bi-calendar2-week"></i>
+                                                                                                            <p>${new Date(booking.startDate).toLocaleDateString()}</p>
+                                                                                                        </div>
+                                                                                                        <div class="recentBookingsDetails">
+                                                                                                            <i class="bi bi-clock"></i>
+                                                                                                            <p>${new Date(booking.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(booking.endDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>`;
+                            bookingsContainer.innerHTML += bookingHTML;
                         });
+                    } else {
+                        bookingsContainer.innerHTML = `<p class="text-muted">No bookings for this date.</p>`;
+                    }
+                }
+                // Function to periodically check and archive expired bookings
+                async function archiveExpiredBookings() {
+                    const now = new Date();
 
-                        const bookingsContainer = document.getElementById("recentBookingsContainer");
-                        bookingsContainer.innerHTML = '';
+                    const expiredBookings = bookingsData.filter(booking =>
+                        new Date(booking.endDate) < now &&
+                        booking.status !== 'Archived' &&
+                        booking.isRecurring);
 
-                        if (filteredBookings.length > 0) {
-                            filteredBookings.forEach(booking => {
-                                const bookingHTML = `
-                                                                                                                    <div class="recentBookings">
-                                                                                                                        <p class="userRecentBookings">${booking.userName}</p>
-                                                                                                                        <hr>
-                                                                                                                        <div class="recentBookingsDetailsDiv">
-                                                                                                                            <div class="recentBookingsDetails">
-                                                                                                                                <i class="bi bi-house-door-fill"></i>
-                                                                                                                                <p>${booking.roomName}</p>
-                                                                                                                            </div>
-                                                                                                                            <div class="recentBookingsDetails">
-                                                                                                                                <i class="bi bi-calendar2-week"></i>
-                                                                                                                                <p>${new Date(booking.startDate).toLocaleDateString()}</p>
-                                                                                                                            </div>
-                                                                                                                            <div class="recentBookingsDetails">
-                                                                                                                                <i class="bi bi-clock"></i>
-                                                                                                                                <p>${new Date(booking.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(booking.endDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-                                                                                                                            </div>
-                                                                                                                        </div>
-                                                                                                                    </div>`;
-                                bookingsContainer.innerHTML += bookingHTML;
+                    for (const booking of expiredBookings) {
+                        try {
+                            const updatedBooking = { ...booking, status: 'Archived' };
+
+                            const response = await fetch(`/api/bookings/ArchiveBooking/${booking.bookingId}`, {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(updatedBooking)
                             });
-                        } else {
-                            bookingsContainer.innerHTML = `<p class="text-muted">No bookings for this date.</p>`;
-                        }
-                    }
-                    // Function to periodically check and archive expired bookings
-                    async function archiveExpiredBookings() {
-                        const now = new Date();
 
-                        const expiredBookings = bookingsData.filter(booking =>
-                            new Date(booking.endDate) < now &&
-                            booking.status !== 'Archived' &&
-                            booking.isRecurring);
-
-                        for (const booking of expiredBookings) {
-                            try {
-                                const updatedBooking = { ...booking, status: 'Archived' };
-
-                                const response = await fetch(`/api/bookings/ArchiveBooking/${booking.bookingId}`, {
-                                    method: 'PUT',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify(updatedBooking)
-                                });
-
-                                if (response.ok) {
-                                    console.log(`Booking ${booking.bookingId} archived successfully.`);
-                                    bookingsData = bookingsData.filter(b => b.bookingId !== booking.bookingId);
-                                    renderBookings(bookingsData);
-                                } else {
-                                    console.error(`Failed to archive booking ${booking.bookingId}`);
-                                }
-                            } catch (error) {
-                                console.error(`Error archiving booking ${booking.bookingId}:`, error);
+                            if (response.ok) {
+                                console.log(`Booking ${booking.bookingId} archived successfully.`);
+                                bookingsData = bookingsData.filter(b => b.bookingId !== booking.bookingId);
+                                renderBookings(bookingsData);
+                            } else {
+                                console.error(`Failed to archive booking ${booking.bookingId}`);
                             }
+                        } catch (error) {
+                            console.error(`Error archiving booking ${booking.bookingId}:`, error);
                         }
                     }
+                }
                     // Helper function to format time as "HH:mm"
                     function formatTime(dateObj) {
                         const hours = String(dateObj.getHours()).padStart(2, '0');
@@ -1450,27 +1449,27 @@
                     }
 
 
-                    // Restrict date picker to current date and future dates only
-                    function restrictBookingDate() {
-                        const bookingDateInput = document.getElementById('addBookingDate');
-                        const today = new Date();
+                // Restrict date picker to current date and future dates only
+                function restrictBookingDate() {
+                    const bookingDateInput = document.getElementById('addBookingDate');
+                    const today = new Date();
 
-                        // Format today's date as YYYY-MM-DD
-                        const formattedDate = today.toISOString().split('T')[0];
+                    // Format today's date as YYYY-MM-DD
+                    const formattedDate = today.toISOString().split('T')[0];
 
-                        // Set the min attribute to today's date
-                        bookingDateInput.setAttribute('min', formattedDate);
-                    }
-                    function calculateBookingDuration(startDate, endDate) {
-                        const start = new Date(startDate);
-                        const end = new Date(endDate);
-                        const diffInMinutes = Math.abs((end - start) / (1000 * 60)); // Difference in minutes
+                    // Set the min attribute to today's date
+                    bookingDateInput.setAttribute('min', formattedDate);
+                }
+                function calculateBookingDuration(startDate, endDate) {
+                    const start = new Date(startDate);
+                    const end = new Date(endDate);
+                    const diffInMinutes = Math.abs((end - start) / (1000 * 60)); // Difference in minutes
 
-                        const hours = Math.floor(diffInMinutes / 60);
-                        const minutes = diffInMinutes % 60;
+                    const hours = Math.floor(diffInMinutes / 60);
+                    const minutes = diffInMinutes % 60;
 
-                        return `${hours}h ${minutes}m`; // Format as "Xh Ym"
-                    }
+                    return `${hours}h ${minutes}m`; // Format as "Xh Ym"
+                }
 
 
                     function generateRecurringDates(startDate, frequency, endDate) {
@@ -1495,8 +1494,8 @@
                         return dates;
                     }
 
-                    // Call this function periodically
-                    setInterval(archiveExpiredBookings, 10 * 60 * 1000); // Every 10 minutes
+                // Call this function periodically
+                setInterval(archiveExpiredBookings, 10 * 60 * 1000); // Every 10 minutes
 
                     document.addEventListener("DOMContentLoaded", () => {
                         // Set the minimum date for the booking date input
@@ -1592,6 +1591,6 @@
                     }
 
 
-                </script>
-</body>
+           </script>
+    </body>
 </html>

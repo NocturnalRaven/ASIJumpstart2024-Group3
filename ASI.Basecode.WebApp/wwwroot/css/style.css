@@ -993,17 +993,107 @@ table tbody tr td {
     color: #9e9e9e; /* Dimmed text color */
     cursor: not-allowed; /* Optional: indicate non-clickable past dates */
 }
-
 /* Days with bookings styling */
 .flatpickr-day.has-booking {
     background-color: #3f51b5; /* Highlight color for booking days */
     color: white;
     border-radius: 50%; /* Circular highlight */
 }
-
 /* Combine styles for past dates with bookings (if needed) */
 .flatpickr-day.past-date.has-booking {
     background-color: #9c27b0; /* Distinct color for past booking days */
     color: white;
+}
+
+.cancel-btn-user-db {
+    background-color: #FFE5CA;
+    color: #E74646;
+    font-size: 10px !important;
+}
+
+.edit-btn-user-db {
+    background-color: #C0EBA6;
+    color: #347928;
+    font-size: 10px !important;
+}
+
+.view-btn-user-db {
+    background-color: #B9E5E8;
+    color: #4A628A;
+    font-size: 10px !important;
+}
+
+.admin-rooms-section {
+    height: 98% !important;
+}
+
+.no-rooms-available-placeholder {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-rooms-section-table-wrapper, .admin-booked-section-table-wrapper {
+    height: 100%;
+}
+
+.no-rooms-available-placeholder-label {
+    font-size: 14px;
+    color: #D3D3D3;
+}
+
+.no-rooms-available-placeholder-label {
+    text-decoration: none;
+}
+
+#adminUserTable {
+    margin-top: 10px;
+}
+
+.admin-user-dashboard {
+    height: 98% !important;
+}
+
+.bi-calendar4-week {
+    font-size: 34px;
+    font-weight: 600;
+    color: rgba(85, 103, 156, 0.5);
+}
+
+.no-bookings-currently-user-db {
+    height: 100% !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.user-bookings-db-section {
+    height: 100% !important;
+}
+
+.userBookings-user-bookings-page-icon {
+    font-size: 54px;
+}
+
+.user-bookings-page-table-group {
+    height: 100% !important;
+}
+
+    .user-bookings-page-table-group:hover {
+        text-decoration: none !important;
+    }
+
+.user-add-booking-db {
+    background-color: #3f51b5;
+    color: #fefefe;
+    font-size: 12px;
+}
+
+.super-admin-accounts-db {
+    height: 98% !important;
 }
 

@@ -24,7 +24,7 @@
 <body>
     <main class="mainBody">
         <div class="mainBodyInner">
-            <div class="bookingsDashboard userDashboard">
+            <div class="bookingsDashboard userDashboard admin-user-dashboard">
                 <div class="bookingsDashboardHeader">
                     <p class="bookingsDashboardTitle">Users</p>
                     <div class="users-inputGroup">
@@ -68,8 +68,8 @@
                                 <td>@Html.DisplayFor(modelItem => item.DateCreated)</td>
                                 <td>@Html.DisplayFor(modelItem => item.DateModified)</td>
                                 <td>
-                                    <button type="button" class="btn btn-secondary btn-sm" onclick="editUser(@item.Id)">Edit</button>
-                                    <button type="button" class="btn btn-danger btn-sm" onclick="showDeleteModal(@item.Id)">Delete</button>
+                                    <button type="button" class="btn edit-btn-user-db btn-sm" onclick="editUser(@item.Id)">Edit</button>
+                                    <button type="button" class="btn cancel-btn-user-db btn-sm" onclick="showDeleteModal(@item.Id)">Delete</button>
                                 </td>
                             </tr>
                         }
@@ -273,8 +273,8 @@
                         <td>${new Date(user.DateCreated).toLocaleDateString()}</td>
                         <td>${new Date(user.DateModified).toLocaleDateString()}</td>
                         <td>
-                            <button type="button" class="btn btn-secondary btn-sm" onclick="editUser(${user.Id})">Edit</button>
-                            <button type="button" class="btn btn-danger btn-sm" onclick="showDeleteModal(${user.Id})">Delete</button>
+                        <button type="button" class="btn btn-sm edit-btn-user-db" onclick="editUser(${user.Id})">Edit</button>
+                        <button type="button" class="btn btn-sm cancel-btn-user-db" onclick="showDeleteModal(${user.Id})">Delete</button>
                         </td>
                     `;
                     tbody.appendChild(tr);
@@ -296,8 +296,8 @@
                         <td>${new Date(user.DateCreated).toLocaleDateString()}</td>
                         <td>${new Date(user.DateModified).toLocaleDateString()}</td>
                         <td>
-                            <button type="button" class="btn btn-secondary btn-sm" onclick="editUser(${user.Id})">Edit</button>
-                            <button type="button" class="btn btn-danger btn-sm" onclick="showDeleteModal(${user.Id})">Delete</button>
+                        <button type="button" class="btn btn-sm edit-btn-user-db" onclick="editUser(${user.Id})">Edit</button>
+                        <button type="button" class="btn btn-sm cancel-btn-user-db" onclick="showDeleteModal(${user.Id})">Delete</button>
                         </td>
                     `;
                     tbody.appendChild(tr);
