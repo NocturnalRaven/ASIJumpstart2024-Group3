@@ -16,13 +16,12 @@
 </head>
 
 <body>
-    <main class="mainBody">
-        <div class="mainBodyInner">
+    <main class="mainBody mainBodyAdminAnalytics">
+        <div class="mainBodyInner mainBodyInnerAdminAnalytics">
             <aside class="calendarSide">
                 <div id="calendar"></div>
             </aside>
             <div class="mainContent">
-                <div class="bookingsDashboardLower">
                     <div class="analytics-card">
                         <div class="d-flex justify-content-between align-items-center">
                             <p class="bookingsDashboardTitle">Analytics</p>
@@ -39,7 +38,7 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="chart-container">
+                        <div class="chart-container3">
                             <canvas id="analyticsChart"></canvas>
                         </div>
                         <div class="legend-container">
@@ -61,15 +60,16 @@
                             </div>
                         </div>
                     </div>
-                    <div class="dashboardPending">
-                        <div class="chart-container2">
-                            <canvas id="barChart" width="300" height="300"></canvas>
+                <div class="mainContent mainContentAdminAnalytics">
+                    <div class="dashboardPending admin-analytics-bar-chart">
+                        <div class="chart-container3">
+                            <canvas id="barChart"></canvas>
                         </div>
                     </div>
                 </div>
                 <div class="bookingsDashboard">
-                    <div class="chart-container2">
-                        <canvas id="lineChart" width="300" height="300"></canvas>
+                    <div class="chart-container3">
+                        <canvas id="lineChart"></canvas>
                     </div>
                 </div>
             </div>
