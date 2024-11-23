@@ -88,7 +88,7 @@
                         <div class="userBookingsDashboardHeader">
                             <p class="userBookingsDashboardTitle">Bookings</p>
                         </div>
-                        <div class="table-wrapper user-bookings-db-section">
+                        <div class="table-responsive user-bookings-db-section">
                             <table class="table table-striped align-middle" id="userBookingsTable">
                                 <thead>
                                     <tr>
@@ -565,60 +565,67 @@
         }
 
             function renderBookingsTable(bookings) {
-                const tableWrapper = document.querySelector('.userBookingsDashboard .table-wrapper');
+                const tableWrapper = document.querySelector('.userBookingsDashboard .table-responsive');
                 tableWrapper.innerHTML = ''; // Clear existing content
                 if (bookings.length === 0) {
                     // If there are no bookings, display a message
                     tableWrapper.innerHTML = `<div class="text-center text-muted m-0 no-rooms-available-placeholder no-bookings-currently-user-db">
-                                        <i class="bi bi-calendar4-week"></i>
-                                        <p class="m-0 no-rooms-available-placeholder-label">No Bookings Currently</p>
-                                        </div>`;
+                                                        <i class="bi bi-calendar4-week userBookings-user-bookings-page-icon"></i>
+                                                        <p class="m-0 no-rooms-available-placeholder-label">No Bookings Currently</p>
+                                                        </div>`;
                     return;
                 }
                 // If there are bookings, render the table
                 const tableHTML = `
-                                <table class="table table-striped align-middle" id="userBookingsTable">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Room</th>
-                                            <th scope="col">Date</th>
-                                            <th scope="col">Start Time</th>
-                                            <th scope="col">End Time</th>
-                                            <th scope="col">Duration</th>
-                                            <th scope="col">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${bookings
-                        .map(
-                            (booking) => {
-                                const bookingDate = new Date(booking.startDate).toLocaleDateString();
-                                const startTime = new Date(booking.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                                const endTime = new Date(booking.endDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                                const duration = Math.abs(new Date(booking.endDate) - new Date(booking.startDate)) / (1000 * 60); // Duration in minutes
-                                const hours = Math.floor(duration / 60);
-                                const minutes = duration % 60;
-                                const formattedDuration = `${hours}h ${minutes}m`;
-                                return `
+                                    <table class="table table-responsive align-middle" id="userBookingsTable">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Room Name</th>
+                                                <th scope="col">Style</th>
+                                                <th scope="col">Booking Date</th>
+                                                <th scope="col">Start Time</th>
+                                                <th scope="col">End Time</th>
+                                                <th scope="col">Duration</th>
+                                                <th scope="col">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${bookings
+                        .map((booking) => {
+                            const bookingDate = new Date(booking.startDate).toLocaleDateString();
+                            const startTime = new Date(booking.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            const endTime = new Date(booking.endDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            const duration = Math.abs(new Date(booking.endDate) - new Date(booking.startDate)) / (1000 * 60); // Duration in minutes
+                            const hours = Math.floor(duration / 60);
+                            const minutes = duration % 60;
+                            const formattedDuration = `${hours}h ${minutes}m`;
+                            // Check if the booking is in the past
+                            const isPastBooking = new Date(booking.endDate) < new Date();
+                            return `
                                                         <tr>
                                                             <td>${booking.roomName || 'Unknown Room'}</td>
+                                                            <td>${booking.roomStyle || 'Unknown Style'}</td>
                                                             <td>${bookingDate}</td>
                                                             <td>${startTime}</td>
                                                             <td>${endTime}</td>
                                                             <td>${formattedDuration}</td>
                                                             <td>
                                                                 <button class="btn btn-sm view-btn-user-db" onclick="viewBooking(${booking.bookingId})">View</button>
-                                                                <button class="btn btn-sm edit-btn-user-db" onclick="editBooking(${booking.bookingId})">Edit</button>
-                                                                <button class="btn btn-sm cancel-btn-user-db" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
+                                                                ${isPastBooking
+                                    ? ''
+                                    : `
+                                                                    <button class="btn btn-sm edit-btn-user-db" onclick="editBooking(${booking.bookingId})">Edit</button>
+                                                                    <button class="btn btn-sm cancel-btn-user-db" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
+                                                                `
+                                }
                                                             </td>
                                                         </tr>
                                                     `;
-                            }
-                        )
+                        })
                         .join('')}
-                                    </tbody>
-                                </table>
-                            `;
+                                        </tbody>
+                                    </table>
+                                `;
                 tableWrapper.innerHTML = tableHTML;
             }
 
