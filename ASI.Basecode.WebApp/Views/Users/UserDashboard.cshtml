@@ -600,6 +600,7 @@
                                 const minutes = duration % 60;
                                 const formattedDuration = `${hours}h ${minutes}m`;
                                 const isPastBooking = new Date(booking.endDate) < new Date();
+                                const isRecurring = booking.isRecurring;
                                 return `
                                                         <tr>
                                                             <td>${booking.roomName || 'Unknown Room'}</td>
@@ -608,24 +609,25 @@
                                                             <td>${endTime}</td>
                                                             <td>${formattedDuration}</td>
                                                             <td>
-                                                                <button class="btn btn-sm view-btn-user-db" onclick="viewBooking(${booking.bookingId})">View</button>
-                                                                ${isPastBooking
-                                        ? ''
-                                        : `
-                                                                    <button class="btn btn-sm edit-btn-user-db" onclick="editBooking(${booking.bookingId})">Edit</button>
-                                                                    <button class="btn btn-sm cancel-btn-user-db" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
-                                                                `
-                                    }
-                                                            </td>
-                                                        </tr>
-                                                    `;
-                            })
-                        .join('')}
-                                        </tbody>
-                                    </table>
-                                `;
-                tableWrapper.innerHTML = tableHTML;
-            }
+                                                            <button class="btn btn-sm view-btn-user-db" onclick="viewBooking(${booking.bookingId})">View</button>
+                                                            ${isPastBooking || isRecurring
+                                ? '' // No Edit button for past or recurring bookings
+                                : `<button class="btn btn-sm edit-btn-user-db" onclick="editBooking(${booking.bookingId})">Edit</button>`
+                            }
+                                                            ${isRecurring || !isPastBooking
+                                ? `<button class="btn btn-sm cancel-btn-user-db" onclick="cancelBooking(${booking.bookingId})">Cancel</button>`
+                                : '' // Cancel button for recurring or active bookings
+                            }
+                                                        </td>
+                                                    </tr>
+                                                `;
+                    })
+                    .join('')}
+                                    </tbody>
+                                </table>
+                            `;
+            tableWrapper.innerHTML = tableHTML;
+        }
 
             function cancelBooking(bookingId) {
                 if (confirm('Are you sure you want to cancel this booking?')) {
