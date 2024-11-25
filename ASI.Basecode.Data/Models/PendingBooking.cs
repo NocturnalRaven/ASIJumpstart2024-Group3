@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ASI.Basecode.WebApp.Models
+namespace ASI.Basecode.Data.Models
 {
     public partial class PendingBooking
     {
@@ -10,6 +10,8 @@ namespace ASI.Basecode.WebApp.Models
         public string ApprovalStatus { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+        public bool Deleted { get; set; }
+        public DateTime? DeletedAt { get; set; }
 
         public virtual Booking Booking { get; set; }
     }

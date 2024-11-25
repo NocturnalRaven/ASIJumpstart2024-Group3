@@ -1,6 +1,5 @@
 ﻿using ASI.Basecode.Data.Interfaces;
 using ASI.Basecode.Data.Models;
-using ASI.Basecode.WebApp.Models;
 using Basecode.Data.Repositories;
 using System;
 using System.Collections.Generic;
@@ -19,8 +18,11 @@ namespace ASI.Basecode.Data.Repositories
 
         public IQueryable<Booking> GetBooking()
         {
-            return this.GetDbSet<Booking>();
+            var bookings = this.GetDbSet<Booking>();
+            Console.WriteLine($"Total Bookings Retrieved: {bookings.Count()}"); // Log the count for debugging
+            return bookings;
         }
+
 
         public bool BookingExists(int bookingId)
         {
@@ -29,12 +31,11 @@ namespace ASI.Basecode.Data.Repositories
 
         public void AddBooking(Booking booking)
         {
-            var maxId = this.GetDbSet<Booking>().Max(x => x.Id) + 1;
-            booking.Id = maxId;
             booking.CreatedAt = DateTime.Now;
             this.GetDbSet<Booking>().Add(booking);
-            UnitOfWork.SaveChanges();
+            UnitOfWork.SaveChanges(); // The database will handle ID assignment
         }
+
 
         public void UpdateBooking(Booking booking)
         {
@@ -53,6 +54,27 @@ namespace ASI.Basecode.Data.Repositories
             }
             UnitOfWork.SaveChanges();
         }
+        /// <summary>
+        /// Archives expired bookings by setting their status to "Archived".
+        /// </summary>
+        /// <returns>The count of bookings archived.</returns>
+        public int ArchiveExpiredBookings()
+        {
+            var expiredBookings = this.GetDbSet<Booking>()
+                .Where(b => b.EndDate < DateTime.Now && b.Status != "Archived" && !b.Deleted);
 
+            int archivedCount = 0;
+            foreach (var booking in expiredBookings)
+            {
+                booking.Status = "Archived";
+                booking.UpdatedAt = DateTime.Now;
+                archivedCount++;
+            }
+
+            UnitOfWork.SaveChanges(); // Save changes after updating statuses
+            Console.WriteLine($"{archivedCount} expired bookings have been archived."); // Log the count for confirmation
+
+            return archivedCount;
+        }
     }
 }

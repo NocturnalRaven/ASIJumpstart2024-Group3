@@ -149,8 +149,8 @@ nav {
 }
 
 .calendarSide {
-
-    flex: 1;
+    /*    flex: 1;*/
+    /*width: 300px;*/
     background-color: #ffffff;
     border-radius: 15px;
     display: flex;
@@ -215,6 +215,19 @@ nav {
 /* Reduce padding for month container to make it fit */
 .flatpickr-current-month {
     padding: 5px !important;
+}
+
+.flatpickr-innerContainer {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.flatpickr-months {
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-left: 20px;
+    margin-right: 20px;
 }
 
 .recentBookingsAside {
@@ -285,15 +298,50 @@ nav {
     padding: 15px 25px;
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
+    /*    overflow-y: auto;*/
+    height: 100%;
+}
+
+.bookingsDashboard {
+    flex: 1;
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 15px 25px;
+    display: flex;
+    flex-direction: column;
+    /*    overflow-y: auto;*/
+    height: 50% !important;
+}
+
+.bookingsDashboard {
+    flex: 1;
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 15px 25px;
+    display: flex;
+    flex-direction: column;
+    /*    overflow-y: auto;*/
+    height: 50% !important;
+}
+
+.bookingsDashboard {
+    flex: 1;
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 15px 25px;
+    display: flex;
+    flex-direction: column;
+    /*    overflow-y: auto;*/
+    height: 50% !important;
 }
 
 .bookingsDashboardLower {
     flex: 1;
     display: flex;
     gap: 15px;
+    height: 100%;
     /* height: 100%; */
-    overflow-y: auto;
+    /*    overflow-y: auto;*/
 }
 
 .dashboardPending {
@@ -303,13 +351,14 @@ nav {
     padding: 15px 25px;
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
+    /*    overflow-y: auto;*/
 }
 
 .dashboardAnalytics {
     flex: 1;
     background-color: #ffffff;
     border-radius: 15px;
+    height: 40%;
 }
 
 .bookingsDashboardHeader {
@@ -368,8 +417,9 @@ table tbody tr td {
     flex: 1;
     background-color: #fff;
     border-radius: 15px;
-    padding: 20px;
-    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    padding: 15px;
+    /*    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;*/
+    height: 100%;
     text-align: center;
 }
 
@@ -386,8 +436,8 @@ table tbody tr td {
 
 .legend-container {
     display: flex;
-    justify-content: center;
-    gap: 15px;
+    /*    justify-content: center;*/
+    gap: 5px;
     margin-top: 15px;
 }
 
@@ -406,8 +456,9 @@ table tbody tr td {
 
 .chart-container {
     position: relative;
-    width: 300px; /* Adjust the width to make the chart smaller */
-    height: 300px; /* Adjust the height to make the chart smaller */
+    align-items: center;
+    width: 200px; /* Adjust the width to make the chart smaller */
+    height: 200px; /* Adjust the height to make the chart smaller */
     margin: 0 auto;
 }
 
@@ -522,11 +573,11 @@ table tbody tr td {
 
 
 /* analytics */
-.chart-container2 {
+/*.chart-container2 {
     position: relative;
     width: 100%;
     height: 100%;
-}
+}*/
 
 
 /* room  */
@@ -623,7 +674,9 @@ table tbody tr td {
 .userDashboardRoomsCardView {
     display: flex;
     flex-direction: row;
-    gap: 10px;
+    gap: 7px;
+    background-color: white;
+    border-radius: 15px;
 }
 
 
@@ -746,11 +799,12 @@ table tbody tr td {
 }
 
 .userDashboardRoomsCard {
-    min-width: 250px; /* Set a fixed minimum width for the cards */
-    max-width: 250px; /* Ensure all cards have the same width */
+    min-width: 200px; /* Set a fixed minimum width for the cards */
+    max-width: 200px; /* Ensure all cards have the same width */
     background-color: #ffffff;
     padding: 10px;
     border-radius: 15px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 /* Style the images to ensure they fit well in the card */
@@ -840,4 +894,309 @@ table tbody tr td {
 
 .logoutBtn {
     background-color: #E5E4E2;
+}
+
+.scrollable-rooms {
+    max-height: 400px; /* Adjust height as needed */
+    overflow-y: auto; /* Enable vertical scrolling */
+    min-height: 316px;
+}
+
+
+.userDashboardLayout {
+    display: flex;
+    flex-direction: column;
+}
+
+#bookingsTable thead tr th {
+    font-size: 12px !important;
+}
+
+#noBookingsMessage {
+}
+
+.noBookingsMessageGroup, .noDataMessageGroup, .noRoomsAddedYetGroup {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: max-content;
+    justify-content: center;
+    align-items: center;
+}
+
+.bi-calendar2-x, .bi-bar-chart, .bi-emoji-frown {
+    color: lightgray;
+    font-size: 60px;
+}
+
+.noBookingsMessageText, .noAnalyticsMessageText, .noRoomsAddedYetText {
+    margin: 0;
+    color: lightgray !important;
+}
+
+.chart-container, .chart-container2 {
+    width: 100%; /* Full width of parent */
+    height: 300px; /* Consistent height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+
+    .chart-container canvas,
+    .chart-container2 canvas {
+        width: 100% !important;
+        /*        height: 100% !important;  Force the canvas to fill its container */
+    }
+
+
+
+.flatpickr-next-month {
+    margin-right: 5%;
+}
+
+.flatpickr-prev-month {
+    margin-left: 5%;
+}
+
+#bookingsTable tbody tr td {
+    font-size: 12px;
+}
+
+.scrollable-table {
+    max-height: 250px; /* Adjust the height as needed */
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: auto; /* Enable horizontal scrolling if needed */
+}
+
+    .scrollable-table::-webkit-scrollbar {
+        display: none;
+    }
+
+.userRoomNBookingSection {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+}
+
+.userBookingsDashboard {
+    height: 36vh !important;
+}
+
+/* Past dates styling */
+.flatpickr-day.past-date {
+    background-color: #f5f5f5; /* Light gray background for past dates */
+    color: #9e9e9e; /* Dimmed text color */
+    cursor: not-allowed; /* Optional: indicate non-clickable past dates */
+}
+
+/* Days with bookings styling */
+.flatpickr-day.has-booking {
+    background-color: #3f51b5; /* Highlight color for booking days */
+    color: white;
+    border-radius: 50%; /* Circular highlight */
+}
+
+/* Combine styles for past dates with bookings (if needed) */
+.flatpickr-day.past-date.has-booking {
+    background-color: #9c27b0; /* Distinct color for past booking days */
+    color: white;
+}
+
+.cancel-btn-user-db {
+    background-color: #FFE5CA;
+    color: #E74646;
+    font-size: 10px !important;
+}
+
+.edit-btn-user-db {
+    background-color: #C0EBA6;
+    color: #347928;
+    font-size: 10px !important;
+}
+
+.view-btn-user-db {
+    background-color: #B9E5E8;
+    color: #4A628A;
+    font-size: 10px !important;
+}
+
+.admin-rooms-section {
+    height: 98% !important;
+}
+
+.no-rooms-available-placeholder {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-rooms-section-table-wrapper, .admin-booked-section-table-wrapper {
+    height: 100%;
+}
+
+.no-rooms-available-placeholder-label {
+    font-size: 14px;
+    color: #D3D3D3;
+}
+
+.no-rooms-available-placeholder-label {
+    text-decoration: none;
+}
+
+#adminUserTable {
+    margin-top: 10px;
+}
+
+.admin-user-dashboard {
+    height: 98% !important;
+}
+
+.bi-calendar4-week {
+    font-size: 34px;
+    font-weight: 600;
+    color: rgba(85, 103, 156, 0.5);
+}
+
+.no-bookings-currently-user-db {
+    height: 100% !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.user-bookings-db-section {
+    height: 100% !important;
+}
+
+.userBookings-user-bookings-page-icon {
+    font-size: 54px;
+}
+
+.user-bookings-page-table-group {
+    height: 100% !important;
+}
+
+    .user-bookings-page-table-group:hover {
+        text-decoration: none !important;
+    }
+
+.user-add-booking-db {
+    background-color: #3f51b5;
+    color: #fefefe;
+    font-size: 12px;
+}
+
+.super-admin-accounts-db {
+    height: 98% !important;
+}
+
+/*User Analytics page*/
+.mainBodyAdminAnalytics {
+    height: 100vh; /* Use the full viewport height */
+}
+
+.mainBodyInnerAdminAnalytics {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    height: 90%; /* Ensure it doesn’t stretch excessively */
+    align-items: flex-start; /* Align sections at the top */
+}
+
+.mainContentAdminAnalytics {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto; /* Allow vertical scrolling if necessary */
+    padding: 20px;
+}
+
+.user-analytics-overall {
+    display: flex;
+    flex-direction: row;
+}
+
+.user-analytics-section-side {
+    flex: 1; /* Take up less space compared to the main content */
+    max-width: 300px; /* Ensure a fixed width for the side section */
+}
+
+.user-analytics-bar-line-section {
+    flex: 2; /* Main content takes up more space */
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Space between charts */
+}
+
+.user-analytics-bar-chart, .user-analytics-line-chart {
+    height: 38vh;
+}
+
+.profile-username-dropdown {
+    font-size: 14px !important;
+    font-weight: 500 !important;
+}
+
+.edit-profile-dropdown-btn {
+    font-size: 12px !important;
+}
+
+.logout-btn-profile-dropdown {
+    font-size: 12px !important;
+    background-color: #FA9884 !important;
+}
+
+.chart-container3 {
+    width: 100%; /* Take full width of parent */
+    max-width: 600px; /* Optional: Constrain maximum width */
+    height: 300px; /* Fixed height for charts */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto; /* Center charts horizontally */
+}
+
+.user-analytics-bar-chart, .user-analytics-line-chart {
+    height: 350px; /* Ensure consistent height */
+    padding: 10px;
+    border-radius: 15px;
+    background-color: #ffffff; /* Optional: Add background color */
+}
+
+.chart-container3 {
+    width: 100%; /* Take the full width of the parent container */
+    max-width: 600px; /* Optional: Constrain the maximum width */
+    height: 350px; /* Fixed height for charts */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto; /* Center the chart horizontally */
+}
+
+.chart-container3 {
+    width: 100%; /* Full width of the parent */
+    max-width: 600px; /* Optional: Constrain the maximum width */
+    height: 300px; /* Fixed height for charts */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto; /* Center the chart horizontally */
+}
+
+.user-analytics-bar-chart,
+.user-analytics-line-chart {
+    flex: none; /* Prevent stretching */
+    height: 350px; /* Ensure consistent chart heights */
+    padding: 10px;
+    border-radius: 15px;
+    background-color: #ffffff;
 }

@@ -1,198 +1,122 @@
-﻿body, html {
+﻿/* General Body Styling */
+body, html {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
+    height: 100%;
+    background-color: #f0f2f5; /* Light background color */
 }
 
-/* Sign-up and Login Containers */
-.signup-container, .login-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #F0F4FA;
-    border-radius: 20px;
-    padding: 40px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.signup-container {
-    width: 50%;
-    margin: 150px auto 0 auto; /* Top margin, horizontal centering, no bottom margin */
-}
-
+/* Login Container */
 .login-container {
-    width: 30%;
-    margin: 200px auto 0 auto; /* Top margin, horizontal centering, no bottom margin */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
 }
 
-.form-container {
-    width: 50%;
+/* Wrapper for Form */
+.container-wrapper {
+    max-width: 400px;
+    width: 100%;
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    padding: 40px 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Logo Styling */
+.logo img {
+    width: 120px;
+    margin-bottom: 20px;
+}
+
+/* Form Title and Subtitle */
+.form-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.form-subtitle {
+    font-size: 15px;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+/* Input Fields with Icons */
+.form-outline {
+    position: relative;
+    margin-bottom: 25px;
 }
 
 .form-input {
     width: 100%;
-    padding: 15px;
-    margin-bottom: 20px;
+    padding: 14px 45px;
+    border-radius: 8px;
     border: 1px solid #ccc;
-    border-radius: 10px;
-    box-sizing: border-box;
-}
-
-.checkbox-container {
-    display: flex;
-    align-items: center;
-    margin-top: 20px;
-}
-
-.form-checkbox {
-    margin-right: 10px;
-}
-
-.submit-button {
-    width: 100%;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    padding: 15px;
     font-size: 16px;
-    cursor: pointer;
-    margin-top: 20px;
-    display: block; /* Ensure it spans the entire form width */
+    background-color: #f9fafc;
 }
 
-.illustration-container {
-    width: 50%;
-    text-align: right;
+.icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    font-size: 18px;
 }
 
-    .illustration-container img {
-        width: 100%;
-    }
-/* Navbar */
-.navbar {
-    background-color: #ffffff; /* White background */
-    border-bottom: 1px solid #e0e0e0; /* Light grey border for separation */
-    padding: 10px 20px; /* Appropriate padding */
-    display: flex; /* Flexbox to enable alignment features */
-    justify-content: center; /* Center horizontally */
-    width: 100%; /* Navbar takes full width of the viewport */
-}
-
-.navbar-nav {
-    display: flex; /* Flex container for nav items */
-    justify-content: center; /* Center nav items horizontally */
-    width: auto; /* Auto width based on content */
-    padding-left: 0; /* Remove padding if any */
-    margin: 0 auto; /* Centering margin if needed */
-    list-style: none; /* Removes list styling */
-}
-
-.nav-item {
-    margin-right: 40px; /* Space between nav items */
-    display: inline-block; /* Inline-block for horizontal layout */
-}
-
-    .nav-item:last-child {
-        margin-right: 0; /* Remove margin for the last item */
-    }
-
-.nav-link {
-    color: #333333; /* Dark grey for readability */
-    font-size: 16px; /* Slightly larger font size */
-    font-weight: 500; /* Medium font weight */
-    padding: 8px 12px; /* Padding for clickable area */
-    display: block; /* Block display to fill the nav-item area */
-    text-decoration: none; /* Remove underline from links */
-}
-
-    .nav-link:hover, .nav-link:focus {
-        color: #0056b3; /* Color change on hover/focus */
-        background-color: #f8f9fa; /* Light background on hover/focus */
-    }
-
-
-/* Calendar Container */
-.calendar-container {
-    background-color: #f9f9f9; /* Slightly off-white background */
+/* Submit Button */
+.submit-button {
+    background-color: #6a67ce;
+    color: #fff;
+    font-weight: bold;
+    padding: 14px;
+    border: none;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin-top: 20px;
-}
-
-
-    .calendar-container h2 {
-        color: #333;
-        margin-bottom: 15px;
-    }
-
-/* Booking, Pending, and Analytics Containers */
-.booking-container, .pending-container, .analytics-container {
-    background-color: #FFFFFF;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.table {
-    margin-top: 10px;
     width: 100%;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
 }
 
-    .table th, .table td {
-        padding: 8px;
-        text-align: left;
+    .submit-button:hover {
+        background-color: #5a57b3;
     }
 
-    .table th {
-        background-color: #e9ecef;
+/* Forgot Password Link */
+.text-muted {
+    color: #666;
+    font-size: 14px;
+    margin-top: 20px;
+    display: inline-block;
+}
+
+    .text-muted:hover {
+        color: #5a57b3;
+        text-decoration: underline;
     }
 
-/* Analytics */
-.analytics-container h2 {
-    color: #333;
-    margin-bottom: 15px;
-}
-
-/* Adjustments for mobile views */
-@media (max-width: 768px) {
-    .navbar-nav {
-        justify-content: space-around;
+/* Responsive Adjustments */
+@media (max-width: 576px) {
+    .container-wrapper {
+        padding: 30px 20px;
     }
 
-    .calendar-container, .booking-container, .pending-container, .analytics-container {
-        margin-bottom: 15px;
+    .form-title {
+        font-size: 24px;
+    }
+
+    .form-subtitle {
+        font-size: 14px;
     }
 }
 
-/* Additional styling for the table buttons */
-.table .btn-sm {
-    padding: 5px 10px;
-}
-
-.table .btn-primary {
-    background-color: #4CAF50;
-    border-color: #4CAF50;
-}
-
-.table .btn-info {
-    background-color: #17a2b8;
-    border-color: #17a2b8;
-}
-
-.table .btn-danger {
-    background-color: #dc3545;
-    border-color: #dc3545;
-}
-
-/* Additional responsive adjustments */
-@media (max-width: 992px) {
-    .calendar-container {
-        height: auto;
-    }
-}
 .render-container {
     padding-inline: 40px;
 }
@@ -205,7 +129,16 @@
     color: #007BFF;
     cursor: pointer;
 }
+
 #accountsTable td, #accountsTable th, #bookingsTable td, #bookingsTable th, #roomsTable td, #roomsTable th {
     font-size: 16px;
 }
 
+.scrollable-rooms {
+    max-height: 400px; /* Adjust height as needed */
+    overflow-y: auto; /* Enable vertical scrolling */
+    padding-right: 10px; /* Add space for scrollbar */
+    border: 1px solid #ddd; /* Optional: Add a border for visual distinction */
+    border-radius: 8px; /* Optional: Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for better appearance */
+}

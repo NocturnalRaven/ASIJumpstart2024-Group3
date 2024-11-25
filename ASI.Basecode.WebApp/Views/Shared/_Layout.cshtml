@@ -1,6 +1,47 @@
-﻿@{
-    // Simulate the user role for now
-    var userRole = "SuperAdmin"; // Change this as needed to simulate different roles
+﻿@using static ASI.Basecode.Resources.Views.Screen
+
+@{
+    // Retrieve the user's role and name from the claims
+    var userName = User.Identity.Name ?? User.Claims.FirstOrDefault(c => c.Type == "name")?.Value ?? "Guest";
+    var userRole = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Role)?.Value ?? "User";
+    // Super Admin = 9, User = 3, Admin = 1, Staff = 2
+}
+
+@section styles {
+    <style>
+        .settings-icon {
+            cursor: pointer;
+        }
+
+        .profile-icon {
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .profile-dropdown {
+            display: none;
+            position: absolute;
+            top: 40px;
+            right: 10px;
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 10px;
+            box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+            .profile-dropdown p {
+                margin-bottom: 5px;
+                font-weight: bold;
+            }
+
+            .profile-dropdown button {
+                width: 100%;
+            }
+
+        .settings-modal .modal-body label {
+            font-weight: bold;
+        }
+    </style>
 }
 
 <!DOCTYPE html>
@@ -9,88 +50,78 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - MeetingRoomBookingSystem</title>
-    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="/MeetingRoomBookingSystem.styles.css" asp-append-version="true" />
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <style>
-        .settings-icon {
-            cursor: pointer;
-        }
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-        .settings-modal .modal-body label {
-            font-weight: bold;
-        }
-    </style>
     @RenderSection("styles", required: false)
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index">MeetingRoomBookingSystem</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between align-items-center">
-                    <ul class="navbar-nav flex-grow-1 align-items-center">
-                        @if (userRole == "Admin")
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="AdminDashboard" asp-action="Admindashboard">Dashboard</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="AdminDashboard" asp-action="Rooms">Rooms</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="AdminDashboard" asp-action="AdminUserDashboard">Users</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="AdminDashboard" asp-action="AdminAnalytics">Analytics</a>
-                            </li>
-                        }
-                        else if (userRole == "SuperAdmin")
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="SuperAdmin" asp-action="Rooms">Rooms</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="SuperAdmin" asp-action="Bookings">Bookings</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="SuperAdmin" asp-action="Accounts">Accounts</a>
-                            </li>
-                        }
-                        else if (userRole == "User")
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Users" asp-action="UserDashboard">Dashboard</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Users" asp-action="UserBookings">Bookings</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Users" asp-action="UserAnalytics">Analytics</a>
-                            </li>
-                        }
-                    </ul>
-                    <div class="navItem">
-                        <i class="bi bi-gear settings-icon navItemA" data-bs-toggle="modal" data-bs-target="#settingsModal" style="font-size: 1.5rem; margin-right: 10px;"></i>
-                        <i class="bi bi-person-circle profile-icon navItemA" id="profileIcon" style="font-size: 1.5rem;"></i>
-                        <div class="profile-dropdown" id="profileDropdown" style="display:none;">
-                            <p id="userName">John Doe</p>
-                            <button class="btn" id="editProfileBtn" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
-                            <button class="btn" id="logoutBtn">Logout</button>
+        @if (ViewData["HideNav"] == null || !(bool)ViewData["HideNav"])
+        {
+            <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
+                <div class="container">
+                    @if (userRole == "1")
+                    {
+                        <a class="navbar-brand" asp-controller="AdminDashboard" asp-action="Admindashboard">MeetingRoomBookingSystem</a>
+                    }
+                    else if (userRole == "9")
+                    {
+                        <a class="navbar-brand" asp-controller="SuperAdmin" asp-action="Rooms">MeetingRoomBookingSystem</a>
+                    }
+                    else if (userRole == "3" || userRole == "2")
+                    {
+                        <a class="navbar-brand" asp-controller="Users" asp-action="UserDashboard">MeetingRoomBookingSystem</a>
+                    }
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between align-items-center">
+                        <ul class="navbar-nav flex-grow-1 align-items-center">
+                            <!-- Role-specific navigation items -->
+                            @if (userRole == "1")
+                            {
+                                <li class="nav-item"><a class="nav-link" asp-controller="AdminDashboard" asp-action="Admindashboard">Dashboard</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="AdminDashboard" asp-action="Rooms">Rooms</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="AdminDashboard" asp-action="AdminUserDashboard">Users</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="AdminDashboard" asp-action="AdminAnalytics">Analytics</a></li>
+                            }
+                            else if (userRole == "9")
+                            {
+                                <li class="nav-item"><a class="nav-link" asp-controller="SuperAdmin" asp-action="Rooms">Rooms</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="SuperAdmin" asp-action="Bookings">Bookings</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="SuperAdmin" asp-action="Accounts">Accounts</a></li>
+                            }
+                            else if (userRole == "3" || userRole == "2")
+                            {
+                                <li class="nav-item"><a class="nav-link" asp-controller="Users" asp-action="UserDashboard">Dashboard</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="Users" asp-action="UserBookings">Bookings</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="Users" asp-action="UserAnalytics">Analytics</a></li>
+                            }
+                        </ul>
+
+                        <!-- Profile icon and dropdown -->
+                        <div class="nav-item position-relative">
+                            <i class="bi bi-gear settings-icon navItemA" data-bs-toggle="modal" data-bs-target="#settingsModal" style="font-size: 1.5rem; margin-right: 10px;"></i>
+                            <i class="bi bi-person-circle profile-icon" id="profileIcon"></i>
+                            <div class="profile-dropdown" id="profileDropdown">
+                                <p>@userName</p>
+                                <button class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
+                                <form asp-controller="Account" asp-action="SignOutUser" method="post">
+                                    <button type="submit" class="btn btn-danger">Logout</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </nav>
+            </nav>
+        }
     </header>
-
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -172,51 +203,71 @@
                 </div>
             </div>
 
-        </main>
-    </div>
-
-    <!-- Edit Profile Modal -->
-    <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="editProfileForm">
-                        <div class="mb-3">
-                            <label for="editUserName" class="form-label">User Name</label>
-                            <input type="text" class="form-control" id="editUserName" placeholder="Enter your name" />
+    <!-- Modals here for Edit Profile and Settings -->
+            <!-- Edit Profile Modal -->
+            <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="mb-3">
-                            <label for="editUserEmail" class="form-label">Email Address</label>
-                            <input type="email" class="form-control" id="editUserEmail" placeholder="Enter your email" />
+                        <div class="modal-body">
+                            <form id="editProfileForm">
+                                <div class="mb-3">
+                                    <label for="editUserName" class="form-label">User Name</label>
+                                    <input type="text" class="form-control" id="editUserName" placeholder="Enter your name" />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editUserEmail" class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" id="editUserEmail" placeholder="Enter your email" />
+                                </div>
+                            </form>
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-
+    <!-- Optional Scripts Section -->
     <script>
-        const profileIcon = document.getElementById("profileIcon");
-        const profileDropdown = document.getElementById("profileDropdown");
+        document.addEventListener("DOMContentLoaded", function () {
+            const profileIcon = document.getElementById("profileIcon");
+            const profileDropdown = document.getElementById("profileDropdown");
 
-        profileIcon.addEventListener("click", function () {
-            profileDropdown.style.display = profileDropdown.style.display === "block" ? "none" : "block";
+            // Toggle profile dropdown visibility
+            profileIcon.addEventListener("click", function (event) {
+                event.stopPropagation();
+                profileDropdown.style.display = profileDropdown.style.display === "block" ? "none" : "block";
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener("click", function (event) {
+                if (!profileDropdown.contains(event.target) && event.target !== profileIcon) {
+                    profileDropdown.style.display = "none";
+                }
+            });
+
+            // Save profile changes
+            document.getElementById("saveProfileBtn").addEventListener("click", function () {
+                const name = document.getElementById("userNameInput").value;
+                const email = document.getElementById("userEmailInput").value;
+                const resetPassword = document.getElementById("resetPasswordInput").value;
+                alert(`Profile updated:\nName: ${name}\nEmail: ${email}`);
+                $('#editProfileModal').modal('hide');
+            });
+
+            // Save settings changes
+            document.getElementById("saveSettingsBtn").addEventListener("click", function () {
+                const setting1 = document.getElementById("setting1").value;
+                const setting2 = document.getElementById("setting2").value;
+                alert(`Settings saved:\nSetting 1: ${setting1}\nSetting 2: ${setting2}`);
+                $('#settingsModal').modal('hide');
+            });
         });
     </script>
-    @RenderSection("Scripts", required: false)
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="/js/edit-profile.js"></script>
-    <script src="/js/settings.js"></script>
-
-    @await RenderSectionAsync("Scripts", required: false)
+    @RenderSection("scripts", required: false)
 </body>
 </html>

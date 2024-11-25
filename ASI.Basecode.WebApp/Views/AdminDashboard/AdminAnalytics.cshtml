@@ -16,36 +16,29 @@
 </head>
 
 <body>
-    <main class="mainBody">
-        <div class="mainBodyInner">
+    <main class="mainBody mainBodyAdminAnalytics">
+        <div class="mainBodyInner mainBodyInnerAdminAnalytics">
             <aside class="calendarSide">
                 <div id="calendar"></div>
-                <div class="recentBookingsOverall">
-                    <p class="recentBookingsAside">Recent Bookings</p>
-                    <div class="recentBookingsOverallInner" id="recentBookingsContainer">
-                        <!-- Recent Bookings will be rendered here -->
-                    </div>
-                </div>
             </aside>
             <div class="mainContent">
-                <div class="bookingsDashboardLower">
                     <div class="analytics-card">
                         <div class="d-flex justify-content-between align-items-center">
                             <p class="bookingsDashboardTitle">Analytics</p>
                             <div class="dropdown">
-                                <button class="btn btn-secondary dropdown-toggle btn-sm analyticsDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <button class="btn btn-secondary dropdown-toggle btn-sm analyticsDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="analyticsFilterButton">
                                     All Time
                                 </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item active" href="#">All Time</a></li>
-                                    <li><a class="dropdown-item" href="#">Day</a></li>
-                                    <li><a class="dropdown-item" href="#">Week</a></li>
-                                    <li><a class="dropdown-item" href="#">Month</a></li>
-                                    <li><a class="dropdown-item" href="#">Year</a></li>
+                                <ul class="dropdown-menu" id="analyticsFilterOptions">
+                                    <li><a class="dropdown-item" href="#" data-filter="all">All Time</a></li>
+                                    <li><a class="dropdown-item" href="#" data-filter="day">Past Day</a></li>
+                                    <li><a class="dropdown-item" href="#" data-filter="week">Past Week</a></li>
+                                    <li><a class="dropdown-item" href="#" data-filter="month">Past Month</a></li>
+                                    <li><a class="dropdown-item" href="#" data-filter="year">Past Year</a></li>
                                 </ul>
                             </div>
                         </div>
-                        <div class="chart-container">
+                        <div class="chart-container3">
                             <canvas id="analyticsChart"></canvas>
                         </div>
                         <div class="legend-container">
@@ -67,15 +60,16 @@
                             </div>
                         </div>
                     </div>
-                    <div class="dashboardPending">
-                        <div class="chart-container2">
-                            <canvas id="barChart" width="300" height="300"></canvas>
+                <div class="mainContent mainContentAdminAnalytics">
+                    <div class="dashboardPending admin-analytics-bar-chart">
+                        <div class="chart-container3">
+                            <canvas id="barChart"></canvas>
                         </div>
                     </div>
                 </div>
                 <div class="bookingsDashboard">
-                    <div class="chart-container2">
-                        <canvas id="lineChart" width="300" height="300"></canvas>
+                    <div class="chart-container3">
+                        <canvas id="lineChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -84,90 +78,234 @@
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
-        // Dummy Data for Recent Bookings
-        const recentBookingsData = [
-            { user: "Dean Lourence Barquio", room: "Room 1", date: "10 Sept 2:00 - 12 Sept 7:30" },
-            { user: "Jane Smith", room: "Room 3", date: "11 Sept 2:00 - 12 Sept 7:30" },
-            { user: "John Doe", room: "Room 9", date: "12 Sept 3:00 - 13 Sept 5:00" }
-        ];
+        let bookingsData = []; // Global variable to store bookings data
+        let rooms = []; // Global variable to store rooms data
 
-        // Render Recent Bookings
-        function renderRecentBookings(bookings) {
-            const container = document.getElementById('recentBookingsContainer');
-            container.innerHTML = '';
+        // Fetch rooms data
+        async function fetchRoomsData() {
+            try {
+                const response = await fetch('/api/bookings/GetAllRooms'); // Replace with your actual API endpoint
+                if (!response.ok) throw new Error('Failed to fetch rooms data');
+                rooms = await response.json();
+            } catch (error) {
+                console.error('Error fetching rooms:', error.message);
+                alert('Failed to load room data.');
+            }
+        }
 
-            bookings.forEach(booking => {
-                const bookingHTML = `
-                            <div class="recentBookings">
-                                <p class="userRecentBookings">${booking.user}</p>
-                                <hr>
-                                <div class="recentBookingsDetailsDiv">
-                                    <div class="recentBookingsDetails">
-                                        <i class="bi bi-house-door-fill"></i>
-                                        <p>${booking.room}</p>
-                                    </div>
-                                    <div class="recentBookingsDetails">
-                                        <i class="bi bi-calendar2-week"></i>
-                                        <p>${booking.date}</p>
-                                    </div>
-                                </div>
-                            </div>`;
-                container.innerHTML += bookingHTML;
+        // Fetch bookings data
+        async function fetchBookingsData() {
+            try {
+                const response = await fetch('/api/bookings/GetAllBookings'); // Replace with your API endpoint
+                if (!response.ok) throw new Error('Failed to fetch bookings data');
+                bookingsData = await response.json();
+
+                // Ensure both bookings and rooms are available before updating analytics
+                await fetchRoomsData(); // Fetch rooms data
+                updateAnalytics('all'); // Default filter
+                updateCalendarHotspots();
+            } catch (error) {
+                console.error('Error fetching bookings:', error.message);
+                alert('Failed to load analytics data.');
+            }
+        }
+
+        // Update Analytics
+        function updateAnalytics(filter) {
+            const filteredBookings = filterBookings(filter);
+
+            // Update Pie Chart (Requires both bookings and rooms)
+            if (rooms.length > 0) {
+                updatePieChart(filteredBookings, rooms);
+            } else {
+                console.warn('Rooms data is empty. Pie chart cannot be rendered.');
+            }
+
+            // Update Bar Chart
+            updateBarChart(filteredBookings);
+
+            // Update Line Chart
+            updateLineChart(filteredBookings);
+        }
+
+        // Filter bookings based on the selected time period
+        function filterBookings(filter) {
+            const now = new Date();
+            return bookingsData.filter(booking => {
+                const bookingDate = new Date(booking.startDate);
+                switch (filter) {
+                    case 'day':
+                        return (now - bookingDate) <= 86400000; // 1 day in ms
+                    case 'week':
+                        return (now - bookingDate) <= 604800000; // 1 week in ms
+                    case 'month':
+                        return (now - bookingDate) <= 2592000000; // 1 month in ms
+                    case 'year':
+                        return (now - bookingDate) <= 31536000000; // 1 year in ms
+                    case 'all':
+                    default:
+                        return true;
+                }
             });
         }
 
-        // Render Recent Bookings on Page Load
-        renderRecentBookings(recentBookingsData);
+        // Update Calendar Hotspots
+        function updateCalendarHotspots() {
+            // Convert bookings start dates to local date strings
+            const hotspotDates = bookingsData.map(booking => {
+                const bookingDate = new Date(booking.startDate);
+                return bookingDate.toLocaleDateString('en-CA'); // Format as YYYY-MM-DD in local time
+            });
 
-        // Initialize Flatpickr
-        flatpickr("#calendar", {
-            inline: true,
-            mode: "range",
-            dateFormat: "Y-m-d",
-            defaultDate: ["2024-09-10", "2024-09-15", "2024-10-01", "2024-10-15"]
-        });
+            flatpickr("#calendar", {
+                inline: true,
+                mode: "single",
+                dateFormat: "Y-m-d",
+                onDayCreate: (dObj, dStr, fp, dayElem) => {
+                    const dayDate = dayElem.dateObj.toLocaleDateString('en-CA'); // Format as YYYY-MM-DD in local time
 
-        // Initialize Pie Chart
-        const ctx = document.getElementById('analyticsChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: ['Meeting Room', 'Event Venue', 'Unit', 'Apartment'],
+                    if (hotspotDates.includes(dayDate)) {
+                        dayElem.style.backgroundColor = '#FFD700'; // Highlight hotspot dates
+                    }
+                }
+            });
+        }
+    
+
+        function updatePieChart(filteredBookings, rooms) {
+            const roomStyleCategoryMapping = {
+                'Classroom': 'Classroom',
+                'Banquet': 'Banquet',
+                'U-Shape': 'U-Shape',
+                'Conference': 'Conference',
+                'Auditorium': 'Auditorium',
+                'Boardroom': 'Boardroom'
+            };
+
+            const categoryCounts = filteredBookings.reduce((acc, booking) => {
+                const roomId = booking.roomId;
+
+                const room = rooms.find(r => r.roomId === roomId);
+
+                if (!room) {
+                    acc['Unknown Category'] = (acc['Unknown Category'] || 0) + 1;
+                    return acc;
+                }
+
+                const style = room.style || 'Unknown';
+                const category = roomStyleCategoryMapping[style] || 'Unknown Category';
+                acc[category] = (acc[category] || 0) + 1;
+
+                return acc;
+            }, {});
+
+            const data = {
+                labels: Object.keys(categoryCounts),
                 datasets: [{
-                    label: 'Bookings by Type',
-                    data: [40, 30, 20, 10],
-                    backgroundColor: ['#6848FF', '#AFAEFF', '#E6DEFF', '#F3F0FF'],
-                    borderWidth: 0
+                    data: Object.values(categoryCounts),
+                    backgroundColor: ['#6848FF', '#AFAEFF', '#E6DEFF', '#F3F0FF', '#FFD700', '#FF5733']
                 }]
-            },
-            options: { responsive: true }
+            };
+
+            if (window.pieChartInstance) {
+                window.pieChartInstance.destroy();
+            }
+
+            const ctx = document.getElementById('analyticsChart').getContext('2d');
+            window.pieChartInstance = new Chart(ctx, {
+                type: 'pie',
+                data,
+                options: {
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                color: '#000',
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            updateLegends(Object.keys(categoryCounts));
+        }
+
+        // Function to update legends dynamically
+        function updateLegends(categories) {
+            const legendContainer = document.querySelector('.legend-container');
+            legendContainer.innerHTML = ''; // Clear existing legends
+
+            categories.forEach((category, index) => {
+                const color = ['#6848FF', '#AFAEFF', '#E6DEFF', '#F3F0FF', '#FFD700', '#FF5733'][index];
+
+                const legendItem = `
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: ${color};"></div>
+                        <span>${category}</span>
+                    </div>
+                `;
+                legendContainer.innerHTML += legendItem;
+            });
+        }
+
+
+        // Bar Chart
+        function updateBarChart(filteredBookings) {
+            const dayCounts = filteredBookings.reduce((acc, booking) => {
+                const day = new Date(booking.startDate).toLocaleDateString('en-US', { weekday: 'long' });
+                acc[day] = (acc[day] || 0) + 1;
+                return acc;
+            }, {});
+
+            const data = {
+                labels: Object.keys(dayCounts),
+                datasets: [{
+                    label: 'Most Booked Days',
+                    data: Object.values(dayCounts),
+                    backgroundColor: '#9fa8da'
+                }]
+            };
+
+            const ctx = document.getElementById('barChart').getContext('2d');
+            new Chart(ctx, { type: 'bar', data });
+        }
+
+        // Line Chart
+        function updateLineChart(filteredBookings) {
+            const hourCounts = filteredBookings.reduce((acc, booking) => {
+                const hour = new Date(booking.startDate).getHours();
+                acc[hour] = (acc[hour] || 0) + 1;
+                return acc;
+            }, {});
+
+            const data = {
+                labels: Object.keys(hourCounts).map(hour => `${hour}:00`),
+                datasets: [{
+                    label: 'Most Booked Hours',
+                    data: Object.values(hourCounts),
+                    borderColor: 'blue',
+                    fill: false
+                }]
+            };
+
+            const ctx = document.getElementById('lineChart').getContext('2d');
+            new Chart(ctx, { type: 'line', data });
+        }
+
+        // Event Listener for Analytics Filter
+        document.getElementById('analyticsFilterOptions').addEventListener('click', e => {
+            if (e.target.tagName === 'A') {
+                const filter = e.target.dataset.filter;
+                document.getElementById('analyticsFilterButton').textContent = e.target.textContent;
+                updateAnalytics(filter);
+            }
         });
 
-        // Initialize Bar Chart
-        const barCtx = document.getElementById('barChart').getContext('2d');
-        new Chart(barCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'],
-                datasets: [{ label: 'Data per day', data: [200, 150, 100, 100, 120, 150, 170], backgroundColor: '#9fa8da' }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
-
-        // Initialize Line Chart
-        const lineCtx = document.getElementById('lineChart').getContext('2d');
-        new Chart(lineCtx, {
-            type: 'line',
-            data: {
-                labels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-                datasets: [
-                    { label: 'Dataset 1', data: [300, 450, 200, 100, 250, 0, 150, 400, 350, 500], borderColor: 'blue', fill: false },
-                    { label: 'Dataset 2', data: [400, 300, 450, 200, 100, 250, 0, 150, 350, 600], borderColor: 'red', fill: false },
-                    { label: 'Dataset 3', data: [150, 200, 300, 400, 450, 200, 100, 250, 0, 150], borderColor: 'green', fill: false }
-                ]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
+        // Fetch Data on Page Load
+        fetchBookingsData();
     </script>
-</body>
+    </body>
 </html>

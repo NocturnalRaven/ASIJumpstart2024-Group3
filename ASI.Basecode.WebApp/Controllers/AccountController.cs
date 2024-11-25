@@ -97,7 +97,20 @@ namespace ASI.Basecode.WebApp.Controllers
                 // 認証OK
                 await this._signInManager.SignInAsync(user);
                 this._session.SetString("UserName", string.Join(" ", user.FirstName, user.LastName));
-                return RedirectToAction("Admindashboard", "AdminDashboard");
+                if (user.UserRole == 1)
+                {
+                    return RedirectToAction("Admindashboard", "AdminDashboard");
+                }
+                else if (user.UserRole == 9)
+                {
+                    return RedirectToAction("Bookings", "SuperAdmin");
+                }
+                else if (user.UserRole == 3 || user.UserRole == 2)
+                {
+                    return RedirectToAction("UserDashboard", "Users");
+                }
+                else
+                    return RedirectToAction("Login", "Account");
             }
             else
             {
@@ -142,7 +155,14 @@ namespace ASI.Basecode.WebApp.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> SignOutUser()
         {
+            // Sign out the user
             await this._signInManager.SignOutAsync();
+
+            // Clear the session and any additional user data if necessary
+            this._session.Clear(); // Optional: Clears all session data, adjust as needed
+            TempData["SuccessMessage"] = "You have been logged out successfully."; // Optional: Add a success message
+
+            // Redirect to the login view
             return RedirectToAction("Login", "Account");
         }
     }

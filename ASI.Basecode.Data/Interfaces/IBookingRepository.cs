@@ -1,5 +1,4 @@
 ﻿using ASI.Basecode.Data.Models;
-using ASI.Basecode.WebApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,5 +14,6 @@ namespace ASI.Basecode.Data.Interfaces
         void AddBooking(Booking booking);
         void UpdateBooking(Booking booking);
         void DeleteBooking(int bookingId);
+        int ArchiveExpiredBookings();
     }
 }
