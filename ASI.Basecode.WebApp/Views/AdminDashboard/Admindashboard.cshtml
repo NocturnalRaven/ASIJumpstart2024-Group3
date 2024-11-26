@@ -1243,12 +1243,13 @@
 
                         const addStartTimeSelect = document.getElementById('AddBookingStartTime');
                         const addEndTimeSelect = document.getElementById('AddBookingEndTime');
-
                         const addDateInput = document.getElementById('addBookingDate');
                         const addRoomSelect = document.getElementById('addBookingRoom');
 
+                        let intervalChecker; // To hold the interval for real-time updates
+
                         // Helper function to populate a dropdown
-                        function populateDropdown(selectElement, disabledIntervals = [], allowPast = false) {
+                        function populateDropdown(selectElement, disabledIntervals = [], allowPast = false, excludeTime = null) {
                             const currentValue = selectElement.value;
                             selectElement.innerHTML = ''; // Clear existing options
 
@@ -1257,10 +1258,11 @@
                                 option.value = time;
                                 option.textContent = time;
 
-                                // Disable option if it's in the disabledIntervals array or past time for today
+                                // Disable option if it's in the disabledIntervals array, past time for today, or matches the excluded time
                                 if (
                                     disabledIntervals.includes(time) ||
-                                    (!allowPast && isPastTime(time))
+                                    (!allowPast && isPastTime(time)) ||
+                                    time === excludeTime
                                 ) {
                                     option.disabled = true;
                                     option.style.color = 'gray';
@@ -1270,7 +1272,7 @@
                             });
 
                             // Restore previous valid selection if possible
-                            if (currentValue && timeIntervals.includes(currentValue) && !disabledIntervals.includes(currentValue)) {
+                            if (currentValue && timeIntervals.includes(currentValue) && !disabledIntervals.includes(currentValue) && currentValue !== excludeTime) {
                                 selectElement.value = currentValue;
                             } else {
                                 selectElement.value = ''; // Reset if invalid
@@ -1283,8 +1285,12 @@
                             const today = new Date().toISOString().split('T')[0];
                             if (addDateInput.value !== today) return false;
 
-                            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-                            return time <= currentTime;
+                            const [hours, minutes] = time.split(':').map(Number);
+                            const timeToCheck = new Date();
+                            timeToCheck.setHours(hours, minutes, 0, 0);
+
+                            // Adjust logic to allow times that are at least 30 minutes in the future
+                            return timeToCheck <= now;
                         }
 
                         // Find all disabled intervals for the selected room and date
@@ -1329,7 +1335,7 @@
                             const disabledIntervals = getDisabledIntervals(selectedDate, selectedRoomId);
 
                             // Populate start dropdown
-                            populateDropdown(addStartTimeSelect, disabledIntervals, true);
+                            populateDropdown(addStartTimeSelect, disabledIntervals, false);
 
                             // Handle dynamic updates for the end dropdown based on selected start time
                             addStartTimeSelect.addEventListener('change', () => {
@@ -1341,14 +1347,30 @@
                                         timeIntervals.slice(0, startIndex) // Disable times before or equal to selected start time
                                     );
 
-                                    populateDropdown(addEndTimeSelect, endDisabledIntervals);
+                                    populateDropdown(addEndTimeSelect, endDisabledIntervals, true, selectedStartTime); // Exclude selected start time
                                 } else {
-                                    populateDropdown(addEndTimeSelect, disabledIntervals);
+                                    populateDropdown(addEndTimeSelect, disabledIntervals, true);
                                 }
                             });
 
                             // Initialize the end dropdown
-                            populateDropdown(addEndTimeSelect, disabledIntervals);
+                            populateDropdown(addEndTimeSelect, disabledIntervals, true);
+
+                            // Clear the real-time interval if already set
+                            if (intervalChecker) clearInterval(intervalChecker);
+
+                            // Start the real-time validation interval
+                            intervalChecker = setInterval(() => {
+                                // Real-time update for start and end time dropdowns
+                                populateDropdown(addStartTimeSelect, disabledIntervals, false);
+                                if (addStartTimeSelect.value) {
+                                    const startIndex = timeIntervals.indexOf(addStartTimeSelect.value);
+                                    const endDisabledIntervals = disabledIntervals.concat(
+                                        timeIntervals.slice(0, startIndex)
+                                    );
+                                    populateDropdown(addEndTimeSelect, endDisabledIntervals, true, addStartTimeSelect.value);
+                                }
+                            }, 30000); // Check every 30 seconds
                         }
 
                         // Populate dropdowns with all intervals initially
@@ -1372,32 +1394,56 @@
 
                         let currentEditingBookingId = null;
 
+                        // Restrict booking date to today and future dates
+                        function restrictBookingDate() {
+                            const today = new Date();
+                            const formattedToday = today.toISOString().split('T')[0];
+                            editDateInput.setAttribute('min', formattedToday); // Set the minimum selectable date to today
+                        }
+
                         // Populate dropdown helper function
-                        function populateDropdown(selectElement, disabledIntervals = [], filterFn = null, currentValue = null) {
+                        function populateDropdown(selectElement, disabledIntervals = [], allowPast = false, minAllowedTime = null) {
+                            const currentValue = selectElement.value;
                             selectElement.innerHTML = ''; // Clear existing options
 
                             timeIntervals.forEach(time => {
-                                if (filterFn && !filterFn(time)) return; // Skip times not matching the filter
-
                                 const option = document.createElement('option');
                                 option.value = time;
                                 option.textContent = time;
 
-                                // Disable option if it's in the disabledIntervals array and not the current value
-                                if (disabledIntervals.includes(time) && time !== currentValue) {
+                                // Allow options only if they meet all conditions
+                                if (
+                                    !disabledIntervals.includes(time) &&
+                                    (allowPast || !isPastTime(time)) &&
+                                    (minAllowedTime === null || time > minAllowedTime) // Ensure time is after minAllowedTime
+                                ) {
+                                    selectElement.appendChild(option);
+                                } else {
                                     option.disabled = true;
                                     option.style.color = 'gray';
+                                    selectElement.appendChild(option);
                                 }
-
-                                selectElement.appendChild(option);
                             });
 
-                            // Restore the previously selected value if valid
+                            // Restore the previously valid selection if possible
                             if (currentValue && timeIntervals.includes(currentValue)) {
                                 selectElement.value = currentValue;
                             } else {
-                                selectElement.value = ''; // Reset invalid value
+                                selectElement.value = ''; // Reset if invalid
                             }
+                        }
+
+                        // Check if a time is in the past for today's date
+                        function isPastTime(time) {
+                            const now = new Date();
+                            const today = new Date().toISOString().split('T')[0];
+                            if (editDateInput.value !== today) return false;
+
+                            const [hours, minutes] = time.split(':').map(Number);
+                            const timeToCheck = new Date();
+                            timeToCheck.setHours(hours, minutes, 0, 0);
+
+                            return timeToCheck <= now; // Return true if the time has already passed
                         }
 
                         // Update disabled times function
@@ -1428,7 +1474,7 @@
                                 return (
                                     booking.roomId === selectedRoomId &&
                                     bookingDate === selectedDate &&
-                                    booking.bookingId !== excludeBookingId // Exclude current editing booking
+                                    booking.bookingId !== excludeBookingId // Exclude the current editing booking
                                 );
                             });
 
@@ -1447,31 +1493,25 @@
                                     for (let i = startIndex; i < endIndex; i++) {
                                         disabledStartTimes.add(timeIntervals[i]);
                                     }
+                                    disabledEndTimes.add(endTime); // Specifically disable the overlapping end time
                                 }
                             });
 
                             const selectedStartTime = startSelect.value;
 
+                            // Populate start time dropdown
                             populateDropdown(
                                 startSelect,
                                 Array.from(disabledStartTimes),
-                                null,
-                                selectedStartTime
+                                false
                             );
 
+                            // Populate end time dropdown, ensuring times are strictly after the selected start time
                             populateDropdown(
                                 endSelect,
                                 Array.from(disabledEndTimes),
-                                time => {
-                                    // Ensure end times cannot go before the selected start time
-                                    if (selectedStartTime) {
-                                        const startTimeIndex = timeIntervals.indexOf(selectedStartTime);
-                                        const currentIndex = timeIntervals.indexOf(time);
-                                        return currentIndex > startTimeIndex;
-                                    }
-                                    return true; // No start time selected, allow all times
-                                },
-                                endSelect.value
+                                true,
+                                selectedStartTime // Min allowed time is the selected start time
                             );
                         }
 
@@ -1500,7 +1540,12 @@
                             currentEditingBookingId = bookingId;
                             updateDisabledTimes(editStartTimeSelect, editEndTimeSelect, editDateInput, editRoomSelect, currentEditingBookingId);
                         };
+
+                        // Restrict booking date when modal is opened
+                        restrictBookingDate();
                     }
+
+
 
                     // Function to generate time intervals
                     function generateTimeIntervals(intervalMinutes, startHour, endHour) {
@@ -1573,6 +1618,30 @@
                     setInterval(archiveExpiredBookings, 10 * 60 * 1000); // Every 10 minutes
 
                     document.addEventListener("DOMContentLoaded", () => {
+                        // Automatically update the "No. of People" field based on room capacity
+                        function updateNoOfPeopleBasedOnRoom(selectElement, inputElement) {
+                            if (!selectElement || !inputElement) return;
+
+                            // Listen for changes in the room selection
+                            selectElement.addEventListener("change", () => {
+                                const selectedOption = selectElement.options[selectElement.selectedIndex];
+                                const roomCapacity = parseInt(selectedOption.dataset.capacity, 10) || 0;
+
+                                console.log(`Room capacity updated to: ${roomCapacity}`); // Debug log
+
+                                // Update the "No. of People" input with the room's capacity
+                                inputElement.value = roomCapacity;
+                            });
+                        }
+                        // Add Booking Modal
+                        const addBookingRoomSelect = document.getElementById("addBookingRoom");
+                        const addBookingPeopleInput = document.getElementById("addBookingPeople");
+                        updateNoOfPeopleBasedOnRoom(addBookingRoomSelect, addBookingPeopleInput);
+
+                        // Edit Booking Modal
+                        const editBookingRoomSelect = document.getElementById("bookingRoomInput");
+                        const editBookingPeopleInput = document.getElementById("bookingPeopleInput");
+                        updateNoOfPeopleBasedOnRoom(editBookingRoomSelect, editBookingPeopleInput);
                         // Set the minimum date for the booking date input
                         const addBookingDate = document.getElementById('addBookingDate');
                         if (addBookingDate) {
