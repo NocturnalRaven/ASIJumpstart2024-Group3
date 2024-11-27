@@ -272,6 +272,23 @@
             </div>
         </div>
     </div>
+    <!-- Generic Alert Modal -->
+    <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="alertModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Message will be dynamically inserted -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
@@ -496,7 +513,7 @@
             const booking = bookingsData.find(b => b.bookingId === bookingId);
 
             if (!booking) {
-                alert('Booking not found.');
+                showAlertModal("Error", 'Booking not found.');
                 return;
             }
 
@@ -520,63 +537,43 @@
             console.log("editBooking called with bookingId:", bookingId);
 
             try {
-                // Fetch the latest booking details dynamically
                 const response = await fetch(`/api/bookings/GetBookedRoomById/${bookingId}`);
                 if (!response.ok) throw new Error("Failed to fetch booking details.");
 
                 const booking = await response.json();
-
                 console.log("Fetched booking details:", booking);
 
-                // Fetch room details to map roomName
                 const roomResponse = await fetch('/api/bookings/GetAllRooms');
                 if (!roomResponse.ok) throw new Error("Failed to fetch rooms.");
-                const rooms = await roomResponse.json();
 
-                // Find the room associated with the booking
+                const rooms = await roomResponse.json();
                 const room = rooms.find(r => r.roomId === booking.roomId);
                 booking.roomName = room ? room.name : 'Unknown';
                 booking.roomStyle = room ? room.style : 'Unknown';
 
-                console.log("Mapped room name:", booking.roomName);
-
-                // Restrict past dates for booking
-                const today = new Date().toISOString().split('T')[0]; // Format today's date as YYYY-MM-DD
-
-                // Populate modal with booking details
+                const today = new Date().toISOString().split('T')[0];
                 document.getElementById('editBookingId').value = bookingId;
                 document.getElementById('editRoomName').value = booking.roomName;
                 document.getElementById('editRoomStyle').value = booking.roomStyle;
 
-
                 const bookingDateInput = document.getElementById('editBookingDate');
                 const formattedStartDate = new Date(booking.startDate).toISOString().split('T')[0];
                 bookingDateInput.value = formattedStartDate;
-                bookingDateInput.setAttribute('min', today); // Restrict past dates
+                bookingDateInput.setAttribute('min', today);
 
-                console.log("Populated editBookingDate with:", formattedStartDate, "and set min to:", today);
-
-                // Populate time dropdowns with the existing booking times
                 const bookingStartTime = new Date(booking.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 const bookingEndTime = new Date(booking.endDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                console.log("Populating time dropdowns with startTime:", bookingStartTime, "endTime:", bookingEndTime);
-
                 populateEditTimeDropdowns(bookingStartTime, bookingEndTime);
 
                 document.getElementById('editRecurring').value = booking.isRecurring ? 'Yes' : 'No';
                 document.getElementById('editFrequencyContainer').style.display = booking.isRecurring ? 'block' : 'none';
                 document.getElementById('editFrequency').value = booking.frequency || 'Daily';
 
-                console.log("Recurring status set to:", booking.isRecurring, "Frequency set to:", booking.frequency);
-
-                // Toggle frequency input visibility
                 document.getElementById('editRecurring').addEventListener('change', () => {
                     const isRecurring = document.getElementById('editRecurring').value === 'Yes';
                     document.getElementById('editFrequencyContainer').style.display = isRecurring ? 'block' : 'none';
-                    console.log("Recurring toggled to:", isRecurring);
                 });
 
-                // Save changes
                 document.getElementById('saveBookingChanges').onclick = async () => {
                     const updatedBooking = {
                         bookingId: parseInt(document.getElementById('editBookingId').value, 10),
@@ -588,19 +585,14 @@
                         frequency: document.getElementById('editRecurring').value === 'Yes' ? document.getElementById('editFrequency').value : null,
                     };
 
-                    console.log("Saving updated booking:", updatedBooking);
-
-                    // Fetch all bookings from the database for conflict checking
                     const allBookingsResponse = await fetch('/api/bookings/GetAllBookings');
                     if (!allBookingsResponse.ok) {
-                        console.error("Failed to fetch all bookings for conflict checking.");
-                        alert("Could not validate booking conflicts. Please try again later.");
+                        showAlertModal("Error", "Could not validate booking conflicts. Please try again later.");
                         return;
                     }
                     const allBookings = await allBookingsResponse.json();
 
-                    // Check for overlapping bookings
-                    const overlapping = bookingsData.some(existingBooking => {
+                    const overlapping = allBookings.some(existingBooking => {
                         const existingStart = new Date(existingBooking.startDate).getTime();
                         const existingEnd = new Date(existingBooking.endDate).getTime();
                         const updatedStart = new Date(updatedBooking.startDate).getTime();
@@ -608,22 +600,20 @@
 
                         return (
                             existingBooking.roomId === updatedBooking.roomId &&
-                            existingBooking.bookingId !== updatedBooking.bookingId && // Exclude current booking from overlap check
+                            existingBooking.bookingId !== updatedBooking.bookingId &&
                             (
-                                (updatedStart >= existingStart && updatedStart < existingEnd) || // Overlaps with start
-                                (updatedEnd > existingStart && updatedEnd <= existingEnd) ||    // Overlaps with end
-                                (updatedStart <= existingStart && updatedEnd >= existingEnd)    // Encloses existing booking
+                                (updatedStart >= existingStart && updatedStart < existingEnd) ||
+                                (updatedEnd > existingStart && updatedEnd <= existingEnd) ||
+                                (updatedStart <= existingStart && updatedEnd >= existingEnd)
                             )
                         );
                     });
 
-
                     if (overlapping) {
-                        alert("Updated booking conflicts with an existing booking. Please choose another time slot.");
+                        showAlertModal("Conflict", "Updated booking conflicts with an existing booking. Please choose another time slot.");
                         return;
                     }
 
-                    // Send the updated booking to the server
                     try {
                         const response = await fetch(`/api/bookings/UpdateBooking/${updatedBooking.bookingId}`, {
                             method: 'PUT',
@@ -631,35 +621,28 @@
                             body: JSON.stringify(updatedBooking),
                         });
 
-                        console.log("UpdateBooking API response:", response);
-
                         if (response.ok) {
-                            console.log("Booking updated successfully.");
-                            alert('Booking updated successfully.');
-                            fetchUserBookings(); // Refresh bookings
+                            showAlertModal("Success", "Booking updated successfully.");
+                            fetchUserBookings();
                             const editModal = bootstrap.Modal.getInstance(document.getElementById('editBookingModal'));
                             editModal.hide();
                         } else {
                             const errorText = await response.text();
-                            console.error("Failed to update booking. Response:", errorText);
-                            alert(`Failed to update booking: ${errorText}`);
+                            showAlertModal("Error", `Failed to update booking: ${errorText}`);
                         }
                     } catch (error) {
-                        console.error('Error updating booking:', error);
-                        alert('Error occurred while updating booking. Please try again later.');
+                        showAlertModal("Error", "Error occurred while updating booking. Please try again later.");
                     }
                 };
 
-                // Show modal
                 const editModal = new bootstrap.Modal(document.getElementById('editBookingModal'));
                 editModal.show();
-                console.log("Edit modal displayed for bookingId:", bookingId);
 
             } catch (error) {
-                console.error("Error fetching booking for editing:", error);
-                alert("An error occurred while editing the booking.");
+                showAlertModal("Error", "An error occurred while editing the booking.");
             }
         }
+    
 
         function populateEditTimeDropdowns(bookingStartTime, bookingEndTime) {
             const timeIntervals = generateTimeIntervals(30, 8, 20); // 30-minute intervals from 8 AM to 8 PM
@@ -945,6 +928,21 @@
             filterBookings(filterValue); // Apply the filter when the button is clicked
             $('#filterModal').modal('hide'); // Close the modal after applying the filter
         });
+
+        function showAlertModal(title, message) {
+            const alertModalElement = document.getElementById('alertModal');
+            const modalTitle = alertModalElement.querySelector('.modal-title');
+            const modalBody = alertModalElement.querySelector('.modal-body');
+
+            // Set the title and message
+            modalTitle.textContent = title;
+            modalBody.textContent = message;
+
+            // Show the modal
+            const alertModal = new bootstrap.Modal(alertModalElement);
+            alertModal.show();
+        }
+
     </script>
 
 </body>
