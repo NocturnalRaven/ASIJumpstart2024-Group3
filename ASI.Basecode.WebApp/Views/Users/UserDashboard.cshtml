@@ -255,6 +255,131 @@
                 </div>
             </div>
         </div>
+
+        <!-- Success Modal for Booking -->
+        <div class="modal fade" id="bookingSuccessModal" tabindex="-1" aria-labelledby="bookingSuccessModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="bookingSuccessModalLabel">Booking Successful!</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Your booking has been added successfully.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Success Modal for Editing Booking -->
+        <div class="modal fade" id="editBookingSuccessModal" tabindex="-1" aria-labelledby="editBookingSuccessModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editBookingSuccessModalLabel">Booking Successful!</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Your booking has been edited successfully.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Cancelled Booking Modal -->
+        <div class="modal fade" id="bookingCancelledModal" tabindex="-1" aria-labelledby="bookingCancelledModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="bookingCancelledModalLabel">Booking Cancelled</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Your booking has been cancelled successfully, and the room is now available.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="actionModal" tabindex="-1" aria-labelledby="actionModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="actionModalLabel"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Content will be dynamically inserted -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Cancellation Confirmation Modal -->
+        <div class="modal fade" id="cancelBookingModal" tabindex="-1" aria-labelledby="cancelBookingModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="cancelBookingModalLabel">Cancel Booking</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to cancel this booking?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                        <button type="button" class="btn btn-danger" id="confirmCancelButton">Yes, Cancel Booking</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Modal -->
+        <div class="modal fade" id="alertSuccessModal" tabindex="-1" aria-labelledby="alertSuccessModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="alertSuccessModalLabel">Success</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Success message will be dynamically inserted -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Modal -->
+        <div class="modal fade" id="alertErrorModal" tabindex="-1" aria-labelledby="alertErrorModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="alertErrorModalLabel">Error</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Error message will be dynamically inserted -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
@@ -391,16 +516,19 @@
                     });
 
                     if (response.ok) {
-                        alert('Booking successful!');
-                        document.getElementById('bookingForm').reset();
-                        fetchUserBookings(); // Refresh bookings
+                        showBookingSuccessModal();
+
+                        // Wait a short duration before refreshing to allow modal to show briefly
+                        setTimeout(() => {
+                            location.reload(); // Refresh the page
+                        }, 2000); // Adjust the delay as needed (2000ms = 2 seconds)
                     } else {
                         const errorText = await response.text();
-                        alert(`Booking failed: ${errorText}`);
+                        showErrorModal(`Booking failed: ${errorText}`);
                     }
                 } catch (error) {
                     console.error('Error booking room:', error.message);
-                    alert('Error occurred while booking. Please try again later.');
+                    showErrorModal('Error occurred while booking. Please try again later.');
                 }
             }
 
@@ -577,7 +705,7 @@
                 }
                 // If there are bookings, render the table
                 const tableHTML = `
-                                <table class="table table-striped align-middle" id="userBookingsTable">
+                                            <table class="table table-striped align-middle" id="userBookingsTable">
                                     <thead>
                                         <tr>
                                             <th scope="col">Room</th>
@@ -599,6 +727,8 @@
                                 const hours = Math.floor(duration / 60);
                                 const minutes = duration % 60;
                                 const formattedDuration = `${hours}h ${minutes}m`;
+                                const isPastBooking = new Date(booking.endDate) < new Date();
+                                const isRecurring = booking.isRecurring;
                                 return `
                                                         <tr>
                                                             <td>${booking.roomName || 'Unknown Room'}</td>
@@ -607,20 +737,25 @@
                                                             <td>${endTime}</td>
                                                             <td>${formattedDuration}</td>
                                                             <td>
-                                                                <button class="btn btn-sm view-btn-user-db" onclick="viewBooking(${booking.bookingId})">View</button>
-                                                                <button class="btn btn-sm edit-btn-user-db" onclick="editBooking(${booking.bookingId})">Edit</button>
-                                                                <button class="btn btn-sm cancel-btn-user-db" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
-                                                            </td>
-                                                        </tr>
-                                                    `;
+                                                            <button class="btn btn-sm view-btn-user-db" onclick="viewBooking(${booking.bookingId})">View</button>
+                                                            ${isPastBooking || isRecurring
+                                ? '' // No Edit button for past or recurring bookings
+                                : `<button class="btn btn-sm edit-btn-user-db" onclick="editBooking(${booking.bookingId})">Edit</button>`
                             }
-                        )
-                        .join('')}
+                                                            ${isRecurring || !isPastBooking
+                                ? `<button class="btn btn-sm cancel-btn-user-db" onclick="cancelBooking(${booking.bookingId})">Cancel</button>`
+                                : '' // Cancel button for recurring or active bookings
+                            }
+                                                        </td>
+                                                    </tr>
+                                                `;
+                    })
+                    .join('')}
                                     </tbody>
                                 </table>
                             `;
-                tableWrapper.innerHTML = tableHTML;
-            }
+            tableWrapper.innerHTML = tableHTML;
+        }
 
             function cancelBooking(bookingId) {
                 if (confirm('Are you sure you want to cancel this booking?')) {
@@ -1106,6 +1241,54 @@
 
                 // Initial validation
                 validateTimeDropdowns();
+            }
+            // Show the Booking Success Modal
+            function showBookingSuccessModal() {
+                const bookingSuccessModal = new bootstrap.Modal(document.getElementById('bookingSuccessModal'));
+                bookingSuccessModal.show();
+            }
+
+            // Show the Edit Booking Success Modal
+            function showEditBookingSuccessModal() {
+                const editBookingSuccessModal = new bootstrap.Modal(document.getElementById('editBookingSuccessModal'));
+                editBookingSuccessModal.show();
+            }
+
+            // Show the Booking Cancelled Modal
+            function showBookingCancelledModal() {
+                const bookingCancelledModal = new bootstrap.Modal(document.getElementById('bookingCancelledModal'));
+                bookingCancelledModal.show();
+            }
+
+            // Show a Dynamic Action Modal
+            function showActionModal(title, bodyContent) {
+                const actionModalElement = document.getElementById('actionModal');
+                const actionModalTitle = actionModalElement.querySelector('.modal-title');
+                const actionModalBody = actionModalElement.querySelector('.modal-body');
+
+                // Set the title and body content dynamically
+                actionModalTitle.textContent = title;
+                actionModalBody.innerHTML = bodyContent;
+
+                // Show the modal
+                const actionModal = new bootstrap.Modal(actionModalElement);
+                actionModal.show();
+            }
+
+            // Show the Cancel Booking Confirmation Modal
+            function showCancelBookingModal() {
+                const cancelBookingModal = new bootstrap.Modal(document.getElementById('cancelBookingModal'));
+                cancelBookingModal.show();
+            }
+
+            // Confirm Booking Cancellation
+            function setupCancelBookingConfirmation(onConfirm) {
+                const confirmCancelButton = document.getElementById('confirmCancelButton');
+                confirmCancelButton.addEventListener('click', () => {
+                    onConfirm();
+                    const cancelBookingModal = bootstrap.Modal.getInstance(document.getElementById('cancelBookingModal'));
+                    cancelBookingModal.hide(); // Close the modal after confirmation
+                });
             }
 
     </script>

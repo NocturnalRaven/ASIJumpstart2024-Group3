@@ -105,7 +105,7 @@
                     }
 
                     <div class="form-group mb-3">
-                        <label asp-for="NewUser.UserCode" class="control-label">User code</label>
+                        <label asp-for="NewUser.UserCode" class="control-label">Username</label>
                         <input name="UserCode" class="form-control" required />
                         <span asp-validation-for="NewUser.UserCode" class="text-danger"></span>
                     </div>
@@ -167,8 +167,16 @@
                     <div class="modal-body">
                         <form id="editUserForm">
                             <div class="mb-3">
-                                <label for="editUserNameInput" class="form-label">Name</label>
-                                <input type="text" class="form-control" id="editUserNameInput" disabled required>
+                                <label for="editUserCodeInput" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="editUserCodeInput" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editUserFirstNameInput" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="editUserFirstNameInput" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editUserLastNameInput" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="editUserLastNameInput" required>
                             </div>
                             <div class="mb-3">
                                 <label for="editUserEmailInput" class="form-label">Email</label>
@@ -180,22 +188,9 @@
                                     <option value="3">User</option>
                                     <option value="2">Staff</option>
                                     <option value="1">Admin</option>
-                                    <option value="9">Super Admin</option>
                                 </select>
                             </div>
-                            <input type="hidden" id="editUserIdInput" />
-                            <div class="mb-3">
-                                <label for="editUserCodeInput" class="form-label">User Code</label>
-                                <input type="text" class="form-control" id="editUserCodeInput" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="editUserFirstNameInput" class="form-label">First Name</label>
-                                <input type="text" class="form-control" id="editUserFirstNameInput" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="editUserLastNameInput" class="form-label">Last Name</label>
-                                <input type="text" class="form-control" id="editUserLastNameInput" required>
-                            </div>
+                            <input type="hidden" id="editUserIdInput" />                    
                             <div class="mb-3">
                                 <label for="editUserPasswordInput" class="form-label">Password</label>
                                 <input type="password" class="form-control" id="editUserPasswordInput" required>
@@ -230,20 +225,26 @@
             </div>
         </div>
 
+        <!-- Reusable Alert Modal -->
+        <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="alertModalLabel">Alert</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="alertModalBody">
+                        <!-- Alert message will go here -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script>
-            const users = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.UserList.dataList));
-
-            async function fetchUsers() {
-                try {
-                    const response = await fetch('/admin/dashboard/users'); // Adjust the URL if necessary
-                    if (!response.ok) throw new Error("Failed to fetch users.");
-
-                    const data = await response.json(); // Ensure this returns JSON
-                    renderUserTable(data); // Render the updated user list
-                } catch (error) {
-                    console.error("Error fetching users:", error);
-                }
-            }
+            const users = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.UserList.dataList));           
 
             document.getElementById('filterInput').addEventListener('input', applyFilter);
 
@@ -282,35 +283,24 @@
             }
 
 
-            function renderUserTable(users) {
-                const tbody = document.querySelector('#adminUserTable tbody');
-                tbody.innerHTML = ''; // Clear existing rows
-
-                users.forEach(user => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                                    <td>${user.Id}</td>
-                                    <td>${user.Name}</td>
-                                    <td>${user.Email}</td>
-                                    <td>${user.DisplayRole}</td>
-                                    <td>${new Date(user.DateCreated).toLocaleDateString()}</td>
-                                    <td>${new Date(user.DateModified).toLocaleDateString()}</td>
-                                    <td>
-                                                    <button type="button" class="btn btn-sm edit-btn-user-db" onclick="editUser(${user.Id})">Edit</button>
-                                        <button type="button" class="btn btn-sm cancel-btn-user-db" onclick="showDeleteModal(${user.Id})">Delete</button>
-                                    </td>
-                                `;
-                    tbody.appendChild(tr);
-                });
-            }
-
             function editUser(id) {
                 const user = users.find(user => user.Id === id);
-                document.getElementById('editUserIdInput').value = user.Id;
-                document.getElementById('editUserNameInput').value = user.Name;
-                document.getElementById('editUserEmailInput').value = user.Email;
-                document.getElementById('editUserRoleInput').value = user.Role;
 
+                if (!user) {
+                    alert('User not found!');
+                    return;
+                }
+
+                // Populate fields with user data
+                document.getElementById('editUserIdInput').value = user.Id;
+                document.getElementById('editUserCodeInput').value = user.UserCode || ''; // User's code
+                document.getElementById('editUserFirstNameInput').value = user.FirstName || ''; // User's first name
+                document.getElementById('editUserLastNameInput').value = user.LastName || ''; // User's last name
+                document.getElementById('editUserEmailInput').value = user.Email || ''; // User's email
+                document.getElementById('editUserRoleInput').value = user.Role || ''; // User's role
+                document.getElementById('editUserPasswordInput').value = user.Password || ''; // User's password (if applicable)
+
+                // Open the modal
                 const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
                 modal.show();
             }
@@ -324,73 +314,77 @@
 
             async function updateUser() {
                 const id = parseInt(document.getElementById('editUserIdInput').value, 10);
-                const name = document.getElementById('editUserNameInput').value;
+                const firstName = document.getElementById('editUserFirstNameInput').value || "DefaultFirstName";
+                const lastName = document.getElementById('editUserLastNameInput').value || "DefaultLastName";
+                const name = `${firstName} ${lastName}`; // Combine first and last names
                 const email = document.getElementById('editUserEmailInput').value;
                 const role = parseInt(document.getElementById('editUserRoleInput').value, 10);
-
-                // Assuming these values are available in the form or hardcoded for testing
-                const userCode = document.getElementById('editUserCodeInput').value || "SomeDefaultCode"; // Replace with actual user code input
-                const firstName = document.getElementById('editUserFirstNameInput').value || "DefaultFirstName"; // Replace with actual first name input
-                const lastName = document.getElementById('editUserLastNameInput').value || "DefaultLastName"; // Replace with actual last name input
-                const password = document.getElementById('editUserPasswordInput').value || "defaultPassword123"; // Replace with actual password input if updating
+                const userCode = document.getElementById('editUserCodeInput').value || "SomeDefaultCode";
+                const password = document.getElementById('editUserPasswordInput').value || "defaultPassword123";
 
                 const updatedUser = {
                     id,
                     name,
                     email,
                     role,
-                    userCode,    // Required field
-                    firstName,   // Required field
-                    lastName,    // Required field
-                    password     // Required field
+                    userCode,
+                    firstName,
+                    lastName,
+                    password
                 };
 
                 try {
                     const response = await fetch(`/UpdateUser`, {
                         method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(updatedUser)
                     });
 
                     if (response.ok) {
-                        await fetchUsers(); // Refresh user list
-                        alert("User updated successfully.");
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
-                        modal.hide();
+                        showAlert('User updated successfully.', 'Success');
+                        window.location.reload(); // Refresh the page after successful update
                     } else {
                         const errorText = await response.text();
-                        console.error("Failed to update user:", errorText);
-                        alert("Error updating user: " + errorText);
+                        console.error('Failed to update user:', errorText);
+                        showAlert(`Error updating user: ${errorText}`, 'Error');
                     }
                 } catch (error) {
-                    console.error("Error updating user:", error);
+                    console.error('Error updating user:', error);
+                    showAlert('An unexpected error occurred while updating the user.', 'Error');
                 }
             }
+
 
             async function deleteUser() {
                 const id = document.getElementById('deleteUserIdInput').value;
 
                 try {
-                    const response = await fetch(`/DeleteUser/${id}`, {
-                        method: 'DELETE'
-                    });
+                    const response = await fetch(`/DeleteUser/${id}`, { method: 'DELETE' });
 
                     if (response.ok) {
-                        await fetchUsers(); // Refresh user list after deletion
-                        alert("User deleted successfully.");
+                        fetchUsers(); // Refresh user list after deletion
+                        showAlert('User deleted successfully.', 'Success');
                         const modal = bootstrap.Modal.getInstance(document.getElementById('deleteUserModal'));
                         modal.hide();
                     } else {
                         const errorText = await response.text();
-                        console.error("Failed to delete user:", errorText);
-                        alert("Error deleting user: " + errorText);
+                        console.error('Failed to delete user:', errorText);
+                        showAlert(`Error deleting user: ${errorText}`, 'Error');
                     }
                 } catch (error) {
-                    console.error("Error deleting user:", error);
+                    console.error('Error deleting user:', error);
+                    showAlert('An unexpected error occurred while deleting the user.', 'Error');
                 }
             }
+
+            function showAlert(message, title = 'Alert') {
+                document.getElementById('alertModalLabel').textContent = title; // Set the title
+                document.getElementById('alertModalBody').textContent = message; // Set the message
+
+                const alertModal = new bootstrap.Modal(document.getElementById('alertModal'));
+                alertModal.show(); // Show the modal
+            }
+
         </script>
 
     </main>

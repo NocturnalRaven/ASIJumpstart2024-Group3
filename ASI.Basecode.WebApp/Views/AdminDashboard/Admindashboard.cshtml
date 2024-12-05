@@ -1,4 +1,4 @@
-﻿@{
+﻿﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -249,7 +249,23 @@
                         </div>
                     </div>
                 </div>
-
+                <!-- Success Modal for Editing Booking -->
+                <div class="modal fade" id="editBookingSuccessModal" tabindex="-1" aria-labelledby="editBookingSuccessModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editBookingSuccessModalLabel">Booking Successful!</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Your booking has been edited successfully.
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- Cancelled Booking Modal -->
                 <div class="modal fade" id="bookingCancelledModal" tabindex="-1" aria-labelledby="bookingCancelledModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
@@ -267,6 +283,23 @@
                         </div>
                     </div>
                 </div>
+                <div class="modal fade" id="actionModal" tabindex="-1" aria-labelledby="actionModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="actionModalLabel"></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Content will be dynamically inserted -->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
 
                 <!-- Cancellation Confirmation Modal -->
                 <div class="modal fade" id="cancelBookingModal" tabindex="-1" aria-labelledby="cancelBookingModalLabel" aria-hidden="true">
@@ -511,11 +544,11 @@
                             const color = ['#6848FF', '#AFAEFF', '#E6DEFF', '#F3F0FF', '#FFD700', '#FF5733'][index % 6]; // Loop colors if needed
 
                             const legendItem = `
-                                            <div class="legend-item">
-                                            <div class="legend-color" style="background-color: ${color};"></div>
-                                            <span>${category}</span>
-                                            </div>
-                                            `;
+                                                                <div class="legend-item">
+                                                                <div class="legend-color" style="background-color: ${color};"></div>
+                                                                <span>${category}</span>
+                                                                </div>
+                                                                `;
                             legendContainer.innerHTML += legendItem;
                         });
                     }
@@ -585,47 +618,49 @@
 
                             const row = document.createElement('tr');
                             row.innerHTML = `
-                                <td>${booking.userId}</td>
-                                <td>${booking.userName}</td>
-                                <td>${booking.roomId}</td>
-                                <td>${booking.roomName}</td>
-                                <td>${bookingDate}</td>
-                                <td>${startTime}</td>
-                                <td>${endTime}</td>
-                                <td>${duration}</td>
-                                <td>
-                                    <button class="btn btn-sm view-btn-user-db"  onclick="viewBooking(${booking.bookingId})">View</button>
-                                    <button class="btn btn-sm edit-btn-user-db" onclick="editBooking(${booking.bookingId})">Edit</button>
-                                    <button class="btn btn-sm cancel-btn-user-db" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
-                                </td>
-                                `;
+                                                    <td>${booking.userId}</td>
+                                                    <td>${booking.userName}</td>
+                                                    <td>${booking.roomId}</td>
+                                                    <td>${booking.roomName}</td>
+                                                    <td>${bookingDate}</td>
+                                                    <td>${startTime}</td>
+                                                    <td>${endTime}</td>
+                                                    <td>${duration}</td>
+                                                    <td>
+                                                        <button class="btn btn-sm view-btn-user-db"  onclick="viewBooking(${booking.bookingId})">View</button>
+                                                        <button class="btn btn-sm edit-btn-user-db" onclick="editBooking(${booking.bookingId})">Edit</button>
+                                                        <button class="btn btn-sm cancel-btn-user-db" onclick="cancelBooking(${booking.bookingId})">Cancel</button>
+                                                    </td>
+                                                    `;
                             tbody.appendChild(row);
                         });
                     }
+
+
 
                     function renderRecentBookings(bookings) {
                         const container = document.querySelector('#recentBookingsContainer');
                         container.innerHTML = '';
 
-                    bookings.slice(0, 3).forEach(booking => {
-                        const bookingHTML = `
-                            <div class="recentBookings">
-                            <p class="userRecentBookings">${booking.userName}</p>
-                            <hr>
-                            <div class="recentBookingsDetailsDiv">
-                            <div class="recentBookingsDetails">
-                            <i class="bi bi-house-door-fill"></i>
-                            <p>${booking.roomName}</p>
-                            </div>
-                            <div class="recentBookingsDetails">
-                            <i class="bi bi-calendar2-week"></i>
-                            <p>${new Date(booking.startDate).toLocaleDateString()}</p>
-                            </div>
-                            </div>
-                            </div>`;
-                        container.innerHTML += bookingHTML;
-                    });
-                }
+                        bookings.slice(0, 3).forEach(booking => {
+                            const bookingHTML = `
+                                                <div class="recentBookings">
+                                                <p class="userRecentBookings">${booking.userName}</p>
+                                                <hr>
+                                                <div class="recentBookingsDetailsDiv">
+                                                <div class="recentBookingsDetails">
+                                                <i class="bi bi-house-door-fill"></i>
+                                                <p>${booking.roomName}</p>
+                                                </div>
+                                                <div class="recentBookingsDetails">
+                                                <i class="bi bi-calendar2-week"></i>
+                                                <p>${new Date(booking.startDate).toLocaleDateString()}</p>
+                                                </div>
+                                                </div>
+                                                </div>`;
+                            container.innerHTML += bookingHTML;
+                        });
+                    }
 
                     async function addBooking() {
                         try {
@@ -748,12 +783,54 @@
                             const startTime = new Date(booking.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                             const endTime = new Date(booking.endDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-                            alert(`Booking Details:\nUser: ${booking.userName}\nRoom: ${booking.roomName}\nDate: ${bookingDate}\nStart Time: ${startTime}\nEnd Time: ${endTime}`);
+                            // Show booking details in a modal
+                            showActionModal(
+                                'Booking Details',
+                                `
+                                <p><strong>User:</strong> ${booking.userName}</p>
+                                <p><strong>Room:</strong> ${booking.roomName}</p>
+                                <p><strong>Date:</strong> ${bookingDate}</p>
+                                <p><strong>Start Time:</strong> ${startTime}</p>
+                                <p><strong>End Time:</strong> ${endTime}</p>
+                                `,
+                                'Close'
+                            );
                         } catch (error) {
                             console.error("Error viewing booking:", error);
-                            alert("An error occurred while viewing booking details.");
+
+                            // Show error in a modal
+                            showActionModal(
+                                'Error',
+                                'An error occurred while viewing booking details. Please try again.',
+                                'Close'
+                            );
                         }
                     }
+
+                    // Function to show action modal
+                    function showActionModal(title, content, buttonText, buttonAction) {
+                        const modal = document.getElementById('actionModal');
+                        const modalTitle = modal.querySelector('.modal-title');
+                        const modalBody = modal.querySelector('.modal-body');
+                        const modalButton = modal.querySelector('.modal-footer .btn');
+
+                        modalTitle.textContent = title;
+                        modalBody.innerHTML = content;
+                        modalButton.textContent = buttonText;
+
+                        if (buttonAction) {
+                            modalButton.onclick = buttonAction;
+                        } else {
+                            modalButton.onclick = () => {
+                                const modalInstance = bootstrap.Modal.getInstance(modal);
+                                modalInstance.hide();
+                            };
+                        }
+
+                        const modalInstance = new bootstrap.Modal(modal);
+                        modalInstance.show();
+                    }
+
 
                     async function editBooking(bookingId) {
                         try {
@@ -833,7 +910,7 @@
                                     });
 
                                     if (response.ok) {
-                                        alert("Booking updated successfully.");
+                                        showEditBookingSuccessModal()
                                         await fetchBookings(); // Refresh bookings after update
                                     } else {
                                         const errorText = await response.text();
@@ -1190,12 +1267,13 @@
 
                         const addStartTimeSelect = document.getElementById('AddBookingStartTime');
                         const addEndTimeSelect = document.getElementById('AddBookingEndTime');
-
                         const addDateInput = document.getElementById('addBookingDate');
                         const addRoomSelect = document.getElementById('addBookingRoom');
 
+                        let intervalChecker; // To hold the interval for real-time updates
+
                         // Helper function to populate a dropdown
-                        function populateDropdown(selectElement, disabledIntervals = [], allowPast = false) {
+                        function populateDropdown(selectElement, disabledIntervals = [], allowPast = false, excludeTime = null) {
                             const currentValue = selectElement.value;
                             selectElement.innerHTML = ''; // Clear existing options
 
@@ -1204,10 +1282,11 @@
                                 option.value = time;
                                 option.textContent = time;
 
-                                // Disable option if it's in the disabledIntervals array or past time for today
+                                // Disable option if it's in the disabledIntervals array, past time for today, or matches the excluded time
                                 if (
                                     disabledIntervals.includes(time) ||
-                                    (!allowPast && isPastTime(time))
+                                    (!allowPast && isPastTime(time)) ||
+                                    time === excludeTime
                                 ) {
                                     option.disabled = true;
                                     option.style.color = 'gray';
@@ -1217,7 +1296,7 @@
                             });
 
                             // Restore previous valid selection if possible
-                            if (currentValue && timeIntervals.includes(currentValue) && !disabledIntervals.includes(currentValue)) {
+                            if (currentValue && timeIntervals.includes(currentValue) && !disabledIntervals.includes(currentValue) && currentValue !== excludeTime) {
                                 selectElement.value = currentValue;
                             } else {
                                 selectElement.value = ''; // Reset if invalid
@@ -1230,8 +1309,12 @@
                             const today = new Date().toISOString().split('T')[0];
                             if (addDateInput.value !== today) return false;
 
-                            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-                            return time <= currentTime;
+                            const [hours, minutes] = time.split(':').map(Number);
+                            const timeToCheck = new Date();
+                            timeToCheck.setHours(hours, minutes, 0, 0);
+
+                            // Adjust logic to allow times that are at least 30 minutes in the future
+                            return timeToCheck <= now;
                         }
 
                         // Find all disabled intervals for the selected room and date
@@ -1276,7 +1359,7 @@
                             const disabledIntervals = getDisabledIntervals(selectedDate, selectedRoomId);
 
                             // Populate start dropdown
-                            populateDropdown(addStartTimeSelect, disabledIntervals, true);
+                            populateDropdown(addStartTimeSelect, disabledIntervals, false);
 
                             // Handle dynamic updates for the end dropdown based on selected start time
                             addStartTimeSelect.addEventListener('change', () => {
@@ -1288,14 +1371,30 @@
                                         timeIntervals.slice(0, startIndex) // Disable times before or equal to selected start time
                                     );
 
-                                    populateDropdown(addEndTimeSelect, endDisabledIntervals);
+                                    populateDropdown(addEndTimeSelect, endDisabledIntervals, true, selectedStartTime); // Exclude selected start time
                                 } else {
-                                    populateDropdown(addEndTimeSelect, disabledIntervals);
+                                    populateDropdown(addEndTimeSelect, disabledIntervals, true);
                                 }
                             });
 
                             // Initialize the end dropdown
-                            populateDropdown(addEndTimeSelect, disabledIntervals);
+                            populateDropdown(addEndTimeSelect, disabledIntervals, true);
+
+                            // Clear the real-time interval if already set
+                            if (intervalChecker) clearInterval(intervalChecker);
+
+                            // Start the real-time validation interval
+                            intervalChecker = setInterval(() => {
+                                // Real-time update for start and end time dropdowns
+                                populateDropdown(addStartTimeSelect, disabledIntervals, false);
+                                if (addStartTimeSelect.value) {
+                                    const startIndex = timeIntervals.indexOf(addStartTimeSelect.value);
+                                    const endDisabledIntervals = disabledIntervals.concat(
+                                        timeIntervals.slice(0, startIndex)
+                                    );
+                                    populateDropdown(addEndTimeSelect, endDisabledIntervals, true, addStartTimeSelect.value);
+                                }
+                            }, 30000); // Check every 30 seconds
                         }
 
                         // Populate dropdowns with all intervals initially
@@ -1319,32 +1418,56 @@
 
                         let currentEditingBookingId = null;
 
+                        // Restrict booking date to today and future dates
+                        function restrictBookingDate() {
+                            const today = new Date();
+                            const formattedToday = today.toISOString().split('T')[0];
+                            editDateInput.setAttribute('min', formattedToday); // Set the minimum selectable date to today
+                        }
+
                         // Populate dropdown helper function
-                        function populateDropdown(selectElement, disabledIntervals = [], filterFn = null, currentValue = null) {
+                        function populateDropdown(selectElement, disabledIntervals = [], allowPast = false, minAllowedTime = null) {
+                            const currentValue = selectElement.value;
                             selectElement.innerHTML = ''; // Clear existing options
 
                             timeIntervals.forEach(time => {
-                                if (filterFn && !filterFn(time)) return; // Skip times not matching the filter
-
                                 const option = document.createElement('option');
                                 option.value = time;
                                 option.textContent = time;
 
-                                // Disable option if it's in the disabledIntervals array and not the current value
-                                if (disabledIntervals.includes(time) && time !== currentValue) {
+                                // Allow options only if they meet all conditions
+                                if (
+                                    !disabledIntervals.includes(time) &&
+                                    (allowPast || !isPastTime(time)) &&
+                                    (minAllowedTime === null || time > minAllowedTime) // Ensure time is after minAllowedTime
+                                ) {
+                                    selectElement.appendChild(option);
+                                } else {
                                     option.disabled = true;
                                     option.style.color = 'gray';
+                                    selectElement.appendChild(option);
                                 }
-
-                                selectElement.appendChild(option);
                             });
 
-                            // Restore the previously selected value if valid
+                            // Restore the previously valid selection if possible
                             if (currentValue && timeIntervals.includes(currentValue)) {
                                 selectElement.value = currentValue;
                             } else {
-                                selectElement.value = ''; // Reset invalid value
+                                selectElement.value = ''; // Reset if invalid
                             }
+                        }
+
+                        // Check if a time is in the past for today's date
+                        function isPastTime(time) {
+                            const now = new Date();
+                            const today = new Date().toISOString().split('T')[0];
+                            if (editDateInput.value !== today) return false;
+
+                            const [hours, minutes] = time.split(':').map(Number);
+                            const timeToCheck = new Date();
+                            timeToCheck.setHours(hours, minutes, 0, 0);
+
+                            return timeToCheck <= now; // Return true if the time has already passed
                         }
 
                         // Update disabled times function
@@ -1375,7 +1498,7 @@
                                 return (
                                     booking.roomId === selectedRoomId &&
                                     bookingDate === selectedDate &&
-                                    booking.bookingId !== excludeBookingId // Exclude current editing booking
+                                    booking.bookingId !== excludeBookingId // Exclude the current editing booking
                                 );
                             });
 
@@ -1394,31 +1517,25 @@
                                     for (let i = startIndex; i < endIndex; i++) {
                                         disabledStartTimes.add(timeIntervals[i]);
                                     }
+                                    disabledEndTimes.add(endTime); // Specifically disable the overlapping end time
                                 }
                             });
 
                             const selectedStartTime = startSelect.value;
 
+                            // Populate start time dropdown
                             populateDropdown(
                                 startSelect,
                                 Array.from(disabledStartTimes),
-                                null,
-                                selectedStartTime
+                                false
                             );
 
+                            // Populate end time dropdown, ensuring times are strictly after the selected start time
                             populateDropdown(
                                 endSelect,
                                 Array.from(disabledEndTimes),
-                                time => {
-                                    // Ensure end times cannot go before the selected start time
-                                    if (selectedStartTime) {
-                                        const startTimeIndex = timeIntervals.indexOf(selectedStartTime);
-                                        const currentIndex = timeIntervals.indexOf(time);
-                                        return currentIndex > startTimeIndex;
-                                    }
-                                    return true; // No start time selected, allow all times
-                                },
-                                endSelect.value
+                                true,
+                                selectedStartTime // Min allowed time is the selected start time
                             );
                         }
 
@@ -1447,7 +1564,12 @@
                             currentEditingBookingId = bookingId;
                             updateDisabledTimes(editStartTimeSelect, editEndTimeSelect, editDateInput, editRoomSelect, currentEditingBookingId);
                         };
+
+                        // Restrict booking date when modal is opened
+                        restrictBookingDate();
                     }
+
+
 
                     // Function to generate time intervals
                     function generateTimeIntervals(intervalMinutes, startHour, endHour) {
@@ -1516,10 +1638,34 @@
                         return dates;
                     }
 
-                // Call this function periodically
-                setInterval(archiveExpiredBookings, 10 * 60 * 1000); // Every 10 minutes
+                    // Call this function periodically
+                    setInterval(archiveExpiredBookings, 10 * 60 * 1000); // Every 10 minutes
 
                     document.addEventListener("DOMContentLoaded", () => {
+                        // Automatically update the "No. of People" field based on room capacity
+                        function updateNoOfPeopleBasedOnRoom(selectElement, inputElement) {
+                            if (!selectElement || !inputElement) return;
+
+                            // Listen for changes in the room selection
+                            selectElement.addEventListener("change", () => {
+                                const selectedOption = selectElement.options[selectElement.selectedIndex];
+                                const roomCapacity = parseInt(selectedOption.dataset.capacity, 10) || 0;
+
+                                console.log(`Room capacity updated to: ${roomCapacity}`); // Debug log
+
+                                // Update the "No. of People" input with the room's capacity
+                                inputElement.value = roomCapacity;
+                            });
+                        }
+                        // Add Booking Modal
+                        const addBookingRoomSelect = document.getElementById("addBookingRoom");
+                        const addBookingPeopleInput = document.getElementById("addBookingPeople");
+                        updateNoOfPeopleBasedOnRoom(addBookingRoomSelect, addBookingPeopleInput);
+
+                        // Edit Booking Modal
+                        const editBookingRoomSelect = document.getElementById("bookingRoomInput");
+                        const editBookingPeopleInput = document.getElementById("bookingPeopleInput");
+                        updateNoOfPeopleBasedOnRoom(editBookingRoomSelect, editBookingPeopleInput);
                         // Set the minimum date for the booking date input
                         const addBookingDate = document.getElementById('addBookingDate');
                         if (addBookingDate) {
@@ -1584,6 +1730,14 @@
                         bookingSuccessModal.show();
                     }
 
+                    // Function to show the Booking Success Modal
+                    function showEditBookingSuccessModal() {
+                        const editBookingSuccessModal = new bootstrap.Modal(
+                            document.getElementById('editBookingSuccessModal')
+                        );
+                        editBookingSuccessModal.show();
+                    }
+
                     // Function to show the Booking Cancelled Modal
                     function showBookingCancelledModal() {
                         const bookingCancelledModal = new bootstrap.Modal(
@@ -1613,6 +1767,6 @@
                     }
 
 
-           </script>
-    </body>
+                </script>
+</body>
 </html>
