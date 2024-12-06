@@ -266,7 +266,7 @@ nav {
 .recentBookingsDetails {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+/*    justify-content: space-between;*/
     gap: 5px;
     align-items: center;
 }
@@ -275,7 +275,7 @@ nav {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    margin-top: 7px;
+/*    margin-top: 7px;*/
 }
 
 .recentBookingsOverallInner {
@@ -695,13 +695,14 @@ table tbody tr td {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+    overflow-x:auto !important;
     min-height: 0; /* Allow the section to shrink when necessary */
 }
 
 .userDashboardRoomsCardView {
     display: flex;
     flex-wrap: nowrap; /* Prevent items from wrapping to a new line */
-    overflow-x: auto; /* Enable horizontal scrolling if needed */
+    overflow-x: scroll !important; /* Enable horizontal scrolling if needed */
     gap: 10px; /* Add some spacing between cards */
     padding: 10px;
 }
@@ -791,11 +792,11 @@ table tbody tr td {
 /* Horizontal scroll for the room card container */
 .userDashboardRoomsCardView {
     display: flex;
-    flex-wrap: nowrap; /* Prevent wrapping */
-    overflow-x: auto; /* Enable horizontal scroll */
+    flex-wrap: nowrap;
+    overflow-x: scroll !important; /* Enable horizontal scroll */
     gap: 10px; /* Space between the cards */
     padding: 10px;
-    max-width: 100%; /* Ensure the container doesn't exceed the viewport width */
+    max-width: 70% !important; /* Ensure the container doesn't exceed the viewport width */
 }
 
 .userDashboardRoomsCard {
@@ -1229,6 +1230,30 @@ table tbody tr td {
     overflow-y: auto; /* Allow vertical scrolling if necessary */
 /*    height: 200px !important;*/
 }
+#roomsContainer {
+    width: 100% !important;
+}
+/*.roomsContainerScroll {
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: scroll !important;
+}*/
+.bookingsSection {
+    overflow-x: auto !important;
+/*    width: 800px !important;*/
+width: 70% !important;
+height: 100% !important;
+}
+.date-and-time-bookings {
+
+display: flex;
+flex-direction: column;
+font-size: 8px !important;
+}
+
+.recentBookingsDetails {
+
+justify-content: left;}
 <<<<<<< HEAD
 
 ======= > > > > > > > 1a9e3931e2d4f9cc9d20e2624cc13c312748b6d1

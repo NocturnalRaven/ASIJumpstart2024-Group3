@@ -76,14 +76,14 @@
                         <div class="usersRoomDashboard mb-2">
                             <h4>Rooms</h4>
                         </div>
-                        <div class="userDashboardRoomsCardView scrollable-rooms" id="roomsContainer">
+                        <div class="userDashboardRoomsCardView scrollable-rooms" id="roomsContainer" style="width: 70% !important; ">
                             <!-- Room cards will be dynamically rendered here -->
                         </div>
                     </div>
                 </section>
 
                 <!-- Booking Table Section -->
-                <section class="bookingsSection">
+                <section class="bookingsSection" style="width: 70% !important; ">
                     <div class="userBookingsDashboard">
                         <div class="userBookingsDashboardHeader">
                             <p class="userBookingsDashboardTitle">Bookings</p>
@@ -379,7 +379,7 @@
                 </div>
             </div>
         </div>
-
+ 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
@@ -668,22 +668,30 @@
                         const bookingHTML = `
                                     <div class="recentBookings">
                                         <div class="recentBookingsDetailsDiv">
+                                            <div class="date-and-time-bookings">
                                             <div class="recentBookingsDetails">
                                                 <i class="bi bi-house-door-fill"></i>
                                                 <p>${booking.roomName || 'Unknown Room'}</p>
                                             </div>
-                                            <div class="recentBookingsDetails">
-                                                <i class="bi bi-calendar2-week"></i>
-                                                <p>${startTime.toLocaleDateString()}</p>
+                                                                                            <div class="recentBookingsDetails">
+                                                    <i class="bi bi-calendar2-week"></i>
+                                                    <p>${startTime.toLocaleDateString()}</p>
+                                                </div>
                                             </div>
-                                            <div class="recentBookingsDetails">
-                                                <i class="bi bi-clock"></i>
-                                                <p>${startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+
+                                            <div class="date-and-time-bookings">
+
+                                                <div class="recentBookingsDetails">
+                                                    <i class="bi bi-clock"></i>
+                                                    <p>${startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                                </div>
+                                                                                                        <div class="recentBookingsDetails">
+                                                            <i class="bi bi-hourglass-split"></i>
+                                                            <p>${formattedDuration}</p>
+                                                        </div>
                                             </div>
-                                            <div class="recentBookingsDetails">
-                                                <i class="bi bi-hourglass-split"></i>
-                                                <p>${formattedDuration}</p>
-                                            </div>
+
+
                                         </div>
                                     </div>
                                 `;
@@ -1289,6 +1297,20 @@
                     const cancelBookingModal = bootstrap.Modal.getInstance(document.getElementById('cancelBookingModal'));
                     cancelBookingModal.hide(); // Close the modal after confirmation
                 });
+            }
+            function showErrorModal(errorMessage) {
+                // Set the error message dynamically in the modal body
+                const modalBody = document.querySelector('#alertErrorModal .modal-body');
+                if (modalBody) {
+                    modalBody.textContent = errorMessage;
+                }
+
+                // Show the error modal using Bootstrap's JavaScript API
+                const errorModal = new bootstrap.Modal(document.getElementById('alertErrorModal'), {
+                    keyboard: true,
+                    backdrop: 'static',
+                });
+                errorModal.show();
             }
 
     </script>
