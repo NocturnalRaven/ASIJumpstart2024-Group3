@@ -600,13 +600,18 @@
                             document.getElementById('bookingsTable').style.display = 'table';
                         }
 
+                        noBookingsMessage.style.display = 'none'; // Hide the "No bookings" message
+                        document.getElementById('bookingsTable').style.display = 'table'; // Show the table
+
                         // Filter bookings to exclude those that have elapsed
                         const upcomingBookings = bookings.filter(booking => new Date(booking.endDate) > new Date());
 
                         if (upcomingBookings.length === 0) {
-                            const row = document.createElement('tr');
-                            row.innerHTML = `<td class="text-center text-muted" colspan="9">No upcoming bookings</td>`;
-                            tbody.appendChild(row);
+                            // const row = document.createElement('tr');
+                            // row.innerHTML = `<td class="text-center text-muted" colSpan="9">No upcoming bookings</td>`;
+                            // tbody.appendChild(row);
+                            noBookingsMessage.style.display = 'block';
+                            document.getElementById('bookingsTable').style.display = 'none';
                             return;
                         }
 
