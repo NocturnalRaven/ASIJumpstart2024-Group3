@@ -379,7 +379,7 @@
                 </div>
             </div>
         </div>
-
+ 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
@@ -1289,6 +1289,20 @@
                     const cancelBookingModal = bootstrap.Modal.getInstance(document.getElementById('cancelBookingModal'));
                     cancelBookingModal.hide(); // Close the modal after confirmation
                 });
+            }
+            function showErrorModal(errorMessage) {
+                // Set the error message dynamically in the modal body
+                const modalBody = document.querySelector('#alertErrorModal .modal-body');
+                if (modalBody) {
+                    modalBody.textContent = errorMessage;
+                }
+
+                // Show the error modal using Bootstrap's JavaScript API
+                const errorModal = new bootstrap.Modal(document.getElementById('alertErrorModal'), {
+                    keyboard: true,
+                    backdrop: 'static',
+                });
+                errorModal.show();
             }
 
     </script>
