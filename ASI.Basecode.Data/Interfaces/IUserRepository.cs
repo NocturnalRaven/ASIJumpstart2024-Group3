@@ -14,5 +14,6 @@ namespace ASI.Basecode.Data.Interfaces
         void AddUser(MUser user);
         void UpdateUser(MUser user);
         void DeleteUser(int userId);
+        MUser GetUserById(int userId);
     }
 }

@@ -62,5 +62,10 @@ namespace ASI.Basecode.Data.Repositories
                 UnitOfWork.SaveChanges();
             }
         }
+
+        public MUser GetUserById(int userId)
+        {
+            return GetDbSet<MUser>().FirstOrDefault(u => u.UserId == userId && !u.Deleted);
+        }
     }
 }

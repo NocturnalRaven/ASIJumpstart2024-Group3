@@ -17,6 +17,7 @@ namespace ASI.Basecode.Data.Models
         public DateTime UpdDt { get; set; }
         public bool Deleted { get; set; }
         public string UserCode { get; set; }
+        public string Email { get; set; }
         public string Password { get; set; }
         public string TemporaryPassword { get; set; }
         public string LastName { get; set; }

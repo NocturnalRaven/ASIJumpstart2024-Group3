@@ -15,12 +15,16 @@ namespace ASI.Basecode.Services.Services
     {
         private readonly IBookingRepository _bookingRepository;
         private readonly IMapper _mapper;
+        private readonly INotificationService _notificationService;
+        private readonly IUserRepository _userRepository;
         private readonly ILogger<BookingService> _logger;
 
-        public BookingService(IBookingRepository repository, IMapper mapper, ILogger<BookingService> logger)
+        public BookingService(IBookingRepository repository, IMapper mapper, INotificationService notificationService, IUserRepository userRepository, ILogger<BookingService> logger)
         {
             _mapper = mapper;
             _bookingRepository = repository;
+            _notificationService = notificationService;
+            _userRepository = userRepository;
             _logger = logger;
         }
 
@@ -50,6 +54,26 @@ namespace ASI.Basecode.Services.Services
             newBooking.UpdatedAt = DateTime.Now;
 
             _bookingRepository.AddBooking(newBooking);
+
+            try 
+            {
+                var subject = "Booking Confirmation";
+                var message = $@"
+                    Dear User,
+                    
+                    Your booking for Room ID {model.RoomId} has been successfully confirmed.
+                    Start Date: {model.StartDate}
+                    End Date: {model.EndDate}
+
+                    Thank you for booking with us!
+                ";
+                var user = _userRepository.GetUserById(newBooking.UserId);
+                _notificationService.SendEmail(user.Email, subject, message);
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError(ex, "Error while sending booking confirmation email.");
+            }
         }
 
         public void Update(BookingViewModel model)
@@ -79,6 +103,38 @@ namespace ASI.Basecode.Services.Services
         public void Delete(int id)
         {
             _bookingRepository.DeleteBooking(id);
+        }
+
+        public void SendBookingReminders()
+        {
+            var upcomingBookings = _bookingRepository.GetBooking()
+                .Where(b => !b.Deleted && b.StartDate == DateTime.Now.AddDays(2).Date)
+                .ToList();
+
+            foreach (var booking in upcomingBookings)
+            {
+                try
+                {
+                    var user = _userRepository.GetUsers().FirstOrDefault(u => u.UserId == booking.UserId);
+                    var subject = "Booking Reminder";
+                    var message = $@"
+                        Dear {user.FirstName},
+                
+                        This is a reminder for your upcoming booking:
+                        Room ID: {booking.RoomId}
+                        Start Date: {booking.StartDate}
+                        End Date: {booking.EndDate}
+                
+                        We look forward to hosting you!
+                    ";
+
+                    _notificationService.SendEmail(user.Email, subject, message);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error while sending reminder email for booking ID {BookingId}", booking.Id);
+                }
+            }
         }
 
         public IEnumerable<BookedRoomViewModel> RetrieveBookedRooms()

@@ -12,6 +12,8 @@ namespace ASI.Basecode.Services.ServiceModels
         [Required(ErrorMessage = "User ID is required")]
         public int UserId { get; set; }
 
+        public string Email { get; set; }
+
         [Required(ErrorMessage = "Room ID is required")]
         public int RoomId { get; set; }
 

@@ -126,6 +126,9 @@ namespace ASI.Basecode.WebApp
 
             services.AddScoped<IBookingRepository, BookingRepository>();
             services.AddScoped<IBookingService, BookingService>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IBookingService, BookingService>();
 
         }
 
