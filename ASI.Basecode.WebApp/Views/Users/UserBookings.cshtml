@@ -858,22 +858,28 @@
                     const bookingHTML = `
                                         <div class="recentBookings">
                                             <div class="recentBookingsDetailsDiv">
-                                                <div class="recentBookingsDetails">
-                                                    <i class="bi bi-house-door-fill"></i>
-                                                    <p>${booking.roomName || 'Unknown Room'}</p>
-                                                </div>
-                                                <div class="recentBookingsDetails">
-                                                    <i class="bi bi-calendar2-week"></i>
-                                                    <p>${startTime.toLocaleDateString()}</p>
-                                                </div>
-                                                <div class="recentBookingsDetails">
-                                                    <i class="bi bi-clock"></i>
-                                                    <p>${startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-                                                </div>
-                                                <div class="recentBookingsDetails">
-                                                    <i class="bi bi-hourglass-split"></i>
-                                                    <p>${formattedDuration}</p>
-                                                </div>
+                                                        <div class="date-and-time-bookings">
+                                                    <div class="recentBookingsDetails">
+                                                        <i class="bi bi-house-door-fill"></i>
+                                                        <p>${booking.roomName || 'Unknown Room'}</p>
+                                                    </div>
+                                                                                                    <div class="recentBookingsDetails">
+                                                            <i class="bi bi-calendar2-week"></i>
+                                                            <p>${startTime.toLocaleDateString()}</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="date-and-time-bookings">
+
+                                                        <div class="recentBookingsDetails">
+                                                            <i class="bi bi-clock"></i>
+                                                            <p>${startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                                        </div>
+                                                                                                                <div class="recentBookingsDetails">
+                                                                    <i class="bi bi-hourglass-split"></i>
+                                                                    <p>${formattedDuration}</p>
+                                                                </div>
+                                                    </div>
                                             </div>
                                         </div>
                                     `;

@@ -1027,6 +1027,7 @@ table tbody tr td {
 
 .admin-rooms-section {
     height: 98% !important;
+    overflow-y: scroll;
 }
 
 .no-rooms-available-placeholder {
@@ -1039,6 +1040,9 @@ table tbody tr td {
 
 .admin-rooms-section-table-wrapper, .admin-booked-section-table-wrapper {
     height: 100%;
+}
+.admin-booked-section {
+    height: 98% !important;
 }
 
 .no-rooms-available-placeholder-label {
@@ -1251,9 +1255,10 @@ flex-direction: column;
 font-size: 8px !important;
 }
 
-.recentBookingsDetails {
+/*.recentBookingsDetails {
 
 justify-content: left;}
 <<<<<<< HEAD
 
 ======= > > > > > > > 1a9e3931e2d4f9cc9d20e2624cc13c312748b6d1
+*/
